@@ -219,15 +219,15 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 	{
 	case GOSSIP_ACTION_INFO_DEF:
 	{
-								   if (Item * item = player->GetItemByGuid(player->scriptitemguid))
-								   {
-									   item->m_DisplayEntry = 0;
-									   if (item->GetBagSlot() == INVENTORY_SLOT_BAG_0 && item->GetSlot() < EQUIPMENT_SLOT_END)
-										   player->SetUInt32Value(PLAYER_VISIBLE_ITEM_1_0 + (item->GetSlot() * MAX_VISIBLE_ITEM_OFFSET), item->GetEntry());
-								   }
-								   uint32 count = 1;
-								   player->DestroyItemCount(pItem, count, true);
-								   player->CLOSE_GOSSIP_MENU();
+		if (Item * item = player->GetItemByGuid(player->scriptitemguid))
+		{
+		   item->m_DisplayEntry = 0;
+		   if (item->GetBagSlot() == INVENTORY_SLOT_BAG_0 && item->GetSlot() < EQUIPMENT_SLOT_END)
+			   player->SetUInt32Value(PLAYER_VISIBLE_ITEM_1_0 + (item->GetSlot() * MAX_VISIBLE_ITEM_OFFSET), item->GetEntry());
+		}
+		uint32 count = 1;
+		player->DestroyItemCount(pItem, count, true);
+		player->CLOSE_GOSSIP_MENU();
 	}break;
 	case GOSSIP_ACTION_INFO_DEF + 1:
 	{
@@ -321,6 +321,186 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	switch (action)
 	{
+	case GOSSIP_ACTION_INFO_DEF + 1: //Ë²·É
+	{
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 20);
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 21);
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 22);
+		pPlayer->SEND_GOSSIP_MENU(822,pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 20:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item1jf;
+		item1jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT sfitem1jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item1jf = field[0].GetUInt32();
+		}
+		if (jf >= item1jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99004, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99004, true, Item::GenerateItemRandomPropertyId(99004));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+			break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 21:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item2jf;
+		item2jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT sfitem2jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item2jf = field[0].GetUInt32();
+		}
+		if (jf >= item2jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item2jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99005, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99005, true, Item::GenerateItemRandomPropertyId(99005));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+			break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 22:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item3jf;
+		item3jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT sfitem3jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item3jf = field[0].GetUInt32();
+		}
+		if (jf > item3jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item3jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99006, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99006, true, Item::GenerateItemRandomPropertyId(99006));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+		break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 2: //Ë«Ìì¸³
+	{
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 23);
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 24);
+		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 25);
+		pPlayer->SEND_GOSSIP_MENU(822,pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 23:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item1jf;
+		item1jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT tfitem1jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item1jf = field[0].GetUInt32();
+		}
+		if (jf > item1jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99001, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99001, true, Item::GenerateItemRandomPropertyId(99001));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+			break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 24:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item2jf;
+		item2jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT tfitem2jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item2jf = field[0].GetUInt32();
+		}
+		if (jf >= item2jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item2jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99002, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99002, true, Item::GenerateItemRandomPropertyId(99002));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+			break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 25:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item3jf;
+		item3jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT tfitem3jf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item3jf = field[0].GetUInt32();
+		}
+		pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item3jf);
+		ItemPosCountVec dest;
+		uint32 noSpaceForCount = 0;
+		pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99003, 1, &noSpaceForCount);
+		Item* Pitem = pPlayer->StoreNewItem(dest, 99003, true, Item::GenerateItemRandomPropertyId(99003));
+		pPlayer->SendNewItem(Pitem, 1, true, false);
+		break;
+	}
 	case GOSSIP_ACTION_INFO_DEF + 3:
 	{
 		oldlevel = pPlayer->getLevel();
