@@ -8,13 +8,14 @@
 extern void AddSC_battleground();
 
 // custom
+extern void AddSC_transform();
+extern void AddSC_custom_cdkey();
 
 // examples
 extern void AddSC_example_creature();
 extern void AddSC_example_escort();
 extern void AddSC_example_gossip_codebox();
 extern void AddSC_example_misc();
-
 // world
 extern void AddSC_areatrigger_scripts();
 extern void AddSC_bosses_emerald_dragons();
@@ -208,6 +209,8 @@ void AddScripts()
     AddSC_battleground();
 
     // custom
+	AddSC_custom_cdkey();
+	AddSC_transform();
 
     // examples
     AddSC_example_creature();

@@ -16,6 +16,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#if _MSC_VER >= 1600 // VC2010
+#pragma execution_character_set("utf-8")
+#endif
+
+
 #include "Common.h"
 #include "Database/DatabaseEnv.h"
 #include "WorldPacket.h"
@@ -440,7 +445,7 @@ void WorldSession::HandlePlayerLoginOpcode(WorldPacket& recv_data)
     CharacterDatabase.DelayQueryHolder(&chrHandler, &CharacterHandler::HandlePlayerLoginCallback, holder);
 }
 
-void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
+void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)   //玩家登录
 {
     ObjectGuid playerGuid = holder->GetGuid();
 
@@ -458,6 +463,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     }
 
     SetPlayer(pCurrChar);
+	pCurrChar->LoadCustom();
 
     WorldPacket data(SMSG_LOGIN_VERIFY_WORLD, 20);
     data << pCurrChar->GetMapId();
@@ -666,6 +672,20 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
 
     m_playerLoading = false;
     delete holder;
+	//////////世界公告
+		/*uint32 playeronlinvecount = sWorld.GetActiveSessionCount();
+		if (playeronlinvecount > 5)
+		{
+			_player->GetSession()->KickPlayer();
+		}*/
+		std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
+		str += "|cffADFF2F";
+		str += pCurrChar->GetName();
+		str += "进入了游戏！";
+		str += "|r";
+		WorldPacket adata(SMSG_NOTIFICATION, (str.size() + 1));
+		adata << str;
+		sWorld.SendGlobalMessage(&adata);
 }
 
 void WorldSession::HandleSetFactionAtWarOpcode(WorldPacket& recv_data)

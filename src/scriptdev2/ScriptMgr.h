@@ -59,24 +59,26 @@ enum EscortFaction
 struct Script
 {
     Script() :
-        pGossipHello(nullptr), pGossipHelloGO(nullptr), pGossipSelect(nullptr), pGossipSelectGO(nullptr),
+	pGossipHello(nullptr), pGossipHelloGO(nullptr), pGossipSelect(nullptr), pGossipSelectGO(nullptr), pGossipSelectItem(nullptr),
         pGossipSelectWithCode(nullptr), pGossipSelectGOWithCode(nullptr),
         pDialogStatusNPC(nullptr), pDialogStatusGO(nullptr),
         pQuestAcceptNPC(nullptr), pQuestAcceptGO(nullptr), pQuestAcceptItem(nullptr),
         pQuestRewardedNPC(nullptr), pQuestRewardedGO(nullptr),
         pGOUse(nullptr), pItemUse(nullptr), pAreaTrigger(nullptr), pProcessEventId(nullptr),
         pEffectDummyNPC(nullptr), pEffectDummyGO(nullptr), pEffectDummyItem(nullptr), pEffectScriptEffectNPC(nullptr),
-        pEffectAuraDummy(nullptr), GetAI(nullptr), GetInstanceData(nullptr)
+		pEffectAuraDummy(nullptr), GetAI(nullptr), GetInstanceData(nullptr), pItemSelect(nullptr)
     {}
 
     std::string Name;
 
     bool (*pGossipHello)(Player*, Creature*);
     bool (*pGossipHelloGO)(Player*, GameObject*);
-    bool (*pGossipSelect)(Player*, Creature*, uint32, uint32);
+	bool (*pGossipSelect)(Player*, Creature*, uint32, uint32);
     bool (*pGossipSelectGO)(Player*, GameObject*, uint32, uint32);
+	bool (*pGossipSelectItem)(Player*, Item*, uint32, uint32);
     bool (*pGossipSelectWithCode)(Player*, Creature*, uint32, uint32, const char*);
     bool (*pGossipSelectGOWithCode)(Player*, GameObject*, uint32, uint32, const char*);
+	bool (*pGossipSelectItemWithCode)(Player*, Item*, uint32, uint32, const char*);
     uint32(*pDialogStatusNPC)(Player*, Creature*);
     uint32(*pDialogStatusGO)(Player*, GameObject*);
     bool (*pQuestAcceptNPC)(Player*, Creature*, Quest const*);
@@ -86,6 +88,7 @@ struct Script
     bool (*pQuestRewardedGO)(Player*, GameObject*, Quest const*);
     bool (*pGOUse)(Player*, GameObject*);
     bool (*pItemUse)(Player*, Item*, SpellCastTargets const&);
+	bool (*pItemSelect)(Player*, Item*, uint32, uint32);
     bool (*pAreaTrigger)(Player*, AreaTriggerEntry const*);
     bool (*pProcessEventId)(uint32, Object*, Object*, bool);
     bool (*pEffectDummyNPC)(Unit*, uint32, SpellEffectIndex, Creature*, ObjectGuid);

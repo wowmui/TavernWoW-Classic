@@ -124,6 +124,75 @@ static const uint32 corpseReclaimDelay[MAX_DEATH_COUNT] = {30, 60, 120};
 
 //== PlayerTaxi ================================================
 
+
+void Player::LoadCustom()
+{
+	if (GetItemCount(99001) >= 1 || GetItemCount(99002) >= 1 || GetItemCount(99003) >= 1 || getLevel() >= 1)
+	{
+		CanDoubleTalent = true;
+	}
+	else
+	{
+		CanDoubleTalent = false;
+	}
+	if (GetItemCount(99004) >= 1 || GetItemCount(99005) >= 1 || GetItemCount(99006) >= 1 || getLevel() >= 1)
+	{
+		CanInstantTaxi = true;
+	}
+	else
+	{
+		CanInstantTaxi = false;
+	}
+}
+bool Player::PExecute(GameDB db, const char* format, ...)
+{
+	if (!format)
+		return false;
+	va_list ap;
+	char szQuery[MAX_QUERY_LEN];
+	va_start(ap, format);
+	int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
+	va_end(ap);
+	if (res == -1)
+	{
+		sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
+		return false;
+	}
+	switch (db)
+	{
+	case RealmDB:
+		return LoginDatabase.Query(szQuery);
+	case CharactersDB:
+		return CharacterDatabase.Query(szQuery);
+	case WorldDB:
+		return WorldDatabase.Query(szQuery);
+	}
+}
+QueryResult* Player::PQuery(GameDB db, const char* format, ...)
+{
+	if (!format) return nullptr;
+	va_list ap;
+	char szQuery[MAX_QUERY_LEN];
+	va_start(ap, format);
+	int res = vsnprintf(szQuery, MAX_QUERY_LEN, format, ap);
+	va_end(ap);
+	if (res == -1)
+	{
+		sLog.outError("SQL Query truncated (and not execute) for format: %s", format);
+		return nullptr;
+	}
+	switch (db)
+	{
+	case RealmDB:
+		return LoginDatabase.Query(szQuery);
+	case CharactersDB:
+		return CharacterDatabase.Query(szQuery);
+	case WorldDB:
+		return WorldDatabase.Query(szQuery);
+	}
+
+}
+
 PlayerTaxi::PlayerTaxi()
 {
     // Taxi nodes
@@ -225,6 +294,22 @@ uint32 PlayerTaxi::GetCurrentTaxiPath() const
     sObjectMgr.GetTaxiPath(m_TaxiDestinations[0], m_TaxiDestinations[1], path, cost);
 
     return path;
+}
+
+bool Player::CanInstantTaxiByDB()
+{
+	auto result = CharacterDatabase.PQuery("SELECT taxi FROM character_limited WHERE guid=%u", GetGUIDLow());
+	if (result)
+	{
+		time_t now = time(NULL);
+		Field* field = result->Fetch();
+		uint32 taxi = field[0].GetUInt32();
+		if (taxi > now)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 std::ostringstream& operator<< (std::ostringstream& ss, PlayerTaxi const& taxi)
@@ -1096,9 +1181,6 @@ void Player::SetDrunkValue(uint16 newDrunkenValue, uint32 itemId)
 
 void Player::Update(uint32 update_diff, uint32 p_time)
 {
-    if (!IsInWorld())
-        return;
-
     // Undelivered mail
     if (m_nextMailDelivereTime && m_nextMailDelivereTime <= time(nullptr))
     {
@@ -16029,7 +16111,13 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
 
     // Checks and preparations done, DO FLIGHT
     ModifyMoney(-(int32)totalcost);
-
+	if (CanInstantTaxi)
+	{
+				TaxiNodesEntry const* lastnode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+		m_taxi.ClearTaxiDestinations();
+		TeleportTo(lastnode->map_id, lastnode->x, lastnode->y, lastnode->z, GetOrientation());
+		return false;
+	}
     // prevent stealth flight
     RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
 

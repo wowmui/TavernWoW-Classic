@@ -761,7 +761,8 @@ ChatCommand* ChatHandler::getCommandTable()
         { "waterwalk",      SEC_GAMEMASTER,     false, &ChatHandler::HandleWaterwalkCommand,           "", nullptr },
         { "quit",           SEC_CONSOLE,        true,  &ChatHandler::HandleQuitCommand,                "", nullptr },
         { "mmap",           SEC_GAMEMASTER,     false, nullptr,                                        "", mmapCommandTable },
-
+		{ "tf",				SEC_PLAYER,			false, &ChatHandler::HandleTfCommand,				   "", nullptr },
+		{ "sf",				SEC_PLAYER,			false, &ChatHandler::HandleSfCommand,				   "", nullptr },
         { nullptr,          0,                  false, nullptr,                                        "", nullptr }
     };
 

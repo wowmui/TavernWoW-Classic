@@ -567,6 +567,7 @@ class ScriptMgr
         bool OnGossipHello(Player* pPlayer, GameObject* pGameObject);
         bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 sender, uint32 action, const char* code);
         bool OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 sender, uint32 action, const char* code);
+		bool OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, const char* code);
         bool OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest);
         bool OnQuestAccept(Player* pPlayer, GameObject* pGameObject, Quest const* pQuest);
         bool OnQuestAccept(Player* pPlayer, Item* pItem, Quest const* pQuest);
@@ -576,6 +577,8 @@ class ScriptMgr
         uint32 GetDialogStatus(Player* pPlayer, GameObject* pGameObject);
         bool OnGameObjectUse(Player* pPlayer, GameObject* pGameObject);
         bool OnItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
+		bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets);
+		bool ItemSelect(Player *pPlayer, Item *pItem, uint32 sender, uint32 action);
         bool OnAreaTrigger(Player* pPlayer, AreaTriggerEntry const* atEntry);
         bool OnProcessEvent(uint32 eventId, Object* pSource, Object* pTarget, bool isStart);
         bool OnEffectDummy(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid);
@@ -618,8 +621,10 @@ class ScriptMgr
         bool (MANGOS_IMPORT* m_pOnGOGossipHello)(Player*, GameObject*);
         bool (MANGOS_IMPORT* m_pOnGossipSelect)(Player*, Creature*, uint32, uint32);
         bool (MANGOS_IMPORT* m_pOnGOGossipSelect)(Player*, GameObject*, uint32, uint32);
+		bool (MANGOS_IMPORT* m_pOnItemGossipSelect)(Player*, Item*, uint32, uint32);
         bool (MANGOS_IMPORT* m_pOnGossipSelectWithCode)(Player*, Creature*, uint32, uint32, const char*);
         bool (MANGOS_IMPORT* m_pOnGOGossipSelectWithCode)(Player*, GameObject*, uint32, uint32, const char*);
+		bool (MANGOS_IMPORT* m_pOnItemGossipSelectWithCode)(Player*, Item*, uint32, uint32, const char*);
         bool (MANGOS_IMPORT* m_pOnQuestAccept)(Player*, Creature*, Quest const*);
         bool (MANGOS_IMPORT* m_pOnGOQuestAccept)(Player*, GameObject*, Quest const*);
         bool (MANGOS_IMPORT* m_pOnItemQuestAccept)(Player*, Item*, Quest const*);

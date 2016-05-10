@@ -15,7 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#if _MSC_VER >= 1600 // VC2010
+#pragma execution_character_set("utf-8")
+#endif
 #include "Common.h"
 #include "Language.h"
 #include "Database/DatabaseEnv.h"
@@ -252,7 +254,62 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recv_data)
         data << uint32(race);                               // player race
         data << uint32(pzoneid);                            // player zone id
     }
-
+	uint32 onoff;
+	uint32 nub;
+	auto io_result = WorldDatabase.PQuery("SELECT fakepeople,peoplenub FROM world_conf");//×Ô¶¯ËÑÑ°Æ¥ÅäscodeµÄcdkey×Ö¶Î
+	if (io_result)
+	{
+		auto field = io_result->Fetch();
+		onoff = field[0].GetUInt32();
+		nub = field[1].GetUInt32();
+	}
+	if (onoff != 0)
+	{
+		auto cdkey_result = CharacterDatabase.PQuery("SELECT name,level,class,race,gender,zone,guid FROM characters");//×Ô¶¯ËÑÑ°Æ¥ÅäscodeµÄcdkey×Ö¶Î
+		auto field = cdkey_result->Fetch();
+		do {
+			uint32 playeronline = sWorld.GetActiveSessionCount();
+			if (displaycount >= (playeronline + nub))
+				break;
+			std::string pname = field[0].GetString();
+			uint32 guid = field[6].GetUInt32();
+			uint32 level = field[1].GetUInt32();
+			uint32 class_ = field[2].GetUInt32();
+			uint32 race = field[3].GetUInt32();
+			uint32 pzoneid = field[5].GetUInt32();
+			if (pname == _player->GetName())
+				continue;
+			// check if target's level is in level range
+			if (level < level_min || level > level_max)
+				continue;
+			auto cdkey1_result = CharacterDatabase.PQuery("SELECT guildid FROM guild_member WHERE guid = %u", guid);//×Ô¶¯ËÑÑ°Æ¥ÅäscodeµÄcdkey×Ö¶Î
+			if (cdkey1_result)
+			{
+				auto field = cdkey1_result->Fetch();
+				uint32 guildid_1 = field[0].GetUInt32();
+				std::string gname_1 = sGuildMgr.GetGuildNameById(guildid_1);
+				data << pname;
+				data << gname_1; // guild name
+				data << uint32(level);                              // player level
+				data << uint32(class_);                             // player class
+				data << uint32(race);                               // player race
+				data << uint32(pzoneid);                            // player zone id
+				++displaycount;
+				matchcount++;
+			}
+			else
+			{
+				data << pname;
+				data << " "; // guild name
+				data << uint32(level);                              // player level
+				data << uint32(class_);                             // player class
+				data << uint32(race);                               // player race
+				data << uint32(pzoneid);                            // player zone id
+				++displaycount;
+				matchcount++;
+			}
+		} while (cdkey_result->NextRow());
+	}
     data.put(0, displaycount);                              // insert right count, count displayed
     data.put(4, matchcount);                                // insert right count, count of matches
 

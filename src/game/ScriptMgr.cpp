@@ -58,8 +58,10 @@ ScriptMgr::ScriptMgr() :
     m_pOnGOGossipHello(nullptr),
     m_pOnGossipSelect(nullptr),
     m_pOnGOGossipSelect(nullptr),
+	m_pOnItemGossipSelect(nullptr),
     m_pOnGossipSelectWithCode(nullptr),
     m_pOnGOGossipSelectWithCode(nullptr),
+	m_pOnItemGossipSelectWithCode(nullptr),
     m_pOnQuestAccept(nullptr),
     m_pOnGOQuestAccept(nullptr),
     m_pOnItemQuestAccept(nullptr),
@@ -2257,6 +2259,14 @@ bool ScriptMgr::OnGossipSelect(Player* pPlayer, GameObject* pGameObject, uint32 
         return m_pOnGOGossipSelect != nullptr && m_pOnGOGossipSelect(pPlayer, pGameObject, sender, action);
 }
 
+bool ScriptMgr::OnGossipSelect(Player* pPlayer, Item* pItem, uint32 sender, uint32 action, const char* code)
+{
+	if (code)
+		return m_pOnItemGossipSelectWithCode != nullptr && m_pOnItemGossipSelectWithCode(pPlayer, pItem, sender, action, code);
+	else
+		return m_pOnItemGossipSelect != nullptr && m_pOnItemGossipSelect(pPlayer, pItem, sender, action);
+}
+
 bool ScriptMgr::OnQuestAccept(Player* pPlayer, Creature* pCreature, Quest const* pQuest)
 {
     return m_pOnQuestAccept != nullptr && m_pOnQuestAccept(pPlayer, pCreature, pQuest);
@@ -2374,8 +2384,10 @@ ScriptLoadResult ScriptMgr::LoadScriptLibrary(const char* libName)
     GET_SCRIPT_HOOK_PTR(m_pOnGossipHello,              "GossipHello");
     GET_SCRIPT_HOOK_PTR(m_pOnGOGossipHello,            "GOGossipHello");
     GET_SCRIPT_HOOK_PTR(m_pOnGossipSelect,             "GossipSelect");
+	GET_SCRIPT_HOOK_PTR(m_pOnItemGossipSelect,		   "ItemGossipSelect");
     GET_SCRIPT_HOOK_PTR(m_pOnGOGossipSelect,           "GOGossipSelect");
     GET_SCRIPT_HOOK_PTR(m_pOnGossipSelectWithCode,     "GossipSelectWithCode");
+	GET_SCRIPT_HOOK_PTR(m_pOnItemGossipSelectWithCode,   "ItemGossipSelectWithCode");
     GET_SCRIPT_HOOK_PTR(m_pOnGOGossipSelectWithCode,   "GOGossipSelectWithCode");
     GET_SCRIPT_HOOK_PTR(m_pOnQuestAccept,              "QuestAccept");
     GET_SCRIPT_HOOK_PTR(m_pOnGOQuestAccept,            "GOQuestAccept");
@@ -2420,8 +2432,10 @@ void ScriptMgr::UnloadScriptLibrary()
     m_pOnGossipHello            = nullptr;
     m_pOnGOGossipHello          = nullptr;
     m_pOnGossipSelect           = nullptr;
+	m_pOnItemGossipSelect		= nullptr;
     m_pOnGOGossipSelect         = nullptr;
     m_pOnGossipSelectWithCode   = nullptr;
+	m_pOnItemGossipSelectWithCode = nullptr;
     m_pOnGOGossipSelectWithCode = nullptr;
     m_pOnQuestAccept            = nullptr;
     m_pOnGOQuestAccept          = nullptr;

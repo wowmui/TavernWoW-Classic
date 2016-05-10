@@ -107,6 +107,15 @@ struct PlayerSpell
 
 typedef std::unordered_map<uint32, PlayerSpell> PlayerSpellMap;
 
+struct PlayerTalentSpell
+{
+	uint32 guid;
+	uint32 spell;
+	uint32 active;
+	uint32 disabled;
+	uint32 freepoint;
+};
+
 // Spell modifier (used for modify other spells)
 struct SpellModifier
 {
@@ -840,6 +849,13 @@ class TradeData
         ObjectGuid m_items[TRADE_SLOT_COUNT];               // traded itmes from m_player side including non-traded slot
 };
 
+enum GameDB
+{
+	RealmDB,
+	CharactersDB,
+	WorldDB
+};
+
 class MANGOS_DLL_SPEC Player : public Unit
 {
         friend class WorldSession;
@@ -848,6 +864,10 @@ class MANGOS_DLL_SPEC Player : public Unit
     public:
         explicit Player(WorldSession* session);
         ~Player();
+
+		bool PExecute(GameDB db, const char* format, ...);
+		QueryResult* PQuery(GameDB db, const char* format, ...);
+
 
         void CleanupsBeforeDelete() override;
 
@@ -901,6 +921,9 @@ class MANGOS_DLL_SPEC Player : public Unit
         ChatTagFlags GetChatTag() const;
         std::string autoReplyMsg;
 
+		uint8 scriptslot;
+		uint32 scriptdisplayEntry;
+		uint64 scriptitemguid;
         PlayerSocial* GetSocial() { return m_social; }
 
         PlayerTaxi m_taxi;
@@ -1253,6 +1276,7 @@ class MANGOS_DLL_SPEC Player : public Unit
         /*********************************************************/
 
         bool LoadFromDB(ObjectGuid guid, SqlQueryHolder* holder);
+		void LoadCustom();
 
         static uint32 GetZoneIdFromDB(ObjectGuid guid);
         static uint32 GetLevelFromDB(ObjectGuid guid);
@@ -1966,6 +1990,9 @@ class MANGOS_DLL_SPEC Player : public Unit
         float  m_recallZ;
         float  m_recallO;
         void   SaveRecallPosition();
+		bool CanInstantTaxi;
+		bool CanInstantTaxiByDB();
+		bool CanDoubleTalent;
 
         void SetHomebindToLocation(WorldLocation const& loc, uint32 area_id);
         void RelocateToHomebind() { SetLocationMapId(m_homebindMapId); Relocate(m_homebindX, m_homebindY, m_homebindZ); }

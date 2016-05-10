@@ -294,6 +294,21 @@ bool GossipSelect(Player* pPlayer, Creature* pCreature, uint32 uiSender, uint32 
 }
 
 MANGOS_DLL_EXPORT
+bool ItemGossipSelect(Player* pPlayer, Item* pItem, uint32 uiSender, uint32 uiAction)
+{
+	debug_log("SD2: Gossip selection, sender: %u, action: %u", uiSender, uiAction);
+
+	Script* pTempScript = m_scripts[pItem->GetProto()->ScriptId];
+
+	if (!pTempScript || !pTempScript->pGossipSelectItem)
+		return false;
+
+	pPlayer->PlayerTalkClass->ClearMenus();
+
+	return pTempScript->pGossipSelectItem(pPlayer, pItem, uiSender, uiAction);
+}
+
+MANGOS_DLL_EXPORT
 bool GOGossipSelect(Player* pPlayer, GameObject* pGo, uint32 uiSender, uint32 uiAction)
 {
     debug_log("SD2: GO Gossip selection, sender: %u, action: %u", uiSender, uiAction);
@@ -336,6 +351,21 @@ bool GOGossipSelectWithCode(Player* pPlayer, GameObject* pGo, uint32 uiSender, u
     pPlayer->PlayerTalkClass->ClearMenus();
 
     return pTempScript->pGossipSelectGOWithCode(pPlayer, pGo, uiSender, uiAction, sCode);
+}
+
+MANGOS_DLL_EXPORT
+bool ItemGossipSelectWithCode(Player* pPlayer, Item* pItem, uint32 uiSender, uint32 uiAction, const char* sCode)
+{
+	debug_log("SD2: GO Gossip selection with code, sender: %u, action: %u", uiSender, uiAction);
+
+	Script* pTempScript = m_scripts[pItem->GetProto()->ScriptId];
+
+	if (!pTempScript || !pTempScript->pGossipSelectGOWithCode)
+		return false;
+
+	pPlayer->PlayerTalkClass->ClearMenus();
+
+	return pTempScript->pGossipSelectItemWithCode(pPlayer, pItem, uiSender, uiAction, sCode);
 }
 
 MANGOS_DLL_EXPORT
@@ -481,9 +511,21 @@ bool ItemUse(Player* pPlayer, Item* pItem, SpellCastTargets const& targets)
 
     if (!pTempScript || !pTempScript->pItemUse)
         return false;
-
+	pPlayer->PlayerTalkClass->ClearMenus();
     return pTempScript->pItemUse(pPlayer, pItem, targets);
 }
+
+//MANGOS_DLL_EXPORT
+//bool ScriptMgr::ItemSelect(Player *pPlayer, Item *pItem, uint32 sender, uint32 action)
+//{
+//	debug_log("OSCR: Gossip selection, sender: %d, action: %d", sender, action);
+//
+//	Script* tmpscript = m_scripts[pItem->GetProto()->ScriptId];
+//	if (!tmpscript || !tmpscript->pItemSelect) return false;
+//
+//	pPlayer->PlayerTalkClass->ClearMenus();
+//	return tmpscript->pItemSelect(pPlayer, pItem, sender, action);
+//}
 
 MANGOS_DLL_EXPORT
 bool EffectDummyCreature(Unit* pCaster, uint32 spellId, SpellEffectIndex effIndex, Creature* pTarget, ObjectGuid originalCasterGuid)

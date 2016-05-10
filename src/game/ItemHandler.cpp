@@ -26,6 +26,11 @@
 #include "Item.h"
 #include "UpdateData.h"
 #include "Chat.h"
+#include "ScriptMgr.h"
+#include "Spell.h"
+
+#pragma once
+#pragma execution_character_set("utf-8")
 
 void WorldSession::HandleSplitItemOpcode(WorldPacket& recv_data)
 {
@@ -1066,11 +1071,14 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
     }
 
     // cheating: non-wrapper wrapper (all empty wrappers is stackable)
-    if (!(gift->GetProto()->Flags & ITEM_FLAG_WRAPPER) || gift->GetMaxStackCount() == 1)
-    {
-        _player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, nullptr);
-        return;
-    }
+	if (gift->GetEntry() != 1209)
+	{
+		if (!(gift->GetProto()->Flags & ITEM_FLAG_WRAPPER) || gift->GetMaxStackCount() == 1)
+		{
+			_player->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, gift, nullptr);
+			return;
+		}
+	}
 
     Item* item = _player->GetItemByPos(item_bag, item_slot);
 
@@ -1085,6 +1093,44 @@ void WorldSession::HandleWrapItemOpcode(WorldPacket& recv_data)
         _player->SendEquipError(EQUIP_ERR_WRAPPED_CANT_BE_WRAPPED, item, nullptr);
         return;
     }
+
+	if (gift->GetEntry() == 1209)
+	{
+		if (item->GetProto()->Class != 2 && item->GetProto()->Class != 4)
+		{
+			SendNotification("这个物品无法幻化.");
+			return;
+		}
+		switch (item->GetProto()->InventoryType)
+		{
+		case INVTYPE_NON_EQUIP:
+		case INVTYPE_NECK:
+		case INVTYPE_BODY:
+		case INVTYPE_FINGER:
+		case INVTYPE_TRINKET:
+		case INVTYPE_BAG:
+		case INVTYPE_TABARD:
+		case INVTYPE_AMMO:
+		case INVTYPE_QUIVER:
+			SendNotification("这个物品无法幻化.");
+			return;
+		}
+		uint8 msg = _player->CanUseItem(gift);
+		if (msg != EQUIP_ERR_OK)
+		{
+			_player->SendEquipError(EQUIP_ERR_NONE, gift, NULL);
+			return;
+		}
+		SpellCastTargets targets;
+		targets.setItemTarget(item);
+		if (!targets.getItemTarget())
+		{
+			SendNotification("物品错误0000");
+			return;
+		}
+		if (sScriptMgr.OnItemUse(_player, gift, targets))
+			return;
+	}
 
     if (item->IsEquipped())
     {
