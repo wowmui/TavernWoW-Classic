@@ -127,7 +127,7 @@ static const uint32 corpseReclaimDelay[MAX_DEATH_COUNT] = {30, 60, 120};
 
 void Player::LoadCustom()
 {
-	if (GetItemCount(99001) >= 1 || GetItemCount(99002) >= 1 || GetItemCount(99003) >= 1 || getLevel() >= 1)
+	if (GetItemCount(99001) >= 1 || GetItemCount(99002) >= 1 || GetItemCount(99003) >= 1)
 	{
 		CanDoubleTalent = true;
 	}
@@ -135,7 +135,7 @@ void Player::LoadCustom()
 	{
 		CanDoubleTalent = false;
 	}
-	if (GetItemCount(99004) >= 1 || GetItemCount(99005) >= 1 || GetItemCount(99006) >= 1 || getLevel() >= 1)
+	if (GetItemCount(99004) >= 1 || GetItemCount(99005) >= 1 || GetItemCount(99006) >= 1)
 	{
 		CanInstantTaxi = true;
 	}
