@@ -78,249 +78,83 @@ bool ChatHandler::HandleTfCommand(char* args)
 	}
 	else
 	{
-		if (argstr == "1save")
+		Player* chr = m_session->GetPlayer();
+		if (chr->isInCombat())
 		{
-			std::vector<PlayerTalentSpell> bak_talent;
-			auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
-			if (result)
-			{
-				do
-				{
-					Field* field = result->Fetch();            //储存备份天赋
-					uint32 guid = field[0].GetUInt32();
-					uint32 spell = field[1].GetUInt32();
-					uint32 active = field[2].GetUInt32();
-					uint32 disabled = field[3].GetUInt32();
-					uint32 freepoint = field[4].GetUInt32();
-					PlayerTalentSpell tmp_talent;
-					tmp_talent.guid = guid;
-					tmp_talent.spell = spell;
-					tmp_talent.active = active;
-					tmp_talent.disabled = disabled;
-					tmp_talent.freepoint = freepoint;
-					bak_talent.push_back(tmp_talent);
-				} while (result->NextRow());
-				CharacterDatabase.PExecute("DELETE FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //删除备份天赋
-			}
-			for (PlayerSpellMap::const_iterator itr = chr->GetSpellMap().begin(); itr != chr->GetSpellMap().end(); ++itr) //
-			{
-				if (chr->HasSpell(itr->first))
-					CharacterDatabase.PExecute("INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
-			}
-			chr->SaveToDB();
-			chr->GetSession()->SendNotification("第一套天赋保存成功！");
+			ChatHandler(chr).PSendSysMessage("战斗中无法切换天赋！");
+			return true;
 		}
-		if (argstr == "2save")
+		if (!chr->CanDoubleTalent)
 		{
-			std::vector<PlayerTalentSpell> bak_talent;
-			auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent_2 WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
-			if (result)
-			{
-				do
-				{
-					Field* field = result->Fetch();            //储存备份天赋
-					uint32 guid = field[0].GetUInt32();
-					uint32 spell = field[1].GetUInt32();
-					uint32 active = field[2].GetUInt32();
-					uint32 disabled = field[3].GetUInt32();
-					uint32 freepoint = field[4].GetUInt32();
-					PlayerTalentSpell tmp_talent;
-					tmp_talent.guid = guid;
-					tmp_talent.spell = spell;
-					tmp_talent.active = active;
-					tmp_talent.disabled = disabled;
-					tmp_talent.freepoint = freepoint;
-					bak_talent.push_back(tmp_talent);
-				} while (result->NextRow());
-				CharacterDatabase.PExecute("DELETE FROM character_spell_talent_2 WHERE guid=%u", chr->GetGUIDLow()); //删除备份天赋
-			}
-			for (PlayerSpellMap::const_iterator itr = chr->GetSpellMap().begin(); itr != chr->GetSpellMap().end(); ++itr) //
-			{
-				if (chr->HasSpell(itr->first))
-					CharacterDatabase.PExecute("INSERT INTO character_spell_talent_2(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
-			}
-			chr->SaveToDB();
-			chr->GetSession()->SendNotification("第二套天赋保存成功！");
+			ChatHandler(chr).PSendSysMessage("你没有获得双天赋权限！");
+			return true;
 		}
-		if (argstr == "tf1")
+		std::vector<PlayerTalentSpell> bak_talent;
+		auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
+		if (result)
 		{
-			if (chr->isInCombat())
+			do
 			{
-				ChatHandler(chr).PSendSysMessage("战斗中无法切换天赋！");
-				return true;
-			}
-			if (!chr->CanDoubleTalent)
-			{
-				ChatHandler(chr).PSendSysMessage("你没有获得双天赋权限！");
-				return true;
-			}
-			for (uint8 i = EQUIPMENT_SLOT_MAINHAND; i <= EQUIPMENT_SLOT_RANGED; i++)
-			{
-				if (Item* pItem = chr->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-				{
-					if (chr->CanUnequipItem(i, false) == EQUIP_ERR_OK)
-					{
-						ItemPosCountVec dest;
-						uint8 msg = chr->CanStoreItem(NULL_BAG, NULL_SLOT, dest, pItem, false);
-						chr->RemoveItem(INVENTORY_SLOT_BAG_0, i, true);
-						chr->StoreItem(dest, pItem, true);
-					}
-					else
-					{
-						ChatHandler(chr->GetSession()).PSendSysMessage("切换天赋需要取下武器.但是背包没有空余空间.请检查背包空余空间");
-						return false;
-					}
-				}
-			}
-
-			std::vector<PlayerTalentSpell> bak_talent;
-			auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
-			if (result)
-			{
-				do
-				{
-					Field* field = result->Fetch();            //储存备份天赋
-					uint32 guid = field[0].GetUInt32();
-					uint32 spell = field[1].GetUInt32();
-					uint32 active = field[2].GetUInt32();
-					uint32 disabled = field[3].GetUInt32();
-					uint32 freepoint = field[4].GetUInt32();
-					PlayerTalentSpell tmp_talent;
-					tmp_talent.guid = guid;
-					tmp_talent.spell = spell;
-					tmp_talent.active = active;
-					tmp_talent.disabled = disabled;
-					tmp_talent.freepoint = freepoint;
-					bak_talent.push_back(tmp_talent);
-				} while (result->NextRow());
-			}
-			for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
-			{
-				TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
-				if (!talentInfo)
-					continue;
-				TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
-				if (!talentTabInfo)
-					continue;
-				// unlearn only talents for character class
-				// some spell learned by one class as normal spells or know at creation but another class learn it as talent,
-				// to prevent unexpected lost normal learned spell skip another class talents
-				if ((chr->getClassMask() & talentTabInfo->ClassMask) == 0)
-					continue;
-
-				for (int j = 4; j >= 0; --j)
-				if (talentInfo->RankID[j])
-				{
-					if (chr->HasSpell(talentInfo->RankID[j]))
-					{
-						chr->removeSpell(talentInfo->RankID[j], false);
-					}
-				}
-			}
-			uint32 freepoint = 0;
-			for each (PlayerTalentSpell var in bak_talent)
-			{
-				if (!chr->HasSpell(var.spell))
-				{
-					chr->learnSpell(var.spell, false);
-				}
-				freepoint = var.freepoint;
-			}
-			chr->SetFreeTalentPoints(freepoint);
-			ChatHandler(chr).PSendSysMessage("天赋切换成功!");
-			chr->SaveToDB();
+				Field* field = result->Fetch();            //储存备份天赋
+				uint32 guid = field[0].GetUInt32();
+				uint32 spell = field[1].GetUInt32();
+				uint32 active = field[2].GetUInt32();
+				uint32 disabled = field[3].GetUInt32();
+				uint32 freepoint = field[4].GetUInt32();
+				PlayerTalentSpell tmp_talent;
+				tmp_talent.guid = guid;
+				tmp_talent.spell = spell;
+				tmp_talent.active = active;
+				tmp_talent.disabled = disabled;
+				tmp_talent.freepoint = freepoint;
+				bak_talent.push_back(tmp_talent);
+			} while (result->NextRow());
+			CharacterDatabase.PExecute("DELETE FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //删除备份天赋
 		}
-		if (argstr == "tf2")
+		for (PlayerSpellMap::const_iterator itr = chr->GetSpellMap().begin(); itr != chr->GetSpellMap().end(); ++itr) //
 		{
-			Player* chr = m_session->GetPlayer();
-			if (chr->isInCombat())
-			{
-				ChatHandler(chr).PSendSysMessage("战斗中无法切换天赋！");
-				return true;
-			}
-			if (!chr->CanDoubleTalent)
-			{
-				ChatHandler(chr).PSendSysMessage("你没有获得双天赋权限！");
-				return true;
-			}
-			for (uint8 i = EQUIPMENT_SLOT_MAINHAND; i <= EQUIPMENT_SLOT_RANGED; i++)
-			{
-				if (Item* pItem = chr->GetItemByPos(INVENTORY_SLOT_BAG_0, i))
-				{
-					if (chr->CanUnequipItem(i, false) == EQUIP_ERR_OK)
-					{
-						ItemPosCountVec dest;
-						uint8 msg = chr->CanStoreItem(NULL_BAG, NULL_SLOT, dest, pItem, false);
-						chr->RemoveItem(INVENTORY_SLOT_BAG_0, i, true);
-						chr->StoreItem(dest, pItem, true);
-					}
-					else
-					{
-						ChatHandler(chr->GetSession()).PSendSysMessage("切换天赋需要取下武器.但是背包没有空余空间.请检查背包空余空间");
-						return false;
-					}
-				}
-			}
-
-			std::vector<PlayerTalentSpell> bak_talent;
-			auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent_2 WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
-			if (result)
-			{
-				do
-				{
-					Field* field = result->Fetch();            //储存备份天赋
-					uint32 guid = field[0].GetUInt32();
-					uint32 spell = field[1].GetUInt32();
-					uint32 active = field[2].GetUInt32();
-					uint32 disabled = field[3].GetUInt32();
-					uint32 freepoint = field[4].GetUInt32();
-					PlayerTalentSpell tmp_talent;
-					tmp_talent.guid = guid;
-					tmp_talent.spell = spell;
-					tmp_talent.active = active;
-					tmp_talent.disabled = disabled;
-					tmp_talent.freepoint = freepoint;
-					bak_talent.push_back(tmp_talent);
-				} while (result->NextRow());
-			}
-			for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
-			{
-				TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
-				if (!talentInfo)
-					continue;
-				TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
-				if (!talentTabInfo)
-					continue;
-				// unlearn only talents for character class
-				// some spell learned by one class as normal spells or know at creation but another class learn it as talent,
-				// to prevent unexpected lost normal learned spell skip another class talents
-				if ((chr->getClassMask() & talentTabInfo->ClassMask) == 0)
-					continue;
-
-				for (int j = 4; j >= 0; --j)
-				if (talentInfo->RankID[j])
-				{
-					if (chr->HasSpell(talentInfo->RankID[j]))
-					{
-						chr->removeSpell(talentInfo->RankID[j], false);
-					}
-				}
-			}
-			uint32 freepoint = 0;
-			for each (PlayerTalentSpell var in bak_talent)
-			{
-				if (!chr->HasSpell(var.spell))
-				{
-					chr->learnSpell(var.spell, false);
-				}
-				freepoint = var.freepoint;
-			}
-			chr->SetFreeTalentPoints(freepoint);
-			ChatHandler(chr).PSendSysMessage("天赋切换成功!");
-			chr->SaveToDB();
+			if (chr->HasSpell(itr->first))
+				CharacterDatabase.PExecute("INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
 		}
-	}
+		chr->SaveToDB();
+		chr->GetSession()->SendNotification("第一套天赋保存成功！");
+		for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
+		{
+			TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
+			if (!talentInfo)
+				continue;
+			TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+			if (!talentTabInfo)
+				continue;
+			// unlearn only talents for character class
+			// some spell learned by one class as normal spells or know at creation but another class learn it as talent,
+			// to prevent unexpected lost normal learned spell skip another class talents
+			if ((chr->getClassMask() & talentTabInfo->ClassMask) == 0)
+				continue;
+
+			for (int j = 4; j >= 0; --j)
+			if (talentInfo->RankID[j])
+			{
+				if (chr->HasSpell(talentInfo->RankID[j]))
+				{
+					chr->removeSpell(talentInfo->RankID[j], false);
+				}
+			}
+		}
+		uint32 freepoint = 0;
+		for each (PlayerTalentSpell var in bak_talent)
+		{
+			if (!chr->HasSpell(var.spell))
+			{
+				chr->learnSpell(var.spell, false);
+			}
+			freepoint = var.freepoint;
+		}
+		chr->SetFreeTalentPoints(freepoint);
+		ChatHandler(chr).PSendSysMessage(99005);
+		chr->SaveToDB();
 		return true;
+	}
 }
 
 bool ChatHandler::HandleHelpCommand(char* args)

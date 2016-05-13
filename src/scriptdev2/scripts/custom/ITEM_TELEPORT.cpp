@@ -247,6 +247,7 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 	}
 	player->ADD_GOSSIP_ITEM(10, "¹ºÂòÉÌÒµ¼¼ÄÜ", 1, GOSSIP_ACTION_INFO_DEF + 5);
 	player->ADD_GOSSIP_ITEM(10, "ÌáÉýÉÌÒµ¼¼ÄÜ", 1, GOSSIP_ACTION_INFO_DEF + 6);
+	player->ADD_GOSSIP_ITEM(10, "¹ºÂò±³°ü", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->SEND_GOSSIP_MENU(822,_Item->GetGUID());
 	return true;
 }
@@ -269,19 +270,17 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		auto field = jfresult->Fetch();
 		jf = field[0].GetUInt32();
-	}
-	auto needjfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT modifyskilljf,learnskilljf,bagjf,doubletalentjf,sfjf,levelupjf,maxlevelupjf,maxskillcount FROM world_conf");
+	}													//			0				1		2		3		4				5				
+	auto needjfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT modifyskilljf,learnskilljf,bagjf,levelupjf,maxlevelupjf,maxskillcount FROM world_conf");
 	if (needjfresult)
 	{
 		auto field = needjfresult->Fetch();
 		maxskilljf = field[0].GetUInt32();
 		learnskilljf = field[1].GetUInt32();
 		bagjf = field[2].GetUInt32();
-		doubletalentjf = field[3].GetUInt32();
-		sfjf = field[4].GetUInt32();
-		levelupjf = field[5].GetUInt32();
-		maxlevelupjf = field[6].GetUInt32();
-		maxskillcount = field[7].GetUInt32();
+		levelupjf = field[3].GetUInt32();
+		maxlevelupjf = field[4].GetUInt32();
+		maxskillcount = field[5].GetUInt32();
 	}
 	if (pPlayer->HasSpell(2575))
 	{
@@ -321,12 +320,49 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	switch (action)
 	{
+	case GOSSIP_ACTION_INFO_DEF + 7: //±³°ü
+	{
+		ChatHandler(pPlayer).PSendSysMessage("¹ºÂòÐèÒªÏûºÄ%uµã»ý·Ö£¬ÇëÈ·ÈÏ£¡", bagjf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "È·ÈÏ¹ºÂò", 1, GOSSIP_ACTION_INFO_DEF + 70);
+		pPlayer->ADD_GOSSIP_ITEM(10, "È¡Ïû", 1, GOSSIP_ACTION_INFO_DEF + 71);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 70: //±³°ü
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		if (jf >= bagjf)
+		{
+		  ItemPosCountVec dest;
+		  uint32 noSpaceForCount = 0;
+		  pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99004, 1, &noSpaceForCount);
+		  Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99004));
+		  pPlayer->SendNewItem(Pitem, 1, true, false);
+		  ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+		  break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·Ö²»×ã£¡£¡");
+			break;
+		}
+		return true;
+	}
 	case GOSSIP_ACTION_INFO_DEF + 1: //Ë²·É
 	{
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 20);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 21);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 22);
-		pPlayer->SEND_GOSSIP_MENU(822,pItem->GetGUID());
+		if (pPlayer->GetItemCount(99004) >= 1 ||
+			pPlayer->GetItemCount(99005) >= 1 ||
+			pPlayer->GetItemCount(99006) >= 1)
+		{
+			ChatHandler(pPlayer).PSendSysMessage("ÄãÒÑ¾­ÓÐË²·ÉÎïÆ·ÁË£¡");
+		}
+		else
+		{
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 20);
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 21);
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 22);
+			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		}
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 20:
@@ -418,10 +454,19 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	case GOSSIP_ACTION_INFO_DEF + 2: //Ë«Ìì¸³
 	{
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 23);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 24);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 25);
-		pPlayer->SEND_GOSSIP_MENU(822,pItem->GetGUID());
+		if (pPlayer->GetItemCount(99001) >= 1 ||
+			pPlayer->GetItemCount(99002) >= 1 ||
+			pPlayer->GetItemCount(99003) >= 1)
+		{
+			ChatHandler(pPlayer).PSendSysMessage("ÄãÒÑ¾­ÓÐË«Ìì¸³ÎïÆ·ÁË£¡");
+		}
+		else
+		{
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 23);
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 24);
+			pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 25);
+			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		}
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 23:
@@ -435,7 +480,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			auto field = itemsfresult->Fetch();
 			item1jf = field[0].GetUInt32();
 		}
-		if (jf > item1jf)
+		if (jf >= item1jf)
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 			ItemPosCountVec dest;
@@ -493,13 +538,22 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			auto field = itemsfresult->Fetch();
 			item3jf = field[0].GetUInt32();
 		}
-		pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item3jf);
-		ItemPosCountVec dest;
-		uint32 noSpaceForCount = 0;
-		pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99003, 1, &noSpaceForCount);
-		Item* Pitem = pPlayer->StoreNewItem(dest, 99003, true, Item::GenerateItemRandomPropertyId(99003));
-		pPlayer->SendNewItem(Pitem, 1, true, false);
-		break;
+		if (jf >= item3jf)
+		{
+			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item3jf);
+			ItemPosCountVec dest;
+			uint32 noSpaceForCount = 0;
+			pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99003, 1, &noSpaceForCount);
+			Item* Pitem = pPlayer->StoreNewItem(dest, 99003, true, Item::GenerateItemRandomPropertyId(99003));
+			pPlayer->SendNewItem(Pitem, 1, true, false);
+			break;
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("»ý·ÖÓà¶î²»×ã£¡");
+			break;
+		}
+		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 3:
 	{
@@ -515,9 +569,17 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = ((60 - oldlevel) * levelupjf);
+		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT maxlevelupjf FROM world_conf");
+		auto field = jfresult->Fetch();
+		uint32 maxjf = field[0].GetUInt32();
+		if (uplevel > maxjf)
+		{
+			uplevel = maxjf;
+		}
 		pPlayer->CLOSE_GOSSIP_MENU();
 		if (jf >= uplevel)
 		{
+			if (uplevel)
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", uplevel, pPlayer->GetSession()->GetAccountId());
 			ChatHandler(pPlayer).PSendSysMessage("×ð¾´µÄÍæ¼Ò,¹§Ï²ÃëÉý³É¹¦!ÏûºÄ%uµã»ý·ÖÌáÉýµ½60¼¶£¡", uplevel);
 			pPlayer->GiveLevel(60);
