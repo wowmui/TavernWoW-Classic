@@ -10993,6 +10993,24 @@ void Player::PrepareGossipMenu(WorldObject* pSource, uint32 menuId)
                     break;
             }
         }
+		else if (pSource->GetTypeId() == TYPEID_ITEM)
+		{
+			Item* item = (Item*)pSource;
+
+			switch (gossipMenu.option_id)
+			{
+			case GOSSIP_OPTION_QUESTGIVER:
+				hasMenuItem = false;
+				break;
+			case GOSSIP_OPTION_GOSSIP:
+				if (!item)
+					hasMenuItem = false;
+				break;
+			default:
+				hasMenuItem = false;
+				break;
+			}
+		}
 
         if (hasMenuItem)
         {
@@ -11187,7 +11205,7 @@ void Player::OnGossipSelect(WorldObject* pSource, uint32 gossipListId)
                 return;
             }
 
-            GetSession()->SendBattlegGroundList(guid, bgTypeId);
+			GetSession()->SendBattlegGroundList(guid, bgTypeId);
             break;
         }
     }

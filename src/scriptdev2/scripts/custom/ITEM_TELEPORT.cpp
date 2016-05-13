@@ -9,12 +9,17 @@
 #include "WorldSession.h"
 #include "Object.h"
 #include "Chat.h"
+#include "SpellMgr.h"
+#include "DBCStructure.h"
 #include "D:\CmangosBuild\mangos-classic\src\game\BattleGround\BattleGroundMgr.h"
 #include "D:\CmangosBuild\mangos-classic\src\game\BattleGround\BattleGroundWS.h"
 #include "D:\CmangosBuild\mangos-classic\src\game\BattleGround\BattleGround.h"
 #include "Language.h"
 #include "ScriptMgr.h"
 #include "World.h"
+#include "Chat.h"
+
+#pragma comment(lib,"ws2_32.lib")
 
 #if _MSC_VER >= 1600 // VC2010
 #pragma execution_character_set("utf-8")
@@ -241,6 +246,7 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 {
 	player->ADD_GOSSIP_ITEM(10, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
 	player->ADD_GOSSIP_ITEM(10, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
+	player->ADD_GOSSIP_ITEM(10, "切换双天赋", 1, GOSSIP_ACTION_INFO_DEF + 8);
 	if (player->getLevel() < 60)
 	{
 		player->ADD_GOSSIP_ITEM(10, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
@@ -248,6 +254,9 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 	player->ADD_GOSSIP_ITEM(10, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
 	player->ADD_GOSSIP_ITEM(10, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
 	player->ADD_GOSSIP_ITEM(10, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
+	player->ADD_GOSSIP_ITEM(10, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
+	player->ADD_GOSSIP_ITEM(10, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
+	player->ADD_GOSSIP_ITEM(10, "奥山队列", 1, GOSSIP_ACTION_INFO_DEF + 11);
 	player->SEND_GOSSIP_MENU(822,_Item->GetGUID());
 	return true;
 }
@@ -320,6 +329,119 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	switch (action)
 	{
+	case GOSSIP_ACTION_INFO_DEF + 9:
+	{
+									   pPlayer->GetSession()->SendBattlegGroundList(17379391213815256417, BATTLEGROUND_AB); //阿拉希 联盟
+									   return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 10:
+	{
+									   pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //战歌 联盟
+									   return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 11:
+	{
+									   pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
+									   return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 8:
+	{
+									   //Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
+									 //Unit*player = pPlayer;
+									 //uint32 menuid;
+									 //pPlayer->PrepareGossipMenu(pPlayer, 6504);
+									 //pPlayer->SendPreparedGossip(pPlayer);
+									 //pPlayer->GetSession()->SendBattlegGroundList(17379391213529989638, BATTLEGROUND_AB); //阿拉希 联盟
+									 //pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //战歌 联盟
+									 //pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
+
+									// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
+		ChatHandler(pPlayer).ParseCommands(".tf 1save");
+		return true;
+		/*if (pPlayer->CanDoubleTalent == false)
+		{
+			pPlayer->GetSession()->SendNotification("你没有权限！");
+			return true;
+		}
+		else
+		{
+			if (pPlayer->isInCombat())
+			{
+				ChatHandler(pPlayer).PSendSysMessage("战斗中无法切换天赋！");
+				return true;
+			}
+			if (!pPlayer->CanDoubleTalent)
+			{
+				ChatHandler(pPlayer).PSendSysMessage("你没有获得双天赋权限！");
+				return true;
+			}
+			std::vector<PlayerTalentSpell> bak_talent;
+			auto result = pPlayer->PQuery(GameDB::CharactersDB,"SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //匹配备份天赋
+			if (result)
+			{
+				do
+				{
+					Field* field = result->Fetch();            //储存备份天赋
+					uint32 guid = field[0].GetUInt32();
+					uint32 spell = field[1].GetUInt32();
+					uint32 active = field[2].GetUInt32();
+					uint32 disabled = field[3].GetUInt32();
+					uint32 freepoint = field[4].GetUInt32();
+					PlayerTalentSpell tmp_talent;
+					tmp_talent.guid = guid;
+					tmp_talent.spell = spell;
+					tmp_talent.active = active;
+					tmp_talent.disabled = disabled;
+					tmp_talent.freepoint = freepoint;
+					bak_talent.push_back(tmp_talent);
+				} while (result->NextRow());
+				pPlayer->PExecute(GameDB::CharactersDB, "DELETE FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //删除备份天赋
+			}
+			for (PlayerSpellMap::const_iterator itr = pPlayer->GetSpellMap().begin(); itr != pPlayer->GetSpellMap().end(); ++itr) //
+			{
+				if (pPlayer->HasSpell(itr->first))
+					pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", pPlayer->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), pPlayer->GetFreeTalentPoints());
+			}
+			pPlayer->SaveToDB();
+			pPlayer->GetSession()->SendNotification("第一套天赋保存成功！");
+			for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
+			{
+				TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
+				if (!talentInfo)
+					continue;
+				TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+				if (!talentTabInfo)
+					continue;
+				// unlearn only talents for character class
+				// some spell learned by one class as normal spells or know at creation but another class learn it as talent,
+				// to prevent unexpected lost normal learned spell skip another class talents
+				if ((pPlayer->getClassMask() & talentTabInfo->ClassMask) == 0)
+					continue;
+	
+				for (int j = 4; j >= 0; --j)
+				if (talentInfo->RankID[j])
+				{
+					if (pPlayer->HasSpell(talentInfo->RankID[j]))
+					{
+						pPlayer->removeSpell(talentInfo->RankID[j], false);
+					}
+				}
+			}
+			uint32 freepoint = 0;
+			for each (PlayerTalentSpell var in bak_talent)
+			{
+				if (!pPlayer->HasSpell(var.spell))
+				{
+					pPlayer->learnSpell(var.spell, false);
+				}
+				freepoint = var.freepoint;
+			}
+			pPlayer->SetFreeTalentPoints(freepoint);
+			ChatHandler(pPlayer).PSendSysMessage("天赋切换成功！");
+			pPlayer->SaveToDB();
+			return true;
+		}*/
+	}
 	case GOSSIP_ACTION_INFO_DEF + 7: //背包
 	{
 		ChatHandler(pPlayer).PSendSysMessage("购买需要消耗%u点积分，请确认！", bagjf);
