@@ -71,7 +71,7 @@ bool ChatHandler::HandleTfCommand(char* args)
 {
 	Player* chr = m_session->GetPlayer();
 	std::string argstr = (char*)args;
-	if (chr->CanDoubleTalent == false || chr->CanDoubleTalent_1 == false)
+	if (chr->CanDoubleTalent == false && chr->CanDoubleTalent_1 == false)
 	{
 		chr->GetSession()->SendNotification("你没有权限！");
 		return true;
@@ -82,11 +82,6 @@ bool ChatHandler::HandleTfCommand(char* args)
 		if (chr->isInCombat())
 		{
 			ChatHandler(chr).PSendSysMessage("战斗中无法切换天赋！");
-			return true;
-		}
-		if (!chr->CanDoubleTalent)
-		{
-			ChatHandler(chr).PSendSysMessage("你没有获得双天赋权限！");
 			return true;
 		}
 		std::vector<PlayerTalentSpell> bak_talent;

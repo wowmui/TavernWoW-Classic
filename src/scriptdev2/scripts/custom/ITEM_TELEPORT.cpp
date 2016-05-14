@@ -357,7 +357,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			sftime = field[0].GetUInt32();
 			tftime = field[1].GetUInt32();
 		}
-		if (pPlayer->CanDoubleTalent_1 == true)
+		if (pPlayer->CanInstantTaxi_1 == true)
 		{
 			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:永久");
 		}
@@ -370,9 +370,9 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			uint32 resttime = ((sftime - time(NULL)) / 86400);
 			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:%u天",resttime);
 		}
-		if (pPlayer->CanInstantTaxi_1 == true)
+		if (pPlayer->CanDoubleTalent_1 == true)
 		{
-			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:永久");
+			ChatHandler(pPlayer).PSendSysMessage("双天赋时间剩余:永久");
 		}
 		else if (tftime < time(NULL))
 		{
