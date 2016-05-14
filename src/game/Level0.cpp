@@ -40,7 +40,7 @@
 bool ChatHandler::HandleSfCommand(char* args)
 {
 	Player* _player = m_session->GetPlayer();
-	if (_player->GetItemCount(99004) >= 1 || _player->GetItemCount(99005) >= 1 || _player->GetItemCount(99006) >= 1)
+	if (_player->CanInstantTaxi == true)
 	{
 		if (!*args)
 		{
@@ -50,13 +50,13 @@ bool ChatHandler::HandleSfCommand(char* args)
 		if (argstr == "on")
 		{
 			_player->CanInstantTaxi = true;
-			ChatHandler(_player).PSendSysMessage("顺飞开启,注意：如果你未持有瞬飞物品，此命令将无法生效！"); //send turn on msg
+			ChatHandler(_player).PSendSysMessage("顺飞开启！"); //send turn on msg
 			return true;
 		}
 		if (argstr == "off")
 		{
 			_player->CanInstantTaxi = false;
-			ChatHandler(_player).PSendSysMessage("瞬飞关闭,注意：如果你未持有瞬飞物品，此命令将无法生效！"); //send turn off msh
+			ChatHandler(_player).PSendSysMessage("瞬飞关闭！"); //send turn off msh
 			return true;
 		}
 	}

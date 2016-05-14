@@ -127,22 +127,17 @@ static const uint32 corpseReclaimDelay[MAX_DEATH_COUNT] = {30, 60, 120};
 
 void Player::LoadCustom()
 {
-	if (GetItemCount(99001) >= 1 || GetItemCount(99002) >= 1 || GetItemCount(99003) >= 1)
+	uint32 sftime;
+	uint32 tftime;
+	auto level_result = CharacterDatabase.PQuery("SELECT sftime,tftime FROM characters WHERE guid = %u", GetGUIDLow());
+	if (level_result)
 	{
-		CanDoubleTalent = true;
+		auto field = level_result->Fetch();
+		sftime = field[0].GetUInt32();
+		tftime = field[1].GetUInt32();
 	}
-	else
-	{
-		CanDoubleTalent = false;
-	}
-	if (GetItemCount(99004) >= 1 || GetItemCount(99005) >= 1 || GetItemCount(99006) >= 1)
-	{
-		CanInstantTaxi = true;
-	}
-	else
-	{
-		CanInstantTaxi = false;
-	}
+	CanDoubleTalent = sftime > time(NULL) ? true : false;
+	CanInstantTaxi = tftime > time(NULL) ? true : false;
 }
 bool Player::PExecute(GameDB db, const char* format, ...)
 {
