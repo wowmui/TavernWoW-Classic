@@ -251,8 +251,14 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		auto field = jfresult->Fetch();
 		open = field[0].GetBool();
 	}
-	player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
-	player->ADD_GOSSIP_ITEM(3, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
+	if (player->CanInstantTaxi_1 == false)
+	{
+		player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
+	}
+	if (player->CanDoubleTalent_1 == false)
+	{
+		player->ADD_GOSSIP_ITEM(3, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
+	}
 	player->ADD_GOSSIP_ITEM(3, "切换双天赋", 1, GOSSIP_ACTION_INFO_DEF + 8);
 	if (player->getLevel() < 60 && open == true)
 	{
@@ -534,6 +540,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		uint32 item1jf;
 		uint32 item2jf;
 		uint32 item3jf;
+		uint32 item4jf;
 		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT sfitem1jf,sfitem2jf,sfitem3jf,item4sf FROM world_conf");
 		if (itemsfresult)
 		{
@@ -541,11 +548,12 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			 item1jf = field[0].GetUInt32();
 			 item2jf = field[1].GetUInt32();
 			 item3jf = field[2].GetUInt32();
+			 item4jf = field[3].GetUInt32();
 		}
 		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求WS点%u点", item1jf);
 		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求WS点%u点", item2jf);
 		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求WS点%u点", item3jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item3jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item4jf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐1", 1, GOSSIP_ACTION_INFO_DEF + 20);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);

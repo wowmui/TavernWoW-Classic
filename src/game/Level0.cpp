@@ -116,8 +116,6 @@ bool ChatHandler::HandleTfCommand(char* args)
 			if (chr->HasSpell(itr->first))
 				CharacterDatabase.PExecute("INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
 		}
-		chr->SaveToDB();
-		chr->GetSession()->SendNotification("第一套天赋保存成功！");
 		for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
 		{
 			TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
@@ -151,7 +149,7 @@ bool ChatHandler::HandleTfCommand(char* args)
 			freepoint = var.freepoint;
 		}
 		chr->SetFreeTalentPoints(freepoint);
-		ChatHandler(chr).PSendSysMessage(99005);
+		chr->GetSession()->SendNotification("|cff7FFF00天赋切换成功!|r");
 		chr->SaveToDB();
 		return true;
 	}
