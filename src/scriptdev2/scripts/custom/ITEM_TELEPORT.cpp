@@ -414,7 +414,8 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		//pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //战歌 联盟
 		//pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
 		// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
-		if (pPlayer->CanDoubleTalent = true)
+									   pPlayer->CLOSE_GOSSIP_MENU();
+		if (pPlayer->CanDoubleTalent == true)
 		{
 		   ChatHandler(pPlayer).ParseCommands(".tf 1save");
 		}
@@ -913,7 +914,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime1 = 1 WHERE guid = %u", pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 					else
@@ -939,7 +940,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 				uint32 atime = 1; //月卡												  1    2     3        4       5            1  2  3  4  5                              6      6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime1 = %u;", pPlayer->GetGUIDLow(), tftime, sftime, atime, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-				pPlayer->CanDoubleTalent == true;
+				pPlayer->CanDoubleTalent = true;
 				return true;
 			}
 		}
@@ -977,7 +978,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 					else
@@ -998,7 +999,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 				}
@@ -1020,7 +1021,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 				uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-				pPlayer->CanDoubleTalent == true;
+				pPlayer->CanDoubleTalent = true;
 				return true;
 			}
 		}
@@ -1058,7 +1059,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 					else
@@ -1079,7 +1080,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 				}
@@ -1101,7 +1102,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 				uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-				pPlayer->CanDoubleTalent == true;
+				pPlayer->CanDoubleTalent = true;
 				return true;
 			}
 		}
@@ -1139,7 +1140,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 					else
@@ -1160,7 +1161,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 						uint32 atime = time(NULL) + 31536000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-						pPlayer->CanDoubleTalent == true;
+						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 				}
@@ -1182,7 +1183,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 				uint32 atime = time(NULL) + 31536000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
-				pPlayer->CanDoubleTalent == true;
+				pPlayer->CanDoubleTalent = true;
 				return true;
 			}
 		}
@@ -1209,7 +1210,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		oldlevel = pPlayer->getLevel();
 		uplevel = ((60 - oldlevel) * levelupjf);
 		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT maxlevelupjf FROM world_conf");
-		auto field = jfresult->Fetch();
+		auto field = jf_xresult->Fetch();
 		uint32 maxjf = field[0].GetUInt32();
 		if (uplevel > maxjf)
 		{
@@ -1504,6 +1505,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
+			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->GetSession()->SendNotification("专业技能过多，无法继续学习！");
 			return true;
 		}
