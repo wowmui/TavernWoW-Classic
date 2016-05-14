@@ -1990,6 +1990,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         float  m_recallZ;
         float  m_recallO;
         void   SaveRecallPosition();
+		bool CanDoubleTalent_1;
+		bool CanInstantTaxi_1;
 		bool CanInstantTaxi;
 		bool CanInstantTaxiByDB();
 		bool CanDoubleTalent;

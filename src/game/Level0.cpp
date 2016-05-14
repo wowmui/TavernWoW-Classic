@@ -40,7 +40,7 @@
 bool ChatHandler::HandleSfCommand(char* args)
 {
 	Player* _player = m_session->GetPlayer();
-	if (_player->CanInstantTaxi == true)
+	if (_player->CanInstantTaxi == true || _player->CanInstantTaxi_1 == true)
 	{
 		if (!*args)
 		{
@@ -71,7 +71,7 @@ bool ChatHandler::HandleTfCommand(char* args)
 {
 	Player* chr = m_session->GetPlayer();
 	std::string argstr = (char*)args;
-	if (chr->CanDoubleTalent == false)
+	if (chr->CanDoubleTalent == false || chr->CanDoubleTalent_1 == false)
 	{
 		chr->GetSession()->SendNotification("你没有权限！");
 		return true;

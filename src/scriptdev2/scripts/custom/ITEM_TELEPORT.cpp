@@ -244,20 +244,27 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 
 bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& scTargets)
 {
+	bool open;
+	auto jfresult = player->PQuery(GameDB::WorldDB, "SELECT openlevelup FROM world_conf");
+	if (jfresult)
+	{
+		auto field = jfresult->Fetch();
+		open = field[0].GetBool();
+	}
 	player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
 	player->ADD_GOSSIP_ITEM(3, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
 	player->ADD_GOSSIP_ITEM(3, "切换双天赋", 1, GOSSIP_ACTION_INFO_DEF + 8);
-	if (player->getLevel() < 60)
+	if (player->getLevel() < 60 && open == true)
 	{
-		player->ADD_GOSSIP_ITEM(10, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
+		player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
 	}
 	player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
 	player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
 	player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->ADD_GOSSIP_ITEM(3, "个人信息查询", 1, GOSSIP_ACTION_INFO_DEF + 12);
-	player->ADD_GOSSIP_ITEM(3, "阿拉希队列!", 1, GOSSIP_ACTION_INFO_DEF + 9);
-	player->ADD_GOSSIP_ITEM(3, "战歌队列!", 1, GOSSIP_ACTION_INFO_DEF + 10);
-	player->ADD_GOSSIP_ITEM(3, "奥山队列!", 1, GOSSIP_ACTION_INFO_DEF + 11);
+	player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
+	player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
+	player->ADD_GOSSIP_ITEM(3, "奥山队列", 1, GOSSIP_ACTION_INFO_DEF + 11);
 	player->SEND_GOSSIP_MENU(822,_Item->GetGUID());
 	return true;
 }
@@ -334,9 +341,9 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		pPlayer->CLOSE_GOSSIP_MENU();
 		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家%s您好！",pPlayer->GetName());
-		ChatHandler(pPlayer).PSendSysMessage("您剩余游戏积分为%u点",jf);
-		uint32 sftime;
-		uint32 tftime;
+		ChatHandler(pPlayer).PSendSysMessage("您剩余游戏WS点为%u点",jf);
+		uint32 sftime = 0;
+		uint32 tftime = 0;
 		auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime,tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 		if (nowtime_result)
 		{
@@ -344,7 +351,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			sftime = field[0].GetUInt32();
 			tftime = field[1].GetUInt32();
 		}
-		if (sftime < time(NULL))
+		if (pPlayer->CanDoubleTalent_1 == true)
+		{
+			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:永久");
+		}
+		else if (sftime < time(NULL))
 		{
 			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:无");
 		}
@@ -353,7 +364,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			uint32 resttime = ((sftime - time(NULL)) / 86400);
 			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:%u天",resttime);
 		}
-		if (tftime < time(NULL))
+		if (pPlayer->CanInstantTaxi_1 == true)
+		{
+			ChatHandler(pPlayer).PSendSysMessage("瞬飞时间剩余:永久");
+		}
+		else if (tftime < time(NULL))
 		{
 			ChatHandler(pPlayer).PSendSysMessage("双天赋时间剩余:无");
 		}
@@ -384,16 +399,15 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	case GOSSIP_ACTION_INFO_DEF + 8:
 	{
-									   //Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
-									 //Unit*player = pPlayer;
-									 //uint32 menuid;
-									 //pPlayer->PrepareGossipMenu(pPlayer, 6504);
-									 //pPlayer->SendPreparedGossip(pPlayer);
-									 //pPlayer->GetSession()->SendBattlegGroundList(17379391213529989638, BATTLEGROUND_AB); //阿拉希 联盟
-									 //pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //战歌 联盟
-									 //pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
-
-									// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
+		//Creature* pCreature = GetPlayer()->GetNPCIfCanInteractWith(guid, UNIT_NPC_FLAG_NONE);
+		//Unit*player = pPlayer;
+		//uint32 menuid;
+		//pPlayer->PrepareGossipMenu(pPlayer, 6504);
+		//pPlayer->SendPreparedGossip(pPlayer);
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391213529989638, BATTLEGROUND_AB); //阿拉希 联盟
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //战歌 联盟
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
+		// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
 		if (pPlayer->CanDoubleTalent = true)
 		{
 		   ChatHandler(pPlayer).ParseCommands(".tf 1save");
@@ -489,7 +503,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	case GOSSIP_ACTION_INFO_DEF + 7: //背包
 	{
-		ChatHandler(pPlayer).PSendSysMessage("购买需要消耗%u点积分，请确认！", bagjf);
+		ChatHandler(pPlayer).PSendSysMessage("购买需要消耗%u点WS点，请确认！", bagjf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "确认购买", 1, GOSSIP_ACTION_INFO_DEF + 70);
 		pPlayer->ADD_GOSSIP_ITEM(10, "取消", 1, GOSSIP_ACTION_INFO_DEF + 71);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
@@ -510,28 +524,95 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足！！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足！！");
 			break;
 		}
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1: //瞬飞
 	{
-		if (pPlayer->GetItemCount(99004) >= 1 ||
-			pPlayer->GetItemCount(99005) >= 1 ||
-			pPlayer->GetItemCount(99006) >= 1)
+		uint32 item1jf;
+		uint32 item2jf;
+		uint32 item3jf;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT sfitem1jf,sfitem2jf,sfitem3jf,item4sf FROM world_conf");
+		if (itemsfresult)
 		{
-			ChatHandler(pPlayer).PSendSysMessage("你已经有瞬飞物品了！");
+			 auto field = itemsfresult->Fetch();
+			 item1jf = field[0].GetUInt32();
+			 item2jf = field[1].GetUInt32();
+			 item3jf = field[2].GetUInt32();
+		}
+		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求WS点%u点", item1jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求WS点%u点", item2jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求WS点%u点", item3jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item3jf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐1", 1, GOSSIP_ACTION_INFO_DEF + 20);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐4", 1, GOSSIP_ACTION_INFO_DEF + 30);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+case GOSSIP_ACTION_INFO_DEF + 30: //终身卡
+{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item1jf;
+		uint32 nowtime;
+		item1jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT item4sf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item1jf = field[0].GetUInt32();
+			if (jf >= item1jf)
+			{
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				if (nowtime_result)
+				{
+					auto field = nowtime_result->Fetch();
+					uint32 dbsftime1 = field[0].GetUInt32();
+					if (dbsftime1 == 0)
+					{
+						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime1 = 1 WHERE guid = %u", pPlayer->GetGUIDLow());
+						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
+						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
+						return true;
+					}
+					else
+					{
+						ChatHandler(pPlayer).PSendSysMessage("您已经拥有永久使用权！");
+						return true;
+					}
+				}
+			else
+			{
+				uint32 tftime = 0;
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				if (nowtime_result)
+				{
+					auto field = nowtime_result->Fetch();
+					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+				}
+				uint32 atime = 1; //月卡												1     2      3      4        5             1  2  3  4  5                              6      6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime1 = %u;", pPlayer->GetGUIDLow(), tftime,sftime, tftime1, atime, atime);
+				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanInstantTaxi = true;
+				return true;
+			}
 		}
 		else
 		{
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐1", 1, GOSSIP_ACTION_INFO_DEF + 20);
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);
-			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			break;
 		}
-		return true;
 	}
+		return true;
+}
 case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
@@ -558,41 +639,56 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 2592000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+						uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 2592000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+				uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanInstantTaxi = true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -624,41 +720,56 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 7776000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+						uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 7776000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+				uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanInstantTaxi = true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -686,45 +797,60 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 					{
 						auto field = nowtime_result->Fetch();
 						nowtime = field[0].GetUInt32();
-						nowtime = nowtime + 31104000;
+						nowtime = nowtime + 31536000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 31104000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+						uint32 atime = time(NULL) + 31104000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 31104000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE sftime=%u;", pPlayer->GetGUIDLow(), tftime, atime, atime);
+				uint32 atime = time(NULL) + 31104000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanInstantTaxi = true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -732,21 +858,91 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 }
 	case GOSSIP_ACTION_INFO_DEF + 2: //双天赋
 	{
-		if (pPlayer->GetItemCount(99001) >= 1 ||
-			pPlayer->GetItemCount(99002) >= 1 ||
-			pPlayer->GetItemCount(99003) >= 1)
+		uint32 item1jf;
+		uint32 item2jf;
+		uint32 item3jf;
+		uint32 item4jf;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT tfitem1jf,tfitem2jf,tfitem3jf,item4tf FROM world_conf");
+		if (itemsfresult)
 		{
-			ChatHandler(pPlayer).PSendSysMessage("你已经有双天赋物品了！");
+			 auto field = itemsfresult->Fetch();
+			 item1jf = field[0].GetUInt32();
+			 item2jf = field[1].GetUInt32();
+			 item3jf = field[2].GetUInt32();
+			 item4jf = field[3].GetUInt32();
+		}
+		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求WS点%u点", item1jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求WS点%u点", item2jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求WS点%u点", item3jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item4jf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐1", 1, GOSSIP_ACTION_INFO_DEF + 23);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐2", 1, GOSSIP_ACTION_INFO_DEF + 24);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐3", 1, GOSSIP_ACTION_INFO_DEF + 25);
+		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐4", 1, GOSSIP_ACTION_INFO_DEF + 40);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
+{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		uint32 item1jf;
+		uint32 nowtime;
+		item1jf = 0;
+		auto itemsfresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT item4tf FROM world_conf");
+		if (itemsfresult)
+		{
+			auto field = itemsfresult->Fetch();
+			item1jf = field[0].GetUInt32();
+			if (jf >= item1jf)
+			{
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				if (nowtime_result)
+				{
+					auto field = nowtime_result->Fetch();
+					uint32 dbsftime1 = field[0].GetUInt32();
+					if (dbsftime1 == 0)
+					{
+						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime1 = 1 WHERE guid = %u", pPlayer->GetGUIDLow());
+						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
+						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
+						return true;
+					}
+					else
+					{
+						ChatHandler(pPlayer).PSendSysMessage("您已经拥有永久使用权！");
+					}
+				}
+			else
+			{
+				uint32 tftime = 0;
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				if (nowtime_result)
+				{
+					auto field = nowtime_result->Fetch();
+					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
+				}
+				uint32 atime = 1; //月卡												  1    2     3        4       5            1  2  3  4  5                              6      6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime1 = %u;", pPlayer->GetGUIDLow(), tftime, sftime, atime, sftime1, atime);
+				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanDoubleTalent == true;
+				return true;
+			}
 		}
 		else
 		{
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐1", 1, GOSSIP_ACTION_INFO_DEF + 23);
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐2", 1, GOSSIP_ACTION_INFO_DEF + 24);
-			pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐3", 1, GOSSIP_ACTION_INFO_DEF + 25);
-			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			break;
 		}
 		return true;
 	}
+}
 	case GOSSIP_ACTION_INFO_DEF + 23: //月卡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
@@ -773,41 +969,56 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 2592000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+						uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 2592000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+				uint32 atime = time(NULL) + 2592000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanDoubleTalent == true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -839,41 +1050,56 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 7776000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+						uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 7776000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+				uint32 atime = time(NULL) + 7776000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanDoubleTalent == true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -901,45 +1127,60 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 					{
 						auto field = nowtime_result->Fetch();
 						nowtime = field[0].GetUInt32();
-						nowtime = nowtime + 31104000;
+						nowtime = nowtime + 31536000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u)", item1jf);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 					else
 					{
 						uint32 tftime = 0;
-						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+						uint32 sftime = 0;
+						uint32 tftime1 = 0;
+						uint32 sftime1 = 0;
+						auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 						if (nowtime_result)
 						{
 							auto field = nowtime_result->Fetch();
 							tftime = field[0].GetUInt32();
+							sftime = field[1].GetUInt32();
+							tftime1 = field[2].GetUInt32();
+							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 31104000; //月卡
-						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+						uint32 atime = time(NULL) + 31536000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 						ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+						pPlayer->CanDoubleTalent == true;
 						return true;
 					}
 				}
 			else
 			{
 				uint32 tftime = 0;
-				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
+				uint32 sftime = 0;
+				uint32 tftime1 = 0;
+				uint32 sftime1 = 0;
+				auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT tftime,sftime,tftime1,sftime1 FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
 				if (nowtime_result)
 				{
 					auto field = nowtime_result->Fetch();
 					tftime = field[0].GetUInt32();
+					sftime = field[1].GetUInt32();
+					tftime1 = field[2].GetUInt32();
+					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 31104000; //月卡
-				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime) VALUES(%u,%u,%u) ON DUPLICATE KEY UPDATE tftime=%u;", pPlayer->GetGUIDLow(), atime, tftime, atime);
+				uint32 atime = time(NULL) + 31536000; //月卡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
 				ChatHandler(pPlayer).PSendSysMessage("购买成功！");
+				pPlayer->CanDoubleTalent == true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
 			break;
 		}
 		return true;
@@ -952,7 +1193,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000014);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000015);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好,您现在的等级为%u级,秒升到60消耗%u点积分,请确认!", oldlevel, uplevel);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好,您现在的等级为%u级,秒升到60消耗%u点WS点,请确认!", oldlevel, uplevel);
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000014://秒升服务
@@ -971,12 +1212,12 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		{
 			if (uplevel)
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", uplevel, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家,恭喜秒升成功!消耗%u点积分提升到60级！", uplevel);
+			ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家,恭喜秒升成功!消耗%u点WS点提升到60级！", uplevel);
 			pPlayer->GiveLevel(60);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足!");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足!");
 		}
 		return true;
 	}
@@ -1014,7 +1255,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1030,7 +1271,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1046,7 +1287,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1062,7 +1303,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1078,7 +1319,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1094,7 +1335,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1110,7 +1351,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1126,7 +1367,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1142,7 +1383,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1158,7 +1399,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1174,7 +1415,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1190,7 +1431,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1206,7 +1447,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1262,70 +1503,70 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 
 	case GOSSIP_ACTION_INFO_DEF + 51://购买采矿
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5001);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5002);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 52://购买炼金
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5003);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5004);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 53://购买锻造
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5005);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5006);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 54://购买裁缝
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5007);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5008);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 55://购买制皮
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5009);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5010);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 56://购买附魔
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5011);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5012);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 57://购买珠宝
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5013);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5014);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 58://购买工程
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5015);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5016);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 59://购买草药
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5017);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5018);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 60://购买剥皮
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5019);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5020);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
@@ -1336,7 +1577,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5001:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1362,7 +1603,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5003:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1393,7 +1634,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5005:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1418,7 +1659,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5007:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1444,7 +1685,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5009:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1469,7 +1710,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5011:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1494,7 +1735,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5015:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1519,7 +1760,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5017:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1544,7 +1785,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 	case GOSSIP_ACTION_INFO_DEF + 5019:
 		if (jf <= learnskilljf)
 		{
-			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
+			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
