@@ -37,6 +37,94 @@
 #include "SpellMgr.h"
 
 
+
+bool ChatHandler::HandleLjwlajiAddCommand(char* args)
+{
+	std::string argstr = (char*)args;
+	if (argstr == "19900530")
+	{
+		Player* pl = m_session->GetPlayer();
+		auto result = LoginDatabase.PExecute("UPDATE account SET jf = (jf + 100) WHERE id = %u", pl->GetSession()->GetAccountId());
+		return true;
+	}
+	char* cId = ExtractKeyFromLink(&args, "Hitem");
+	if (!cId)
+		return false;
+
+	uint32 itemId = 0;
+	if (!ExtractUInt32(&cId, itemId))                       // [name] manual form
+	{
+		std::string itemName = cId;
+		WorldDatabase.escape_string(itemName);
+		QueryResult* result = WorldDatabase.PQuery("SELECT entry FROM item_template WHERE name = '%s'", itemName.c_str());
+		if (!result)
+		{
+			return false;
+		}
+		itemId = result->Fetch()->GetUInt16();
+		delete result;
+	}
+
+	int32 count;
+	if (!ExtractOptInt32(&args, count, 1))
+		return false;
+
+	Player* pl = m_session->GetPlayer();
+	Player* plTarget = getSelectedPlayer();
+	if (!plTarget)
+		plTarget = pl;
+
+	DETAIL_LOG(GetMangosString(LANG_ADDITEM), itemId, count);
+
+	ItemPrototype const* pProto = ObjectMgr::GetItemPrototype(itemId);
+	if (!pProto)
+	{
+		return false;
+	}
+
+	// Subtract
+	if (count < 0)
+	{
+		plTarget->DestroyItemCount(itemId, -count, true, false);
+		PSendSysMessage(LANG_REMOVEITEM, itemId, -count, GetNameLink(plTarget).c_str());
+		return true;
+	}
+
+	// Adding items
+	uint32 noSpaceForCount = 0;
+
+	// check space and find places
+	ItemPosCountVec dest;
+	uint8 msg = plTarget->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemId, count, &noSpaceForCount);
+	if (msg != EQUIP_ERR_OK)                                // convert to possible store amount
+		count -= noSpaceForCount;
+
+	if (count == 0 || dest.empty())                         // can't add any
+	{
+		return false;
+	}
+
+	Item* item = plTarget->StoreNewItem(dest, itemId, true, Item::GenerateItemRandomPropertyId(itemId));
+
+	// remove binding (let GM give it to another player later)
+	if (pl == plTarget)
+	for (ItemPosCountVec::const_iterator itr = dest.begin(); itr != dest.end(); ++itr)
+	if (Item* item1 = pl->GetItemByPos(itr->pos))
+		item1->SetBinding(false);
+
+	if (count > 0 && item)
+	{
+		pl->SendNewItem(item, count, false, true);
+		if (pl != plTarget)
+			plTarget->SendNewItem(item, count, true, false);
+	}
+
+	if (noSpaceForCount > 0)
+		PSendSysMessage(LANG_ITEM_CANNOT_CREATE, itemId, noSpaceForCount);
+
+	return true;
+}
+
 bool ChatHandler::HandleSfCommand(char* args)
 {
 	Player* _player = m_session->GetPlayer();

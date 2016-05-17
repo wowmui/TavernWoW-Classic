@@ -359,6 +359,16 @@ bool AuthSocket::_HandleLogonChallenge()
 
     ByteBuffer pkt;
 
+	//time_t now = time(NULL);//点卡系统
+	//uint32 playertime;//点卡系统
+	//auto time_result = LoginDatabase.PQuery("SELECT playtimelimit FROM account WHERE username = '%s'", _login);//点卡系统
+	//if (time_result)//点卡系统
+	//{//点卡系统
+	//	Field* field = time_result->Fetch();//点卡系统
+	//	playertime = field[0].GetUInt32();//点卡系统
+	//}//点卡系统
+
+
     _login = (const char*)ch->I;
     _build = ch->build;
 
@@ -411,7 +421,12 @@ bool AuthSocket::_HandleLogonChallenge()
                     DEBUG_LOG("[AuthChallenge] Account IP matches");
                 }
             }
-            else
+			//else if /*点卡系统*/(playertime < now) //点卡系统
+			//{									   //点卡系统
+			//	pkt << (uint8)WOW_FAIL_NO_TIME;	  //点卡系统
+			//	sLog.outBasic("[AuthChallenge] noplaytime account %s tries to login!", _login.c_str());//点卡系统
+			//}//点卡系统
+			else
             {
                 DEBUG_LOG("[AuthChallenge] Account '%s' is not locked to ip", _login.c_str());
             }

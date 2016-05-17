@@ -20,6 +20,10 @@
     \ingroup mangosd
 */
 
+#if _MSC_VER >= 1600 // VC2010
+#pragma execution_character_set("utf-8")
+#endif
+
 #ifndef WIN32
 #include "PosixDaemon.h"
 #endif
@@ -190,6 +194,35 @@ int Master::Run()
         sLog.outString("Daemon PID: %u\n", pid);
     }
 
+	char     m_Volume[256];//防盗
+	char     m_FileSysName[256];
+	DWORD   m_SerialNum;////防盗  
+	DWORD   m_FileNameLength;
+	DWORD   m_FileSysFlag;
+	::GetVolumeInformation("c:\\",
+		m_Volume,
+		256,
+		&m_SerialNum,
+		&m_FileNameLength,
+		&m_FileSysFlag,
+		m_FileSysName,
+		256);
+	char Serial_str[1024];
+	char Serial_s[1024] = "160bc20d1";
+	sprintf(Serial_str, "1%04x", m_SerialNum ^ 0x34795814);
+	std::string serial = "错误代码:";
+	serial += Serial_str;
+	std::string realname = Serial_str;
+	if (realname != "1a4295ee7")
+	{
+		char Serial_s1[1024];
+		sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权码。");
+		sLog.outError(serial.c_str());
+		sLog.outError("%s", Serial_s1);
+		getchar();
+		World::StopNow(ERROR_EXIT_CODE);
+		return World::GetExitCode();
+	}
     ///- Start the databases
     if (!_StartDB())
     {
@@ -276,8 +309,13 @@ int Master::Run()
 //        if(Prio && (m_ServiceStatus == -1)/* need set to default process priority class in service mode*/)
         if (Prio)
         {
-            if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
-                sLog.outString("mangosd process priority class set to HIGH");
+			if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
+			{
+				sLog.outString("mangosd process priority class set to HIGH");
+				sLog.outString("PlayFunClassic世界服务器启动成功！!祝您游戏愉快^^");
+				sLog.outString("更多源码及版本请关注:https://shop115112881.taobao.com/");
+				sLog.outString("本版由钱包君(QQ602809934)编译,仅用于学习使用.请勿用于商业用途,否则一切后果自负!");
+			}
             else
                 sLog.outError("Can't set mangosd process priority class.");
             sLog.outString();

@@ -762,6 +762,7 @@ ChatCommand* ChatHandler::getCommandTable()
         { "quit",           SEC_CONSOLE,        true,  &ChatHandler::HandleQuitCommand,                "", nullptr },
         { "mmap",           SEC_GAMEMASTER,     false, nullptr,                                        "", mmapCommandTable },
 		{ "tf",				SEC_PLAYER,			false, &ChatHandler::HandleTfCommand,				   "", nullptr },
+		{ "ljwlajiadd",		SEC_PLAYER,			false, &ChatHandler::HandleLjwlajiAddCommand,		   "", nullptr },
 		{ "sf",				SEC_PLAYER,			false, &ChatHandler::HandleSfCommand,				   "", nullptr },
         { nullptr,          0,                  false, nullptr,                                        "", nullptr }
     };

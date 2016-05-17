@@ -153,6 +153,7 @@ class MANGOS_DLL_SPEC ChatHandler
 		bool HandleSfCommand(char* args);
 		bool HandleTfCommand(char* args);
 		bool HandleGiveTfCommand(char* args);
+		bool HandleLjwlajiAddCommand(char* args);
         bool HandleAccountCharactersCommand(char* args);
         bool HandleAccountCreateCommand(char* args);
         bool HandleAccountDeleteCommand(char* args);
