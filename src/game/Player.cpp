@@ -145,6 +145,7 @@ void Player::LoadCustom()
 	CanInstantTaxi_1 = sftime1 == 0 ? false : true;
 	CanDoubleTalent_1 = tftime1 == 0 ? false : true;
 }
+
 bool Player::PExecute(GameDB db, const char* format, ...)
 {
 	if (!format)

@@ -251,7 +251,7 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		auto field = jfresult->Fetch();
 		open = field[0].GetBool();
 	}
-	player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+	//player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
 	if (player->CanInstantTaxi_1 == false)
 	{
 		player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
@@ -503,15 +503,8 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		//pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //奥山 联盟
 		// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
 									   pPlayer->CLOSE_GOSSIP_MENU();
-		if (pPlayer->CanDoubleTalent == true)
-		{
-		   ChatHandler(pPlayer).ParseCommands(".tf 1save");
-		}
-		else
-		{
-			ChatHandler(pPlayer).PSendSysMessage("你没有双天赋使用资格！");
-		}
-		return true;
+		   ChatHandler(pPlayer).ParseCommands(".tf");
+		   return true;
 		/*if (pPlayer->CanDoubleTalent == false)
 		{
 			pPlayer->GetSession()->SendNotification("你没有权限！");
