@@ -1898,7 +1898,9 @@ bool SpellMgr::IsNoStackSpellDueToSpell(uint32 spellId_1, uint32 spellId_2) cons
                     // Garrote-Silence -> Garrote (multi-family check)
                     if (spellInfo_1->SpellIconID == 498 && spellInfo_1->SpellVisual == 0 && spellInfo_2->SpellIconID == 498)
                         return false;
-
+					// ΗΏ»―Ό²Εά && Ό²Εά
+					if (spellInfo_1->SpellIconID == 516 && spellInfo_2->SpellIconID == 516)
+					return false;
                     break;
                 }
                 case SPELLFAMILY_HUNTER:

@@ -18,6 +18,7 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "Chat.h"
+#include "Unit.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -251,7 +252,7 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		auto field = jfresult->Fetch();
 		open = field[0].GetBool();
 	}
-	//player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+	player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
 	if (player->CanInstantTaxi_1 == false)
 	{
 		player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
