@@ -673,11 +673,11 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)   //玩家登录
     m_playerLoading = false;
     delete holder;
 	//////////世界公告
-		/*uint32 playeronlinvecount = sWorld.GetActiveSessionCount();
-		if (playeronlinvecount > 5)
-		{
-			_player->GetSession()->KickPlayer();
-		}*/
+		//uint32 playeronlinvecount = sWorld.GetActiveSessionCount();
+		//if (playeronlinvecount > 5)
+		//{
+		//	_player->GetSession()->KickPlayer();
+		//}
 		std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
 		str += "|cffADFF2F";
 		str += pCurrChar->GetName();

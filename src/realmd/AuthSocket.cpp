@@ -365,7 +365,7 @@ bool AuthSocket::_HandleLogonChallenge()
     _build = ch->build;
 
 	time_t now = time(NULL);//点卡系统
-	uint32 playertime;//点卡系统
+	uint32 playertime = 0;//点卡系统
 	QueryResult* time_result = LoginDatabase.PQuery("SELECT playtimelimit FROM account WHERE username = '%s'", _login.c_str());//点卡系统
 	if (time_result)//点卡系统
 	{//点卡系统
@@ -397,6 +397,11 @@ bool AuthSocket::_HandleLogonChallenge()
         BASIC_LOG("[AuthChallenge] Banned ip %s tries to login!", get_remote_address().c_str());
         delete result;
     }
+	else if (playertime == 0)
+	{
+		pkt << (uint8)WOW_FAIL_UNKNOWN_ACCOUNT;
+		delete result;
+	}
 	else if /*点卡系统*/ (playertime < now) //点卡系统
 	{									   //点卡系统
 		pkt << (uint8)WOW_FAIL_NO_TIME;	  //点卡系统

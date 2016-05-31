@@ -62,13 +62,28 @@ struct boss_buruAI : public ScriptedAI
 
     void Reset() override
     {
+		CleanMonster();
         m_uiDismemberTimer      = 5000;
         m_uiGatheringSpeedTimer = 9000;
         m_uiCreepingPlagueTimer = 0;
         m_uiFullSpeedTimer      = 60000;
         m_uiPhase               = PHASE_EGG;
     }
+	void CleanMonster()
+	{
+		while (true)
+		{
+			if (auto creature = GetClosestCreatureWithEntry(m_creature, 15521, 500.0f))
+			{
+				creature->ForcedDespawn();
+			}
+			else
+			{
+				break;
+			}
 
+		}
+	}
     void Aggro(Unit* pWho) override
     {
         DoScriptText(EMOTE_TARGET, m_creature, pWho);
@@ -212,6 +227,10 @@ struct npc_buru_eggAI : public Scripted_NoMovementAI
         DoCastSpellIfCan(m_creature, SPELL_SUMMON_HATCHLING, CAST_TRIGGERED, m_creature->GetObjectGuid());
 
         // Reset Buru's target - this might have been done by spell, but currently this is unk to us
+		if (Creature*creature = GetClosestCreatureWithEntry(m_creature, 15370, 10))
+		{
+			creature->DealDamage(creature, 45000, nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NORMAL, nullptr, false);
+		}
         if (m_pInstance)
         {
             if (Creature* pBuru = m_pInstance->GetSingleCreatureFromStorage(NPC_BURU))

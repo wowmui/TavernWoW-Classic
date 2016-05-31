@@ -374,8 +374,8 @@ void GameObject::Update(uint32 update_diff, uint32 p_time)
             {
                 case GAMEOBJECT_TYPE_DOOR:
                 case GAMEOBJECT_TYPE_BUTTON:
-                    if (GetGOInfo()->GetAutoCloseTime() && (m_cooldownTime < time(nullptr)))
-                        ResetDoorOrButton();
+					if (GetGOInfo()->GetAutoCloseTime() && (m_cooldownTime < time(nullptr)))
+						ResetDoorOrButton();
                     break;
                 case GAMEOBJECT_TYPE_CHEST:
                     if (loot)

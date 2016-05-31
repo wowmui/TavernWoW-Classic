@@ -253,6 +253,7 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		open = field[0].GetBool();
 	}
 	player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+	player->ADD_GOSSIP_ITEM(3, "金币-积分转换", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
 	if (player->CanInstantTaxi_1 == false)
 	{
 		player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
@@ -270,9 +271,9 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 	player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
 	player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->ADD_GOSSIP_ITEM(3, "个人信息查询", 1, GOSSIP_ACTION_INFO_DEF + 12);
-	player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
-	player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
-	player->ADD_GOSSIP_ITEM(3, "奥山队列", 1, GOSSIP_ACTION_INFO_DEF + 11);
+	//player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
+	//player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
+	//player->ADD_GOSSIP_ITEM(3, "奥山队列", 1, GOSSIP_ACTION_INFO_DEF + 11);
 	player->SEND_GOSSIP_MENU(822,_Item->GetGUID());
 	return true;
 }
@@ -345,13 +346,146 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	switch (action)
 	{
+	case GOSSIP_ACTION_INFO_DEF + 14:
+	{
+										if (GameObject* pCrystal = GetClosestGameObjectWithEntry(pPlayer, 180619, 10.0f))
+										{
+											uint32 guid = pCrystal->GetGUIDLow();;
+											uint64 guid_2 = pCrystal->GetGUID();
+											//pCrystal->SetInUse(false);
+											//pCrystal->Respawn();
+											//pCrystal->ResetDoorOrButton();
+											//pCrystal->SetGoState(GO_STATE_READY);
+											pCrystal->Refresh();
+											pCrystal->AddToWorld();
+											if (pCrystal->getLootState() == GO_ACTIVATED)
+											{
+												pPlayer->Say("yes it's actived", LANG_UNIVERSAL);
+											}
+										}
+		pPlayer->ADD_GOSSIP_ITEM(3, "转换比例30金:1积分", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1400);
+		pPlayer->ADD_GOSSIP_ITEM(3, "转换1点", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1401);
+		pPlayer->ADD_GOSSIP_ITEM(3, "转换10点", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
+		pPlayer->ADD_GOSSIP_ITEM(3, "转换50点", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 1401:
+	{
+										  pPlayer->CLOSE_GOSSIP_MENU();
+		if (pPlayer->GetMoney() >= 300000)
+		{
+		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 1) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
+		  pPlayer->ModifyMoney(-300000);
+		  ChatHandler(pPlayer).PSendSysMessage("转换成功！");
+		}
+		else
+		{
+		  ChatHandler(pPlayer).PSendSysMessage("请检查是否有足够的金币！");
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 1402:
+	{
+										  pPlayer->CLOSE_GOSSIP_MENU();
+		if (pPlayer->GetMoney() >= 3000000)
+		{
+		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 10) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
+		  pPlayer->ModifyMoney(-3000000);
+		  ChatHandler(pPlayer).PSendSysMessage("转换成功！");
+		}
+		else
+		{
+		  ChatHandler(pPlayer).PSendSysMessage("请检查是否有足够的金币！");
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 1403:
+	{
+										  pPlayer->CLOSE_GOSSIP_MENU();
+		if (pPlayer->GetMoney() >= 15000000)
+		{
+		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 50) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
+		  pPlayer->ModifyMoney(-15000000);
+		  ChatHandler(pPlayer).PSendSysMessage("转换成功！");
+		}
+		else
+		{
+		  ChatHandler(pPlayer).PSendSysMessage("请检查是否有足够的金币！");
+		}
+		return true;
+	}
 	case GOSSIP_ACTION_INFO_DEF + 13:
 	{
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好！");
+		ChatHandler(pPlayer).PSendSysMessage("天卡费用为10金币一张！");
+		ChatHandler(pPlayer).PSendSysMessage("周卡费用为70金币一张！");
+		ChatHandler(pPlayer).PSendSysMessage("月卡费用为300金币一张！");
 		pPlayer->ADD_GOSSIP_ITEM(3, "查询剩余时间", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30009);
 		pPlayer->ADD_GOSSIP_ITEM(3, "储值天卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30100);
 		pPlayer->ADD_GOSSIP_ITEM(3, "储值周卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30101);
 		pPlayer->ADD_GOSSIP_ITEM(3, "储值月卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30102);
+		pPlayer->ADD_GOSSIP_ITEM(3, "购买天卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30103);
+		pPlayer->ADD_GOSSIP_ITEM(3, "购买周卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30104);
+		pPlayer->ADD_GOSSIP_ITEM(3, "购买月卡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30105);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 30103:
+	{
+		if (pPlayer->GetMoney() >= 100000)
+		{
+		   ItemPosCountVec dest;
+		   uint32 noSpaceForCount = 0;
+		   pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99006, 1, &noSpaceForCount);
+		   Item* Pitem = pPlayer->StoreNewItem(dest, 99006, true, Item::GenerateItemRandomPropertyId(99006));
+		   pPlayer->ModifyMoney(-100000);
+		   pPlayer->SendNewItem(Pitem, 1, true, false);
+		   pPlayer->GetSession()->SendNotification("购买成功！");
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("请确认是否有足够的金币！");
+		}
+		pPlayer->CLOSE_GOSSIP_MENU();
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 30104:
+	{
+		if (pPlayer->GetMoney() >= 700000)
+		{
+		   ItemPosCountVec dest;
+		   uint32 noSpaceForCount = 0;
+		   pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99007, 1, &noSpaceForCount);
+		   Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99007));
+		   pPlayer->ModifyMoney(-700000);
+		   pPlayer->SendNewItem(Pitem, 1, true, false);
+		   pPlayer->GetSession()->SendNotification("购买成功！");
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("请确认是否有足够的金币！");
+		}
+		pPlayer->CLOSE_GOSSIP_MENU();
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 30105:
+	{
+		if (pPlayer->GetMoney() >= 3000000)
+		{
+		   ItemPosCountVec dest;
+		   uint32 noSpaceForCount = 0;
+		   pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99008, 1, &noSpaceForCount);
+		   Item* Pitem = pPlayer->StoreNewItem(dest, 99008, true, Item::GenerateItemRandomPropertyId(99008));
+		   pPlayer->ModifyMoney(-3000000);
+		   pPlayer->SendNewItem(Pitem, 1, true, false);
+		   pPlayer->GetSession()->SendNotification("购买成功！");
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("请确认是否有足够的金币！");
+		}
+		pPlayer->CLOSE_GOSSIP_MENU();
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 30009:
@@ -436,7 +570,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		pPlayer->CLOSE_GOSSIP_MENU();
 		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家%s您好！",pPlayer->GetName());
-		ChatHandler(pPlayer).PSendSysMessage("您剩余游戏WS点为%u点",jf);
+		ChatHandler(pPlayer).PSendSysMessage("您剩余游戏积分为%u点",jf);
 		uint32 sftime = 0;
 		uint32 tftime = 0;
 		auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime,tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
@@ -592,7 +726,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	}
 	case GOSSIP_ACTION_INFO_DEF + 7: //背包
 	{
-		ChatHandler(pPlayer).PSendSysMessage("购买需要消耗%u点WS点，请确认！", bagjf);
+		ChatHandler(pPlayer).PSendSysMessage("购买需要消耗%u点积分，请确认！", bagjf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "确认购买", 1, GOSSIP_ACTION_INFO_DEF + 70);
 		pPlayer->ADD_GOSSIP_ITEM(10, "取消", 1, GOSSIP_ACTION_INFO_DEF + 71);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
@@ -614,7 +748,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足！！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足！！");
 			break;
 		}
 		return true;
@@ -634,10 +768,10 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			 item3jf = field[2].GetUInt32();
 			 item4jf = field[3].GetUInt32();
 		}
-		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求WS点%u点", item1jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求WS点%u点", item2jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求WS点%u点", item3jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item4jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求积分%u点", item1jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐1", 1, GOSSIP_ACTION_INFO_DEF + 20);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);
@@ -699,7 +833,7 @@ case GOSSIP_ACTION_INFO_DEF + 30: //终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 	}
@@ -782,7 +916,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -865,7 +999,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -948,7 +1082,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -969,10 +1103,10 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 			 item3jf = field[2].GetUInt32();
 			 item4jf = field[3].GetUInt32();
 		}
-		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求WS点%u点", item1jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求WS点%u点", item2jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求WS点%u点", item3jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求WS点%u点", item4jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求积分%u点", item1jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
+		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐1", 1, GOSSIP_ACTION_INFO_DEF + 23);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐2", 1, GOSSIP_ACTION_INFO_DEF + 24);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐3", 1, GOSSIP_ACTION_INFO_DEF + 25);
@@ -1036,7 +1170,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -1119,7 +1253,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -1202,7 +1336,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -1285,7 +1419,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点余额不足！");
+			ChatHandler(pPlayer).PSendSysMessage("积分余额不足！");
 			break;
 		}
 		return true;
@@ -1293,12 +1427,54 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 }
 	case GOSSIP_ACTION_INFO_DEF + 3:
 	{
+		pPlayer->ADD_GOSSIP_ITEM(0, "使用金币秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 930);
+		pPlayer->ADD_GOSSIP_ITEM(0, "使用积分秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 931);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 930:
+	{
+		oldlevel = pPlayer->getLevel();
+		uplevel = (((60 - oldlevel) * levelupjf)*20);
+		pPlayer->ADD_GOSSIP_ITEM(0, "确认秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000114);
+		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000115);
+		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好,您现在的等级为%u级,秒升到60消耗%u金币,请确认!", oldlevel, uplevel);
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 1000114://秒升服务
+	{
+		oldlevel = pPlayer->getLevel();
+		uplevel = (((60 - oldlevel) * levelupjf)*200000);
+		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT maxlevelupjf FROM world_conf");
+		auto field = jf_xresult->Fetch();
+		pPlayer->CLOSE_GOSSIP_MENU();
+		if (pPlayer->GetMoney() >= uplevel)
+		{
+			if (uplevel)
+			pPlayer->ModifyMoney(-uplevel);
+			ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家,恭喜秒升成功!消耗%u点金币提升到60级！", (uplevel / 10000));
+			pPlayer->GiveLevel(60);
+		}
+		else
+		{
+			ChatHandler(pPlayer).PSendSysMessage("金币不足!");
+		}
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 1000115:
+	{
+		pPlayer->CLOSE_GOSSIP_MENU();
+		return true;
+	}
+	case GOSSIP_ACTION_INFO_DEF + 931:
+	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = ((60 - oldlevel) * levelupjf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000014);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000015);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好,您现在的等级为%u级,秒升到60消耗%u点WS点,请确认!", oldlevel, uplevel);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家您好,您现在的等级为%u级,秒升到60消耗%u点积分,请确认!", oldlevel, uplevel);
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000014://秒升服务
@@ -1317,12 +1493,12 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		{
 			if (uplevel)
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", uplevel, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家,恭喜秒升成功!消耗%u点WS点提升到60级！", uplevel);
+			ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家,恭喜秒升成功!消耗%u点积分提升到60级！", uplevel);
 			pPlayer->GiveLevel(60);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足!");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足!");
 		}
 		return true;
 	}
@@ -1360,7 +1536,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1376,7 +1552,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1392,7 +1568,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1408,7 +1584,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1424,7 +1600,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1440,7 +1616,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1456,7 +1632,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1472,7 +1648,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1488,7 +1664,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1504,7 +1680,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1520,7 +1696,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1536,7 +1712,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1552,7 +1728,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("WS点不足购买此项目,或未学得该技能！");
+			ChatHandler(pPlayer).PSendSysMessage("积分不足购买此项目,或未学得该技能！");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1609,70 +1785,70 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 
 	case GOSSIP_ACTION_INFO_DEF + 51://购买采矿
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5001);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5002);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 52://购买炼金
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5003);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5004);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 53://购买锻造
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5005);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5006);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 54://购买裁缝
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5007);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5008);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 55://购买制皮
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5009);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5010);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 56://购买附魔
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5011);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5012);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 57://购买珠宝
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5013);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5014);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 58://购买工程
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5015);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5016);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 59://购买草药
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5017);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5018);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
 	case GOSSIP_ACTION_INFO_DEF + 60://购买剥皮
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认学习", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5019);
-		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点WS点,请确认!", pPlayer->GetName(), learnskilljf);
+		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家|cff54FF9F[%s]|r您好,本次操作将扣除|cffFF0000%u|r点积分,请确认!", pPlayer->GetName(), learnskilljf);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5020);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
@@ -1683,7 +1859,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5001:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1709,7 +1885,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5003:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1740,7 +1916,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5005:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1765,7 +1941,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5007:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1791,7 +1967,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5009:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1816,7 +1992,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5011:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1841,7 +2017,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5015:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1866,7 +2042,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5017:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1891,7 +2067,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	case GOSSIP_ACTION_INFO_DEF + 5019:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("WS点不足!", LANG_UNIVERSAL);
+			pPlayer->Say("积分不足!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
