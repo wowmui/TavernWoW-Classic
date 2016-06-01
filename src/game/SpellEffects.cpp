@@ -3422,8 +3422,7 @@ void Spell::EffectScriptEffect(SpellEffectIndex eff_idx)
                 case 24324:                                 // Blood Siphon
                 {
                     if (!unitTarget || unitTarget->GetTypeId() != TYPEID_PLAYER)
-                        return;
-
+                        return;	
                     unitTarget->CastSpell(m_caster, unitTarget->HasAura(24321) ? 24323 : 24322, true);
                     return;
                 }

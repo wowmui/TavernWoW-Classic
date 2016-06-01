@@ -340,6 +340,7 @@ void WorldSession::LogoutPlayer(bool Save)
 
     if (_player)
     {
+
         sLog.outChar("Account: %d (IP: %s) Logout Character:[%s] (guid: %u)", GetAccountId(), GetRemoteAddress().c_str(), _player->GetName() , _player->GetGUIDLow());
 
         if (Loot* loot = sLootMgr.GetLoot(_player))
