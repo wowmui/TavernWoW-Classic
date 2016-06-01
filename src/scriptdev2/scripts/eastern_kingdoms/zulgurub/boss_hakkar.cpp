@@ -23,6 +23,22 @@ EndScriptData */
 
 #include "precompiled.h"
 #include "zulgurub.h"
+#include "Object.h"
+#include "Player.h"
+#include "Creature.h"
+#include "MapManager.h"
+#include "Language.h"
+#include "SpellAuras.h"
+#include "World.h"
+#include "Group.h"
+#include "ObjectGuid.h"
+#include "ObjectMgr.h"
+#include "Mail.h"
+#include "WorldPacket.h"
+#include "Util.h"
+#include "Formulas.h"
+#include "GridNotifiersImpl.h"
+#include "Chat.h"
 
 enum
 {
@@ -40,7 +56,11 @@ enum
     SPELL_ASPECT_OF_VENOXIS     = 24688,
     SPELL_ASPECT_OF_MARLI       = 24686,
     SPELL_ASPECT_OF_THEKAL      = 24689,
-    SPELL_ASPECT_OF_ARLOKK      = 24690
+    SPELL_ASPECT_OF_ARLOKK      = 24690,
+
+	// HAKAsun
+	CREATURE_HAKA_SUN			= 11357
+
 };
 
 struct boss_hakkarAI : public ScriptedAI
@@ -64,9 +84,12 @@ struct boss_hakkarAI : public ScriptedAI
     uint32 m_uiAspectOfMarliTimer;
     uint32 m_uiAspectOfThekalTimer;
     uint32 m_uiAspectOfArlokkTimer;
+	uint32 m_hakasunchecktimer;
+	uint8 m_suncount;
 
     void Reset() override
     {
+		m_suncount				   = 0;
         m_uiBloodSiphonTimer       = 90000;
         m_uiCorruptedBloodTimer    = 25000;
         m_uiCauseInsanityTimer     = 17000;
@@ -78,6 +101,8 @@ struct boss_hakkarAI : public ScriptedAI
         m_uiAspectOfMarliTimer     = 12000;
         m_uiAspectOfThekalTimer    = 8000;
         m_uiAspectOfArlokkTimer    = 18000;
+		m_hakasunchecktimer		   = 8000;
+		CleanSun();
     }
 
     void Aggro(Unit* /*who*/) override
@@ -97,9 +122,34 @@ struct boss_hakkarAI : public ScriptedAI
                 m_uiAspectOfThekalTimer = 0;
             if (m_pInstance->GetData(TYPE_ARLOKK) == DONE)
                 m_uiAspectOfArlokkTimer = 0;
+			DospawnNextSun();
         }
     }
-
+	void checksunnum()
+	{
+		if (auto creature = GetClosestCreatureWithEntry(m_creature, CREATURE_HAKA_SUN, 500.0f))
+		{
+			m_suncount++;
+		}
+	}
+	void CleanSun()
+	{
+		while (true)
+		{
+			if (auto creature = GetClosestCreatureWithEntry(m_creature, CREATURE_HAKA_SUN, 500.0f))
+			{
+				creature->ForcedDespawn();
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+	void DospawnNextSun()
+	{
+		m_creature->SummonCreature(CREATURE_HAKA_SUN, -11799.063f, -1683.7207f, 52.9f, 1.598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+	}
     void UpdateAI(const uint32 uiDiff) override
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
@@ -107,6 +157,7 @@ struct boss_hakkarAI : public ScriptedAI
 
         if (m_uiBloodSiphonTimer < uiDiff)
         {
+			m_creature->MonsterSay("BLOOD_SIPHON is Comming!", LANG_UNIVERSAL);
             if (DoCastSpellIfCan(m_creature, SPELL_BLOOD_SIPHON) == CAST_OK)
                 m_uiBloodSiphonTimer = 90000;
         }
@@ -139,6 +190,13 @@ struct boss_hakkarAI : public ScriptedAI
         else
             m_uiCauseInsanityTimer -= uiDiff;
 
+		if (m_hakasunchecktimer < uiDiff)
+		{
+			checksunnum();
+			if (m_suncount < 1)
+			m_creature->SummonCreature(CREATURE_HAKA_SUN, -11799.063f, -1683.7207f, 52.9f, 1.598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+		}
+		else m_hakasunchecktimer -= uiDiff;
         // Will Of Hakkar Timer
         if (m_uiWillOfHakkarTimer < uiDiff)
         {

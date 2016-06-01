@@ -19,6 +19,7 @@
 #include "World.h"
 #include "Chat.h"
 #include "Unit.h"
+#include "ObjectMgr.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -245,6 +246,8 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 
 bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& scTargets)
 {
+	if (Creature*pcreature = GetClosestCreatureWithEntry(player, 14834, 50))
+	pcreature->CastSpell(pcreature, 24324, true);
 	bool open;
 	auto jfresult = player->PQuery(GameDB::WorldDB, "SELECT openlevelup FROM world_conf");
 	if (jfresult)

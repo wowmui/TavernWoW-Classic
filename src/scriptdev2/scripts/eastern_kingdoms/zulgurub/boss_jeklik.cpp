@@ -35,7 +35,7 @@ enum
     // Bat spells
     SPELL_CHARGE                = 22911,
     SPELL_SONIC_BURST           = 23918,
-    // SPELL_PSYHIC_SCREAM       = 22884,                   // spell not confirmed - needs research
+    SPELL_PSYHIC_SCREAM         = 22884,                   // spell not confirmed - needs research 27610
     SPELL_SWOOP                 = 23919,
     SPELL_SUMMON_FRENZIED_BATS  = 23974,
 
@@ -81,6 +81,7 @@ struct boss_jeklikAI : public ScriptedAI
     uint32 m_uiChainMindFlayTimer;
     uint32 m_uiGreaterHealTimer;
     uint32 m_uiFlyingBatsTimer;
+	uint32 m_screamtimer;
 
     bool m_bIsPhaseOne;
 
@@ -97,7 +98,7 @@ struct boss_jeklikAI : public ScriptedAI
         m_uiChainMindFlayTimer  = 26000;
         m_uiGreaterHealTimer    = 20000;
         m_uiFlyingBatsTimer     = 30000;
-
+		m_screamtimer		    = 15000;
         m_bIsPhaseOne           = true;
 
         DoCastSpellIfCan(m_creature, SPELL_GREEN_CHANNELING);
@@ -211,7 +212,12 @@ struct boss_jeklikAI : public ScriptedAI
             }
             else
                 m_uiChargeTimer -= uiDiff;
-
+			if (m_screamtimer < uiDiff)
+			{
+				m_creature->CastSpell(m_creature, SPELL_PSYHIC_SCREAM, true);
+			}
+			else
+				m_screamtimer -= uiDiff;
             if (m_uiSwoopTimer < uiDiff)
             {
                 if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_SWOOP) == CAST_OK)

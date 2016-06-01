@@ -122,7 +122,6 @@ struct boss_ossirianAI : public ScriptedAI
 			{
 				break;
 			}
-
 		}
 
 		while (true)
