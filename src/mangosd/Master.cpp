@@ -179,6 +179,52 @@ Master::~Master()
 /// Main function
 int Master::Run()
 {
+
+	////////////////////
+	WSADATA         wd;
+	int ret = 0;
+	SOCKET c;
+	char recvBuf[1000] = "", sendBuf[1000] = "";
+	SOCKADDR_IN saddr;
+
+	ret = WSAStartup(MAKEWORD(2, 2), &wd);  /*1.初始化操作*/
+
+	if (ret != 0)
+	{
+		return 0;
+	}
+
+	if (HIBYTE(wd.wVersion) != 2 || LOBYTE(wd.wVersion) != 2)
+	{
+		sLog.outString("初始化失败");
+		WSACleanup();
+		return 1;
+	}
+	/*2.创建客户端socket*/
+	c = socket(AF_INET, SOCK_STREAM, 0);
+
+	/*3.定义要连接的服务端信息*/
+	saddr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
+	saddr.sin_family = AF_INET;
+	saddr.sin_port = htons(8888);
+	/*4.连接服务端*/
+	connect(c, (SOCKADDR*)&saddr, sizeof(SOCKADDR));
+	recv(c, recvBuf, 1000, 0);
+	std::string std1 = recvBuf;
+	/*if (std1 != "1")
+	{
+		sLog.outString("%s", std1);
+		sLog.outString("未授权");
+		getchar();
+		return 0;
+	}*/
+	sLog.outString("服务端发来的数据:%s\n", recvBuf);
+	sLog.outString("0是剪刀，1是石头，2是布");
+	char clmsg[255];
+	std::string std;
+	std = getchar();
+	sprintf(sendBuf, std.c_str());
+	send(c, sendBuf, strlen(sendBuf) + 1, 0);
     /// worldd PID file creation
     std::string pidfile = sConfig.GetStringDefault("PidFile", "");
     if (!pidfile.empty())
@@ -224,7 +270,7 @@ int Master::Run()
 	std::string serial = "错误代码:";
 	serial += Serial_str;
 	std::string realname = Serial_str;
-	if (realname != "1a4295ee7")//1a4295ee7//1e561//18e226edd
+	if (realname != "1a4295ee7")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e
 	{
 		char Serial_s1[1024];
 		sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权码。");

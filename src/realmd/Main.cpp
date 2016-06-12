@@ -318,9 +318,9 @@ extern int main(int argc, char** argv)
 			if (SetPriorityClass(hProcess, HIGH_PRIORITY_CLASS))
 			{
 				sLog.outString("realmd process priority class set to HIGH");
-				sLog.outString("PlayFunClassic登录服务器启动成功！!祝您游戏愉快^^");
-				sLog.outString("更多源码及版本请关注:https://shop115112881.taobao.com/");
-				sLog.outString("本版由钱包君(QQ602809934)编译,仅用于学习使用.请勿用于商业用途,否则一切后果自负!");
+				//sLog.outString("PlayFunClassic登录服务器启动成功！!祝您游戏愉快^^");
+				//sLog.outString("更多源码及版本请关注:https://shop115112881.taobao.com/");
+				//sLog.outString("本版由钱包君(QQ602809934)编译,仅用于学习使用.请勿用于商业用途,否则一切后果自负!");
 
 			}
             else

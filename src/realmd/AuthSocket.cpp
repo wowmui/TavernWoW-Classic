@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -364,14 +364,14 @@ bool AuthSocket::_HandleLogonChallenge()
     _login = (const char*)ch->I;
     _build = ch->build;
 
-	time_t now = time(NULL);//�㿨ϵͳ
-	uint32 playertime = 0;//�㿨ϵͳ
-	QueryResult* time_result = LoginDatabase.PQuery("SELECT playtimelimit FROM account WHERE username = '%s'", _login.c_str());//�㿨ϵͳ
-	if (time_result)//�㿨ϵͳ
-	{//�㿨ϵͳ
-		Field* field = time_result->Fetch();//�㿨ϵͳ
-		playertime = field[0].GetUInt32();//�㿨ϵͳ
-	}//�㿨ϵͳ
+	time_t now = time(NULL);//点卡系统
+	uint32 playertime = 0;//点卡系统
+	QueryResult* time_result = LoginDatabase.PQuery("SELECT playtimelimit FROM account WHERE username = '%s'", _login.c_str());//点卡系统
+	if (time_result)//点卡系统
+	{//点卡系统
+		Field* field = time_result->Fetch();//点卡系统
+		playertime = field[0].GetUInt32();//点卡系统
+	}//点卡系统
 
     ///- Normalize account name
     // utf8ToUpperOnlyLatin(_login); -- client already send account in expected form
@@ -402,12 +402,12 @@ bool AuthSocket::_HandleLogonChallenge()
 		pkt << (uint8)WOW_FAIL_UNKNOWN_ACCOUNT;
 		delete result;
 	}
-	else if /*�㿨ϵͳ*/ (playertime < now) //�㿨ϵͳ
-	{									   //�㿨ϵͳ
-		pkt << (uint8)WOW_FAIL_NO_TIME;	  //�㿨ϵͳ
-		DEBUG_LOG("[AuthChallenge] noplaytime account %s tries to login!", _login.c_str());//�㿨ϵͳ
+	else if /*点卡系统*/ (playertime < now) //点卡系统
+	{									   //点卡系统
+		pkt << (uint8)WOW_FAIL_NO_TIME;	  //点卡系统
+		DEBUG_LOG("[AuthChallenge] noplaytime account %s tries to login!", _login.c_str());//点卡系统
 		delete result;
-	}//�㿨ϵͳ
+	}//点卡系统
 	else
     {
         ///- Get the account details from the account table

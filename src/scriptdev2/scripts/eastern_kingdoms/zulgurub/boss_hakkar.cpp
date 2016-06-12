@@ -39,6 +39,7 @@ EndScriptData */
 #include "Formulas.h"
 #include "GridNotifiersImpl.h"
 #include "Chat.h"
+#include "Unit.h"
 
 enum
 {
@@ -86,9 +87,17 @@ struct boss_hakkarAI : public ScriptedAI
     uint32 m_uiAspectOfArlokkTimer;
 	uint32 m_hakasunchecktimer;
 	uint8 m_suncount;
+	bool cancheck;
+	uint32 checktimer;
+	uint32 checkcount;
+	uint32 checkcount_1;
 
     void Reset() override
     {
+		checkcount_1			   = 500;
+		checkcount				   = 0;
+		cancheck				   = false;
+		checktimer				   = 2000;
 		m_suncount				   = 0;
         m_uiBloodSiphonTimer       = 90000;
         m_uiCorruptedBloodTimer    = 25000;
@@ -102,6 +111,7 @@ struct boss_hakkarAI : public ScriptedAI
         m_uiAspectOfThekalTimer    = 8000;
         m_uiAspectOfArlokkTimer    = 18000;
 		m_hakasunchecktimer		   = 8000;
+
 		CleanSun();
     }
 
@@ -125,13 +135,6 @@ struct boss_hakkarAI : public ScriptedAI
 			DospawnNextSun();
         }
     }
-	void checksunnum()
-	{
-		if (auto creature = GetClosestCreatureWithEntry(m_creature, CREATURE_HAKA_SUN, 500.0f))
-		{
-			m_suncount++;
-		}
-	}
 	void CleanSun()
 	{
 		while (true)
@@ -148,17 +151,72 @@ struct boss_hakkarAI : public ScriptedAI
 	}
 	void DospawnNextSun()
 	{
-		m_creature->SummonCreature(CREATURE_HAKA_SUN, -11799.063f, -1683.7207f, 52.9f, 1.598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+		m_creature->SummonCreature(CREATURE_HAKA_SUN, -11838.752930f, -1703.950684f, 40.748745f, 0.92f, TEMPSUMMON_CORPSE_DESPAWN, 0);
 	}
     void UpdateAI(const uint32 uiDiff) override
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
             return;
 
+		if (checkcount_1 < uiDiff)
+		{
+			Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
+
+			for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+			{
+				Player* pPlayer = itr->getSource();
+				if (pPlayer->HasAura(24322) || pPlayer->HasAura(24323))
+				{
+					ChatHandler(pPlayer).ParseCommands(".skaq9i21n3 24324");
+				}
+				else
+				{
+
+				}
+			}
+		}
+		else checkcount_1 -= uiDiff;
+
+		if (cancheck == true)
+		{
+			if (checktimer < uiDiff)
+			{
+				Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
+
+				for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+					{
+						Player* pPlayer = itr->getSource(); 
+						if (pPlayer->HasAura(24178) || pPlayer->HasAura(24327))
+						{
+							Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
+
+							for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+							{
+								if (pPlayer->CanFreeMove())
+								{
+									Player* attackPlayer = itr->getSource();
+									if (attackPlayer->isAlive())
+									pPlayer->CastSpell(pPlayer, 27383, true);
+									checktimer = 2500;
+								}
+							}
+						}
+					}
+				}
+			else checktimer -= uiDiff;
+		}
         if (m_uiBloodSiphonTimer < uiDiff)
         {
-			m_creature->MonsterSay("BLOOD_SIPHON is Comming!", LANG_UNIVERSAL);
-            if (DoCastSpellIfCan(m_creature, SPELL_BLOOD_SIPHON) == CAST_OK)
+			if (DoCastSpellIfCan(m_creature, SPELL_BLOOD_SIPHON) == CAST_OK)
+			{
+				Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
+
+				for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+				{
+					Player* pPlayer = itr->getSource();
+					ChatHandler(pPlayer).ParseCommands(".skaq9i21n3 6432");
+				}
+			}
                 m_uiBloodSiphonTimer = 90000;
         }
         else
@@ -179,22 +237,33 @@ struct boss_hakkarAI : public ScriptedAI
         // Cause Insanity Timer
         if (m_uiCauseInsanityTimer < uiDiff)
         {
+			cancheck = true;
+			checktimer = 2000;
             if (m_creature->getThreatManager().getThreatList().size() > 1)
             {
-                if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CAUSE_INSANITY) == CAST_OK)
-                    m_uiCauseInsanityTimer = urand(10000, 15000);
+				if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CAUSE_INSANITY) == CAST_OK)
+				{
+					m_uiCauseInsanityTimer = urand(10000, 15000);
+				}
             }
-            else // Solo case, check again later
-                m_uiCauseInsanityTimer = urand(35000, 43000);
+			else // Solo case, check again later
+			{
+				m_uiCauseInsanityTimer = urand(35000, 43000);
+			}   
         }
         else
             m_uiCauseInsanityTimer -= uiDiff;
 
 		if (m_hakasunchecktimer < uiDiff)
 		{
-			checksunnum();
-			if (m_suncount < 1)
-			m_creature->SummonCreature(CREATURE_HAKA_SUN, -11799.063f, -1683.7207f, 52.9f, 1.598f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+				if (auto creature = GetClosestCreatureWithEntry(m_creature, CREATURE_HAKA_SUN, 500.0f))
+				{
+					
+				}
+				else
+				{
+					m_creature->SummonCreature(CREATURE_HAKA_SUN, -11838.752930f, -1703.950684f, 40.748745f, 0.92f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+				}
 		}
 		else m_hakasunchecktimer -= uiDiff;
         // Will Of Hakkar Timer

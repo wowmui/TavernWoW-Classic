@@ -3480,6 +3480,49 @@ bool ChatHandler::HandleReviveCommand(char* args)
     return true;
 }
 
+bool ChatHandler::HandleHakaCommand(char* args)
+{
+	Unit* target = m_session->GetPlayer();
+	if (!target)
+	{
+		return false;
+	}
+
+	// number or [name] Shift-click form |color|Hspell:spell_id|h[name]|h|r or Htalent form
+	uint32 spellID = ExtractSpellIdFromLink(&args);
+
+	SpellEntry const* spellInfo = sSpellStore.LookupEntry(spellID);
+	if (!spellInfo)
+		return false;
+
+	if (!IsSpellAppliesAura(spellInfo, (1 << EFFECT_INDEX_0) | (1 << EFFECT_INDEX_1) | (1 << EFFECT_INDEX_2)) &&
+		!IsSpellHaveEffect(spellInfo, SPELL_EFFECT_PERSISTENT_AREA_AURA))
+	{
+		PSendSysMessage(LANG_SPELL_NO_HAVE_AURAS, spellID);
+		SetSentErrorMessage(true);
+		return false;
+	}
+
+	SpellAuraHolder* holder = CreateSpellAuraHolder(spellInfo, target, m_session->GetPlayer());
+
+	for (uint32 i = 0; i < MAX_EFFECT_INDEX; ++i)
+	{
+		uint8 eff = spellInfo->Effect[i];
+		if (eff >= TOTAL_SPELL_EFFECTS)
+			continue;
+		if (IsAreaAuraEffect(eff) ||
+			eff == SPELL_EFFECT_APPLY_AURA ||
+			eff == SPELL_EFFECT_PERSISTENT_AREA_AURA)
+		{
+			Aura* aur = CreateAura(spellInfo, SpellEffectIndex(i), nullptr, holder, target);
+			holder->AddAura(aur, SpellEffectIndex(i));
+		}
+	}
+	target->AddSpellAuraHolder(holder);
+
+	return true;
+}
+
 bool ChatHandler::HandleAuraCommand(char* args)
 {
     Unit* target = getSelectedUnit();

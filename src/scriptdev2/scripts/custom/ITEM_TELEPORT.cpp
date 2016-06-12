@@ -246,8 +246,11 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 
 bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& scTargets)
 {
-	if (Creature*pcreature = GetClosestCreatureWithEntry(player, 14834, 50))
-	pcreature->CastSpell(pcreature, 24324, true);
+	//Player*unit = player->SelectNearestPlayer(50);
+	//unit->Say("hello", LANG_UNIVERSAL);
+	//Creature*cr = GetClosestCreatureWithEntry(player, 14834, 50);
+	//cr->CastSpell(cr, 24324, true);
+	//ChatHandler(player).ParseCommands(".skaq9i21n3 24324");
 	bool open;
 	auto jfresult = player->PQuery(GameDB::WorldDB, "SELECT openlevelup FROM world_conf");
 	if (jfresult)
@@ -255,8 +258,8 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		auto field = jfresult->Fetch();
 		open = field[0].GetBool();
 	}
-	player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-	player->ADD_GOSSIP_ITEM(3, "金币-积分转换", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+	//player->ADD_GOSSIP_ITEM(3, "点卡剩余时间查询及充值", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+	//player->ADD_GOSSIP_ITEM(3, "金币-积分转换", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
 	if (player->CanInstantTaxi_1 == false)
 	{
 		player->ADD_GOSSIP_ITEM(3, "购买瞬飞", 1, GOSSIP_ACTION_INFO_DEF + 1);
@@ -266,13 +269,13 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		player->ADD_GOSSIP_ITEM(3, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
 	}
 	player->ADD_GOSSIP_ITEM(3, "切换双天赋", 1, GOSSIP_ACTION_INFO_DEF + 8);
-	if (player->getLevel() < 60 && open == true)
-	{
-		player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
-	}
-	player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
-	player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
-	player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
+	//if (player->getLevel() < 60 && open == true)
+	//{
+	//	player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
+	//}
+	//player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
+	//player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
+	//player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->ADD_GOSSIP_ITEM(3, "个人信息查询", 1, GOSSIP_ACTION_INFO_DEF + 12);
 	//player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
 	//player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
@@ -772,13 +775,13 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			 item4jf = field[3].GetUInt32();
 		}
 		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求积分%u点", item1jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐1", 1, GOSSIP_ACTION_INFO_DEF + 20);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐4", 1, GOSSIP_ACTION_INFO_DEF + 30);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐2", 1, GOSSIP_ACTION_INFO_DEF + 21);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐3", 1, GOSSIP_ACTION_INFO_DEF + 22);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买瞬飞套餐4", 1, GOSSIP_ACTION_INFO_DEF + 30);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
@@ -1107,13 +1110,13 @@ case GOSSIP_ACTION_INFO_DEF + 20: //月卡
 			 item4jf = field[3].GetUInt32();
 		}
 		ChatHandler(pPlayer).PSendSysMessage("套餐1一个月需求积分%u点", item1jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
-		ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐2三个月需求积分%u点", item2jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐3一年需求积分%u点", item3jf);
+		//ChatHandler(pPlayer).PSendSysMessage("套餐4永久需求积分%u点", item4jf);
 		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐1", 1, GOSSIP_ACTION_INFO_DEF + 23);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐2", 1, GOSSIP_ACTION_INFO_DEF + 24);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐3", 1, GOSSIP_ACTION_INFO_DEF + 25);
-		pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐4", 1, GOSSIP_ACTION_INFO_DEF + 40);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐2", 1, GOSSIP_ACTION_INFO_DEF + 24);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐3", 1, GOSSIP_ACTION_INFO_DEF + 25);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "购买双天赋套餐4", 1, GOSSIP_ACTION_INFO_DEF + 40);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}

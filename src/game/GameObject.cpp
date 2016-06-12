@@ -1140,7 +1140,12 @@ void GameObject::Use(Unit* user)
             // count charges
             if (goInfo->trap.charges > 0)
                 AddUse();
-
+			if (goInfo->id == 176511)
+			{
+				float x, y, z, o;
+				this->GetPosition(x, y, z);
+				SummonCreature(11262, x, y, z, 0.92f, TEMPSUMMON_CORPSE_DESPAWN, 0);
+			}
             if (IsBattleGroundTrap && user->GetTypeId() == TYPEID_PLAYER)
             {
                 // BattleGround gameobjects case

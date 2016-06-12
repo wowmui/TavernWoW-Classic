@@ -232,6 +232,10 @@ bool ChatHandler::HandleTfCommand(char* args)
 			freepoint = var.freepoint;
 		}
 		chr->SetFreeTalentPoints(freepoint);
+		if (freepoint == (chr->getLevel() - 9))
+		{
+			chr->resetTalents();
+		}
 		chr->GetSession()->SendNotification("|cff7FFF00Ìì¸³ÇĞ»»³É¹¦!|r");
 		chr->SaveToDB();
 		return true;

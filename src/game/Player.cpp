@@ -140,8 +140,8 @@ void Player::LoadCustom()
 		sftime1 = field[2].GetUInt32();
 		tftime1 = field[3].GetUInt32();
 	}
-	CanDoubleTalent = sftime > time(NULL) ? true : false;
-	CanInstantTaxi = tftime > time(NULL) ? true : false;
+	CanDoubleTalent = sftime > time(NULL) ? false : true;
+	CanInstantTaxi = tftime > time(NULL) ? false : true;
 	CanInstantTaxi_1 = sftime1 == 0 ? false : true;
 	CanDoubleTalent_1 = tftime1 == 0 ? false : true;
 }
@@ -16135,7 +16135,7 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
     ModifyMoney(-(int32)totalcost);
 	if (CanInstantTaxi)
 	{
-				TaxiNodesEntry const* lastnode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
+		TaxiNodesEntry const* lastnode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
 		m_taxi.ClearTaxiDestinations();
 		TeleportTo(lastnode->map_id, lastnode->x, lastnode->y, lastnode->z, GetOrientation());
 		return false;

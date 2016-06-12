@@ -51,7 +51,7 @@
 #include "movement/MoveSplineInit.h"
 #include "movement/MoveSpline.h"
 #include "CreatureLinkingMgr.h"
-
+#include "GridDefines.h"
 #include <math.h>
 #include <stdarg.h>
 
@@ -491,6 +491,27 @@ void Unit::RemoveSpellsCausingAura(AuraType auraType, SpellAuraHolder* except)
         RemoveAurasDueToSpell((*iter)->GetId(), except);
         iter = m_modAuras[auraType].begin();
     }
+}
+Player* Unit::SelectNearestPlayer(float distance) const
+{
+	CellPair pair(MaNGOS::ComputeCellPair(GetPositionX(), GetPositionY()));
+	Cell cell(pair);
+	cell.SetNoCreate();
+
+	Player* pPlayer = NULL;
+
+	{
+		MaNGOS::AnyPlayerInObjectRangeCheck creature_check(this, distance);
+		MaNGOS::PlayerSearcher<MaNGOS::AnyPlayerInObjectRangeCheck> searcher(pPlayer, creature_check);
+
+		TypeContainerVisitor<MaNGOS::PlayerSearcher<MaNGOS::AnyPlayerInObjectRangeCheck>, WorldTypeMapContainer> world_player_searcher(searcher);
+		TypeContainerVisitor<MaNGOS::PlayerSearcher<MaNGOS::AnyPlayerInObjectRangeCheck>, GridTypeMapContainer> grid_player_searcher(searcher);
+
+		cell.Visit(pair, world_player_searcher, *GetMap(), *this, distance);
+		cell.Visit(pair, grid_player_searcher, *GetMap(), *this, distance);
+	}
+
+	return pPlayer;
 }
 
 void Unit::RemoveSpellsCausingAura(AuraType auraType, ObjectGuid casterGuid)
@@ -8720,6 +8741,7 @@ Unit* Unit::SelectRandomFriendlyTarget(Unit* except /*= nullptr*/, float radius 
 
     return *tcIter;
 }
+
 
 bool Unit::hasNegativeAuraWithInterruptFlag(uint32 flag)
 {
