@@ -270,7 +270,7 @@ int Master::Run()
 	std::string serial = "错误代码:";
 	serial += Serial_str;
 	std::string realname = Serial_str;
-	if (realname != "1a4295ee7")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e
+	if (realname != "1cedfd35d")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e//1be0b050e
 	{
 		char Serial_s1[1024];
 		sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权码。");

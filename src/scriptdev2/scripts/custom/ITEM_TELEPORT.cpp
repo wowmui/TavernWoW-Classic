@@ -269,13 +269,13 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		player->ADD_GOSSIP_ITEM(3, "购买双天赋", 1, GOSSIP_ACTION_INFO_DEF + 2);
 	}
 	player->ADD_GOSSIP_ITEM(3, "切换双天赋", 1, GOSSIP_ACTION_INFO_DEF + 8);
-	//if (player->getLevel() < 60 && open == true)
-	//{
-	//	player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
-	//}
-	//player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
-	//player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
-	//player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
+	if (player->getLevel() < 60 && open == true)
+	{
+		player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
+	}
+	player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
+	player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
+	player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->ADD_GOSSIP_ITEM(3, "个人信息查询", 1, GOSSIP_ACTION_INFO_DEF + 12);
 	//player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
 	//player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);

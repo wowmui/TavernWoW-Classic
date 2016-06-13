@@ -140,8 +140,8 @@ void Player::LoadCustom()
 		sftime1 = field[2].GetUInt32();
 		tftime1 = field[3].GetUInt32();
 	}
-	CanDoubleTalent = sftime > time(NULL) ? false : true;
-	CanInstantTaxi = tftime > time(NULL) ? false : true;
+	CanDoubleTalent = tftime > time(NULL) ? true : false;
+	CanInstantTaxi = sftime > time(NULL) ? true : false;
 	CanInstantTaxi_1 = sftime1 == 0 ? false : true;
 	CanDoubleTalent_1 = tftime1 == 0 ? false : true;
 }
@@ -1690,7 +1690,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
         // It will be created in the WorldPortAck.
         DungeonPersistentState* state = GetBoundInstanceSaveForSelfOrGroup(mapid);
         Map* map = sMapMgr.FindMap(mapid, state ? state->GetInstanceId() : 0);
-        if (!map || map->CanEnter(this))
+        if (!map /*|| map->CanEnter(this)*/)
         {
             // lets reset near teleport flag if it wasn't reset during chained teleports
             SetSemaphoreTeleportNear(false);
