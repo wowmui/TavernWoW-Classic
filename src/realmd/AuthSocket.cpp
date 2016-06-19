@@ -402,12 +402,12 @@ bool AuthSocket::_HandleLogonChallenge()
 		pkt << (uint8)WOW_FAIL_UNKNOWN_ACCOUNT;
 		delete result;
 	}
-	else if /*点卡系统*/ (playertime < now) //点卡系统
-	{									   //点卡系统
-		pkt << (uint8)WOW_FAIL_NO_TIME;	  //点卡系统
-		DEBUG_LOG("[AuthChallenge] noplaytime account %s tries to login!", _login.c_str());//点卡系统
-		delete result;
-	}//点卡系统
+	//else if /*点卡系统*/ (playertime < now) //点卡系统
+	//{									   //点卡系统
+	//	pkt << (uint8)WOW_FAIL_NO_TIME;	  //点卡系统
+	//	DEBUG_LOG("[AuthChallenge] noplaytime account %s tries to login!", _login.c_str());//点卡系统
+	//	delete result;
+	//}//点卡系统
 	else
     {
         ///- Get the account details from the account table
