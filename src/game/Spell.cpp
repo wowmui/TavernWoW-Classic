@@ -1155,7 +1155,10 @@ void Spell::DoSpellHitOnUnit(Unit* unit, uint32 effectMask, bool isReflected)
                     unit->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
 
                 // caster can be detected but have stealth aura
-                m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+				//m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+				if (!(m_spellInfo->SpellFamilyName == SPELLFAMILY_ROGUE && (m_spellInfo->SpellFamilyFlags & UI64LIT(0x00000080) || m_spellInfo->SpellFamilyFlags & 2147483648)))
+					
+					m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
 
                 if (!unit->IsStandState() && !unit->hasUnitState(UNIT_STAT_STUNNED))
                     unit->SetStandState(UNIT_STAND_STATE_STAND);
@@ -2686,6 +2689,14 @@ void Spell::cast(bool skipCheck)
                 AddPrecastSpell(25771);                     // Forbearance
             break;
         }
+		case SPELLFAMILY_ROGUE:
+		{
+			 // exit stealth on sap when improved sap is not skilled
+			if (m_spellInfo->SpellFamilyFlags & UI64LIT(0x00000080) && m_caster->GetTypeId() == TYPEID_PLAYER && (!m_caster->GetAura(14076, SpellEffectIndex(0)) && !m_caster->GetAura(14094, SpellEffectIndex(0)) && !m_caster->GetAura(14095, SpellEffectIndex(0))))
+				m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+			break;
+		}
+
         case SPELLFAMILY_WARRIOR:
             break;
         case SPELLFAMILY_PRIEST:

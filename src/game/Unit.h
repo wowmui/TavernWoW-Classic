@@ -1390,6 +1390,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         bool HasInvisibilityAura() const { return HasAuraType(SPELL_AURA_MOD_INVISIBILITY); }
         bool isFeared()  const { return HasAuraType(SPELL_AURA_MOD_FEAR); }
         bool isInRoots() const { return HasAuraType(SPELL_AURA_MOD_ROOT); }
+		bool isConfused() const { return HasAuraType(SPELL_AURA_MOD_CONFUSE); }
         bool IsPolymorphed() const;
 
         bool isFrozen() const;
