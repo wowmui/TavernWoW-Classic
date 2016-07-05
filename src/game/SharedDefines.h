@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -501,7 +501,7 @@ enum PvpTeamIndex
 
 #define PVP_TEAM_COUNT    2
 
-enum SpellEffects
+enum SpellEffects  //技能类型注释
 {
     SPELL_EFFECT_NONE                      = 0,
     SPELL_EFFECT_INSTAKILL                 = 1,

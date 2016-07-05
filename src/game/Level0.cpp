@@ -244,23 +244,23 @@ bool ChatHandler::HandleTfCommand(char* args)
 
 bool ChatHandler::HandleHelpCommand(char* args)
 {
-    if (!*args)
-    {
-        ShowHelpForCommand(getCommandTable(), "help");
-        ShowHelpForCommand(getCommandTable(), "");
-    }
-    else
-    {
-        if (!ShowHelpForCommand(getCommandTable(), args))
-            SendSysMessage(LANG_NO_CMD);
-    }
-
+    //if (!*args)
+    //{
+    //    ShowHelpForCommand(getCommandTable(), "help");
+    //    ShowHelpForCommand(getCommandTable(), "");
+    //}
+    //else
+    //{
+    //    if (!ShowHelpForCommand(getCommandTable(), args))
+    //        SendSysMessage(LANG_NO_CMD);
+    //}
+	//
     return true;
 }
 
 bool ChatHandler::HandleCommandsCommand(char* /*args*/)
 {
-    ShowHelpForCommand(getCommandTable(), "");
+    //ShowHelpForCommand(getCommandTable(), "");
     return true;
 }
 
