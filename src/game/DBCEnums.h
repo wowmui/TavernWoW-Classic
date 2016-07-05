@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -130,7 +130,7 @@ enum SpellEffectIndex
 
 #define MAX_EFFECT_INDEX 3
 
-enum SpellFamily
+enum SpellFamily //修技能
 {
     SPELLFAMILY_GENERIC     = 0,
     SPELLFAMILY_UNK1        = 1,                            // events, holidays
