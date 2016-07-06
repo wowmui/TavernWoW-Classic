@@ -4740,6 +4740,8 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (pet->isAlive())
                     return SPELL_FAILED_ALREADY_HAVE_SUMMON;
 
+				if (!pet->isAlive())
+					pet->RemoveFromWorld();
                 break;
             }
             // Don't make this check for SPELL_EFFECT_SUMMON_CRITTER, SPELL_EFFECT_SUMMON_WILD or SPELL_EFFECT_SUMMON_GUARDIAN.
