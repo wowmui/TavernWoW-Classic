@@ -251,7 +251,7 @@ class MANGOS_DLL_SPEC Pet : public Creature
         bool unlearnSpell(uint32 spell_id, bool learn_prev, bool clear_ab = true);
         bool removeSpell(uint32 spell_id, bool learn_prev, bool clear_ab = true);
         void CleanupActionBar();
-
+		void CheckSpeed();
         PetSpellMap     m_spells;
         TeachSpellMap   m_teachspells;
         AutoSpellList   m_autospells;
@@ -276,6 +276,7 @@ class MANGOS_DLL_SPEC Pet : public Creature
 
         bool    m_removed;                                  // prevent overwrite pet state in DB at next Pet::Update if pet already removed(saved)
     protected:
+		uint32  m_CheckSpeedTimer;
         uint32  m_happinessTimer;
         uint32  m_loyaltyTimer;
         PetType m_petType;

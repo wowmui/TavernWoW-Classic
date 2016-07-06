@@ -52,7 +52,7 @@ uint32 const LevelStartLoyalty[6] =
 Pet::Pet(PetType type) :
     Creature(CREATURE_SUBTYPE_PET),
     m_TrainingPoints(0), m_resetTalentsCost(0), m_resetTalentsTime(0),
-    m_removed(false), m_happinessTimer(7500), m_loyaltyTimer(12000), m_petType(type), m_duration(0),
+	m_removed(false), m_happinessTimer(7500), m_loyaltyTimer(12000), m_petType(type), m_duration(0), m_CheckSpeedTimer(3000),
     m_loyaltyPoints(0), m_bonusdamage(0), m_auraUpdateMask(0), m_loading(false),
     m_petModeFlags(PET_MODE_DEFAULT)
 {
@@ -539,6 +539,18 @@ void Pet::SetDeathState(DeathState s)                       // overwrite virtual
     CastOwnerTalentAuras();
 }
 
+void Pet::CheckSpeed()
+{
+	Unit* owner = GetOwner();
+	if (!owner)
+		return;
+	if (owner->GetTypeId() != TYPEID_PLAYER)
+		return;
+	float speed = owner->GetSpeedRate(MOVE_RUN);
+	if (GetSpeedRate(MOVE_RUN) == speed)
+		return;
+	SetSpeedRate(MOVE_RUN, speed, true);
+}
 void Pet::Update(uint32 update_diff, uint32 diff)
 {
     if (m_removed)                                          // pet already removed, just wait in remove queue, no updates
@@ -622,6 +634,12 @@ void Pet::RegenerateAll(uint32 update_diff)
     else
         m_happinessTimer -= update_diff;
 
+	if (m_CheckSpeedTimer <= update_diff)
+	{
+		CheckSpeed();
+		m_CheckSpeedTimer = 2000;
+	}
+	else m_CheckSpeedTimer -= update_diff;
     if (m_loyaltyTimer <= update_diff)
     {
         TickLoyaltyChange();
