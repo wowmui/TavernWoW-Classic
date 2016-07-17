@@ -236,6 +236,7 @@ bool ChatHandler::HandleTfCommand(char* args)
 		{
 			chr->resetTalents();
 		}
+		chr->UpdateSkillsToMaxSkillsForLevel();
 		chr->GetSession()->SendNotification("|cff7FFF00Ìì¸³ÇĞ»»³É¹¦!|r");
 		chr->SaveToDB();
 		return true;

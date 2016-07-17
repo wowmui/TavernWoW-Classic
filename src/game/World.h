@@ -360,6 +360,35 @@ enum RealmZone
 };
 
 /// Storage class for commands issued for delayed execution
+struct CustomConfig
+{
+	uint32 rewhonordate;
+	uint32 fakepeopleonoroff;
+	uint32 peoplenub;
+	uint32 modifyskilljf;
+	uint32 learnskilljf;
+	uint32 bagjf;
+	uint32 levelupjf;
+	uint32 maxlevelupjf;
+	uint32 maxskillcount;
+	uint32 sfitem1jf;
+	uint32 sfitem2jf;
+	uint32 sfitem3jf;
+	uint32 tfitem1jf;
+	uint32 tfitem2jf;
+	uint32 tfitem3jf;
+	uint32 openlevelup;
+	uint32 item4sf;
+	uint32 item4tf;
+	uint32 allowintohonorhouse;
+	uint32 allowkillhonor;
+	uint32 moneyleveluponoroff;
+	uint32 modifyskillonoroff;
+	uint32 buyskillonoroff;
+	uint32 minhonorkill;
+	uint32 honorlessreduction;
+	uint32 dishonorkillduction;
+};
 struct CliCommandHolder
 {
     typedef void Print(void*, const char*);
@@ -387,13 +416,18 @@ struct CliCommandHolder
 class World
 {
     public:
+		std::map<uint32, CustomConfig>CustomConfiMap;
         static volatile uint32 m_worldLoopCounter;
 
         World();
         ~World();
 
+		//==Custom Load==//
+		void RewHonor();
+		void RewHonorIfIntime();
+		void LoadCustomSettings();
         void CleanupsBeforeStop();
-
+		CustomConfig GetCustomSettings(uint32 entry);
         WorldSession* FindSession(uint32 id) const;
         void AddSession(WorldSession* s);
         bool RemoveSession(uint32 id);
@@ -588,6 +622,7 @@ class World
         uint32 m_NextMaintenanceDate;
         uint32 m_MaintenanceTimeChecker;
 
+		bool m_canrew;
         time_t m_startTime;
         time_t m_gameTime;
         IntervalTimer m_timers[WUPDATE_COUNT];

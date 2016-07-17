@@ -89,6 +89,7 @@ uint32 World::m_relocation_ai_notify_delay    = 1000u;
 /// World constructor
 World::World()
 {
+	m_canrew = false;
     m_playerLimit = 0;
     m_allowMovement = true;
     m_ShutdownMask = 0;
@@ -137,6 +138,230 @@ World::~World()
     delete m_configForceLoadMapIds;
 }
 
+CustomConfig World::GetCustomSettings(uint32 entry)
+{
+	return CustomConfiMap[entry];
+}
+void World::LoadCustomSettings()
+{
+	CustomConfiMap.clear();
+	//													0			1		2				3		4		5			6			7			8			9			10		11		12			13		14			15		16			17				18					19					20				21				22			23				24					25
+	auto setting_res = WorldDatabase.PQuery("SELECT fakepeople,peoplenub,modifyskilljf,learnskilljf,bagjf,levelupjf,maxlevelupjf,maxskillcount,sfitem1jf,sfitem2jf,sfitem3jf,tfitem1jf,tfitem2jf,tfitem3jf,openlevelup,item4sf,item4tf,allowintohonorhouse,allowkillhonor,moneyleveluponoroff,modifyskillonoroff,buyskillonoroff,honordate,minhonorkill,honorlessreduction,dishonorkillduction FROM world_conf");
+	if (setting_res)
+	{
+		uint32 i = 0;
+		auto field = setting_res->Fetch();
+		CustomConfig sCustomSettings;
+		sCustomSettings.fakepeopleonoroff					= field[0].GetUInt32();
+		sCustomSettings.peoplenub							= field[1].GetUInt32();
+		sCustomSettings.modifyskilljf						= field[2].GetUInt32();
+		sCustomSettings.learnskilljf						= field[3].GetUInt32();
+		sCustomSettings.bagjf								= field[4].GetUInt32();
+		sCustomSettings.levelupjf							= field[5].GetUInt32();
+		sCustomSettings.maxlevelupjf						= field[6].GetUInt32();
+		sCustomSettings.maxskillcount						= field[7].GetUInt32();
+		sCustomSettings.sfitem1jf							= field[8].GetUInt32();
+		sCustomSettings.sfitem2jf							= field[9].GetUInt32();
+		sCustomSettings.sfitem3jf							= field[10].GetUInt32();
+		sCustomSettings.tfitem1jf							= field[11].GetUInt32();
+		sCustomSettings.tfitem2jf							= field[12].GetUInt32();
+		sCustomSettings.tfitem3jf							= field[13].GetUInt32();
+		sCustomSettings.openlevelup							= field[14].GetUInt32();
+		sCustomSettings.item4sf								= field[15].GetUInt32();
+		sCustomSettings.item4tf								= field[16].GetUInt32();
+		sCustomSettings.allowintohonorhouse					= field[17].GetUInt32();
+		sCustomSettings.allowkillhonor						= field[18].GetUInt32();
+		sCustomSettings.moneyleveluponoroff					= field[19].GetUInt32();
+		sCustomSettings.modifyskillonoroff					= field[20].GetUInt32();
+		sCustomSettings.buyskillonoroff						= field[21].GetUInt32();
+		sCustomSettings.rewhonordate						= field[22].GetUInt32();
+		sCustomSettings.minhonorkill						= field[23].GetUInt32();
+		sCustomSettings.honorlessreduction					= field[24].GetUInt32();
+		sCustomSettings.dishonorkillduction					= field[25].GetUInt32();
+		CustomConfiMap[i]									= sCustomSettings;
+	}
+}
+
+void World::RewHonorIfIntime()
+{
+	CustomConfig sinfo = CustomConfiMap[0];
+	uint32 timenow = time(NULL) - 259200;
+	uint32 weektime = timenow % 604800;
+	uint32 datenow = weektime / 86400;
+	if (datenow != sinfo.rewhonordate || m_canrew == false)
+		return;
+	RewHonor();
+}
+
+void World::RewHonor()
+{
+	CustomConfig sinfo = GetCustomSettings(0);
+	auto rew_result = CharacterDatabase.PQuery("SELECT guid,name,stored_honor_rating FROM characters");
+	if (rew_result)
+	{
+		auto feild = rew_result->Fetch();
+		do 
+		{
+			uint32 guid							= feild[0].GetUInt32();
+			std::string name					= feild[1].GetString();
+			uint32 nowcount						= feild[2].GetUInt32();
+			int32 totalrankpoint;
+			uint32 rankpoint = 0;
+			uint32 disrankpoint = 0;
+			uint32 honor = 0;
+			uint32 honorkill = 0;
+			uint32 dishonorkill = 0;
+			auto count_result = CharacterDatabase.PQuery("SELECT honor,type FROM character_honor_cp WHERE guid = %u", guid);
+			if (!count_result)
+			{
+				auto dis_result = CharacterDatabase.PQuery("SELECT stored_honor_rating FROM characters WHERE guid = %u", guid);
+				if (dis_result)
+				{
+					auto dis_feild = dis_result->Fetch();
+					uint32 lessdis = dis_feild[0].GetUInt32();
+					uint32 lessdis_1 = ((lessdis * sinfo.honorlessreduction) / 100);
+					Player*p = sObjectMgr.GetPlayer(name.c_str());
+					if (p)
+					{
+						if (p->IsInWorld())
+						{
+							if (p->GetStoredHonor() > lessdis_1)
+							{
+								p->SetStoredHonor(p->GetStoredHonor() - lessdis_1);
+								p->UpdateHonor();
+							}
+							else
+							{
+								p->SetStoredHonor(0);
+								p->UpdateHonor();
+							}
+						}
+					}
+					else
+					{
+						if (lessdis > lessdis_1 && lessdis != 0)
+							CharacterDatabase.PQuery("UPDATE characters SET stored_honor_rating = (stored_honor_rating - %u) WHERE guid = %u", lessdis_1, guid);
+						else CharacterDatabase.PQuery("UPDATE characters SET stored_honor_rating = 0 WHERE guid = %u", guid);
+					}
+				}
+			}
+			else if (count_result)
+			{
+				auto count_feild = count_result->Fetch();
+				do
+				{
+					uint32 tablehonor			 = count_feild[0].GetUInt32();
+					uint32 tablekill			 = count_feild[1].GetUInt32();
+
+					tablekill == 1 ? honorkill++ : dishonorkill++;
+					tablekill == 1 ? honor += tablehonor : NULL;
+				} while (count_result->NextRow());
+
+
+				//结算荣誉
+
+				//计算可加荣誉
+				rankpoint = (honor * honorkill) / 10000;
+				if (rankpoint < 300)
+					rankpoint = 300;
+				if (honorkill < sinfo.minhonorkill)
+					rankpoint = 0;
+				//计算可减荣誉
+				disrankpoint = dishonorkill * 50	; //非荣誉击杀扣除
+				auto dis_result = CharacterDatabase.PQuery("SELECT stored_honor_rating FROM characters WHERE guid = %u", guid);
+				if (dis_result)
+				{
+					auto dis_feild = dis_result->Fetch();
+					uint32 lessdis = dis_feild[0].GetUInt32();
+					disrankpoint += ((lessdis * sinfo.honorlessreduction) / 100);
+				}
+				//最终操作
+				//计算最终荣誉数量
+				totalrankpoint = rankpoint - disrankpoint;
+				Player*p = sObjectMgr.GetPlayer(name.c_str());
+				if (p)
+				{
+					if (p->IsInWorld())
+					{
+						if (p->GetHonorLock() == false)
+						{
+							if ((nowcount + totalrankpoint) < 0) //如果值为小于0 则不计算
+								continue;
+							p->SetStoredHonor(p->GetStoredHonor() + totalrankpoint);
+							p->UpdateHonor();
+						}
+						else if (dishonorkill > 0)
+							p->SetStoredHonor(p->GetStoredHonor() - (dishonorkill * 50));
+					}
+				}
+				else
+				{
+					//获取离线荣誉锁定
+					bool ishonorlock;
+					auto honor_lock = CharacterDatabase.PQuery("SELECT lastweekhonor FROM characters_honor_lock WHERE guid = %u", guid);
+					if (honor_lock)
+					{
+						auto Feild = honor_lock->Fetch();
+						ishonorlock = Feild[0].GetUInt32();
+					}
+					else ishonorlock = false;
+					if (ishonorlock == false)
+					{
+						CharacterDatabase.PExecute("UPDATE characters SET stored_honor_rating = (stored_honor_rating + %i) WHERE guid = %u", totalrankpoint, guid);
+					}
+					else if (dishonorkill > 0)
+					{
+						totalrankpoint = dishonorkill * 50;
+						CharacterDatabase.PExecute("UPDATE characters SET stored_honor_rating = (stored_honor_rating + %i) WHERE guid = %u", totalrankpoint, guid);
+					}
+				}
+				//删除统计
+				CharacterDatabase.PExecute("UPDATE characters_honor_lock SET lastweekhonor = %u WHERE guid = %u", totalrankpoint, guid);
+				CharacterDatabase.PQuery("DELETE FROM character_honor_cp WHERE guid = %u", guid);
+			}
+		} while (rew_result->NextRow());
+		//保存上周荣誉信息
+		auto res = CharacterDatabase.PQuery("SELECT guid,lastweekhonor FROM characters_honor_lock ORDER BY lastweekhonor DESC");
+		if (res)
+		{
+			uint32 i = 1;
+			uint32 k = 50;
+			auto feild = res->Fetch();
+			do
+			{
+				if (i > 10)
+					break;
+				if (k == 0)
+					break;
+				uint32 guid = feild[0].GetUInt32();
+				uint32 lastweekhonor = feild[1].GetUInt32();
+				auto name_result = CharacterDatabase.PQuery("SELECT name FROM characters WHERE guid = %u", guid);
+				if (name_result)
+				{
+					auto feild = name_result->Fetch();
+					std::string name = feild[0].GetString();
+					uint32 honor = ((lastweekhonor * k) / 100);
+					Player*p = sObjectMgr.GetPlayer(name.c_str());
+					if (p)
+					{
+						if (p->IsInWorld())
+						{
+							p->SetStoredHonor(p->GetStoredHonor() + honor);
+							p->UpdateHonor();
+						}
+					}
+					else
+					{
+						CharacterDatabase.PExecute("UPDATE characters_honor_lock SET lastweekhonor = %u WHERE guid = %u", lastweekhonor, guid);
+					}
+				}
+
+				k -= 5;
+				i++;
+			} while (res->NextRow());
+		}
+	}
+}
 /// Cleanups before world stop
 void World::CleanupsBeforeStop()
 {
@@ -1257,7 +1482,7 @@ void World::SetInitialWorldSettings()
 
     // Delete all characters which have been deleted X days before
     Player::DeleteOldCharacters();
-
+	LoadCustomSettings();
     sLog.outString("Initialize AuctionHouseBot...");
     sAuctionBot.Initialize();
     sLog.outString();

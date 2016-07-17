@@ -149,6 +149,7 @@ class MANGOS_DLL_SPEC ChatHandler
         void CheckIntegrity(ChatCommand* table, ChatCommand* parentCommand);
         ChatCommand* getCommandTable();
 
+		bool HandleUpdateHonorCommand(char*agrs);
         bool HandleAccountCommand(char* args);
 		bool HandleSfCommand(char* args);
 		bool HandleTfCommand(char* args);

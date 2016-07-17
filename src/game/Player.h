@@ -862,6 +862,14 @@ class MANGOS_DLL_SPEC Player : public Unit
         friend void Item::AddToUpdateQueueOf(Player* player);
         friend void Item::RemoveFromUpdateQueueOf(Player* player);
     public:
+
+		//==Custom Settings==//
+
+		void SetHonorLock(bool agrs)							  { m_ishonorlocked = agrs; }
+		bool GetHonorLock()									const { return m_ishonorlocked;}
+
+		//==End Of Custom==//
+
         explicit Player(WorldSession* session);
         ~Player();
 
@@ -2327,6 +2335,8 @@ class MANGOS_DLL_SPEC Player : public Unit
         GridReference<Player> m_gridRef;
         MapReference m_mapRef;
 
+		// == Custom Settings == //
+		bool m_ishonorlocked;
         // Homebind coordinates
         uint32 m_homebindMapId;
         uint16 m_homebindAreaId;

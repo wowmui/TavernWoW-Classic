@@ -3555,6 +3555,11 @@ bool ChatHandler::HandleHonorShow(char* /*args*/)
     return true;
 }
 
+bool ChatHandler::HandleUpdateHonorCommand(char*agrs)
+{
+	sWorld.RewHonor();
+	return true;
+}
 bool ChatHandler::HandleHonorAddCommand(char* args)
 {
     if (!*args)

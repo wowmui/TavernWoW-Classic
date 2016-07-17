@@ -64,6 +64,8 @@
 
 #include <cmath>
 
+#pragma execution_character_set("utf-8")
+
 #define ZONE_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
 #define PLAYER_SKILL_INDEX(x)       (PLAYER_SKILL_INFO_1_1 + ((x)*3))
@@ -144,6 +146,18 @@ void Player::LoadCustom()
 	CanInstantTaxi = sftime > time(NULL) ? true : false;
 	CanInstantTaxi_1 = sftime1 == 0 ? false : true;
 	CanDoubleTalent_1 = tftime1 == 0 ? false : true;
+	auto honor = CharacterDatabase.PQuery("SELECT islocked FROM characters_honor_lock WHERE guid = %u", GetGUIDLow());
+	if (honor)
+	{
+		auto feild = honor->Fetch();
+		m_ishonorlocked = feild[0].GetBool();
+	}
+	else
+	{
+		std::string name = GetName();
+		CharacterDatabase.PExecute("INSERT INTO characters_honor_lock (guid,name,islocked,lastweekhonor) VALUES (%u,'%s',%u,%u)", GetGUIDLow(), name.c_str(), 0, 0);
+		m_ishonorlocked = false;
+	}
 }
 
 bool Player::PExecute(GameDB db, const char* format, ...)
@@ -1584,6 +1598,21 @@ ChatTagFlags Player::GetChatTag() const
 
 bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options /*=0*/, AreaTrigger const* at /*=nullptr*/)
 {
+	if (mapid == 450 || mapid == 449)
+	{
+		bool allow;
+		auto result = WorldDatabase.PQuery("SELECT allowintohonorhouse FROM world_conf");
+		if (result)
+		{
+			auto feild = result->Fetch();
+			allow = feild[0].GetBool();
+		}
+		if (allow == 0)
+		{
+			GetSession()->SendNotification("ÈÙÓþ·¿ÔÝÎ´¿ªÆô");
+			return false;
+		}
+	}
     if (!MapManager::IsValidMapCoord(mapid, x, y, z, orientation))
     {
         sLog.outError("TeleportTo: invalid map %d or absent instance template.", mapid);
@@ -6155,17 +6184,35 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize)
     {
         Player* pVictim = (Player*)uVictim;
 
+		auto result = WorldDatabase.PQuery("SELECT allowkillhonor FROM world_conf");
+		if (result)
+		{
+			auto field = result->Fetch();
+			bool allow = field[0].GetBool();
+			if (allow == false)
+			{
+				GetSession()->SendNotification("ÈÙÓþÏµÍ³ÔÝÎ´¿ªÆô£¡");
+				return false;
+			}
+		}
+
         if (GetTeam() == pVictim->GetTeam())
             return false;
 
         if (getLevel() < (pVictim->getLevel() + 5))
         {
             AddHonorCP(MaNGOS::Honor::HonorableKillPoints(this, pVictim, groupsize), HONORABLE, pVictim->GetGUIDLow(), TYPEID_PLAYER);
-            return true;
         }
+		else if (getLevel() >= (pVictim->getLevel() + 5))
+		{
+			AddHonorCP(MaNGOS::Honor::DishonorableKillPoints(getLevel()), DISHONORABLE, pVictim->GetGUIDLow(), TYPEID_PLAYER);
+		}
+		return true;
     }
-
-    return false;
+	else
+	{
+		return false;
+	}
 }
 
 bool Player::AddHonorCP(float honor, uint8 type, uint32 victim, uint8 victimType)
@@ -14994,11 +15041,11 @@ void Player::_SaveHonorCP()
                 itr->state = HK_DELETED;
                 break;
             case HK_NEW:
-                CharacterDatabase.PExecute("INSERT INTO character_honor_cp (guid,victim_type,victim,honor,date,type) "
-                                           " VALUES (%u,%u,%u,%f,%u,%u)", GetGUIDLow(), itr->victimType, itr->victimID, itr->honorPoints , itr->date, itr->type);
-                itr->state = HK_UNCHANGED;
-                tempList.push_back(*itr);
-                break;
+				CharacterDatabase.PExecute("INSERT INTO character_honor_cp (guid,victim_type,victim,honor,date,type) "
+					" VALUES (%u,%u,%u,%f,%u,%u)", GetGUIDLow(), itr->victimType, itr->victimID, itr->honorPoints, itr->date, itr->type);
+				itr->state = HK_UNCHANGED;
+				tempList.push_back(*itr);
+				break;
             case HK_UNCHANGED:
                 tempList.push_back(*itr);
                 break;

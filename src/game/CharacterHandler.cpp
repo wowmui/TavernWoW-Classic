@@ -678,14 +678,14 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)   //玩家登录
 		//{
 		//	_player->GetSession()->KickPlayer();
 		//}
-		std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
-		str += "|cffADFF2F";
-		str += pCurrChar->GetName();
-		str += "进入了游戏！";
-		str += "|r";
-		WorldPacket adata(SMSG_NOTIFICATION, (str.size() + 1));
-		adata << str;
-		sWorld.SendGlobalMessage(&adata);
+		//std::string str = GetMangosString(LANG_GLOBAL_NOTIFY);
+		//str += "|cffADFF2F";
+		//str += pCurrChar->GetName();
+		//str += "进入了游戏！";
+		//str += "|r";
+		//WorldPacket adata(SMSG_NOTIFICATION, (str.size() + 1));
+		//adata << str;
+		//sWorld.SendGlobalMessage(&adata);
 }
 
 void WorldSession::HandleSetFactionAtWarOpcode(WorldPacket& recv_data)
