@@ -546,6 +546,8 @@ void Pet::CheckSpeed()
 		return;
 	if (owner->GetTypeId() != TYPEID_PLAYER)
 		return;
+	if (isInCombat() || owner->isInCombat())
+		return;
 	float speed = owner->GetSpeedRate(MOVE_RUN);
 	if (GetSpeedRate(MOVE_RUN) == speed)
 		return;
@@ -623,6 +625,13 @@ void Pet::RegenerateAll(uint32 update_diff)
     else
         m_regenTimer -= update_diff;
 
+	if (m_CheckSpeedTimer <= update_diff)
+	{
+		CheckSpeed();
+		m_CheckSpeedTimer = 3000;
+	}
+	else m_CheckSpeedTimer -= update_diff;
+
     if (getPetType() != HUNTER_PET)
         return;
 
@@ -633,13 +642,6 @@ void Pet::RegenerateAll(uint32 update_diff)
     }
     else
         m_happinessTimer -= update_diff;
-
-	if (m_CheckSpeedTimer <= update_diff)
-	{
-		CheckSpeed();
-		m_CheckSpeedTimer = 2000;
-	}
-	else m_CheckSpeedTimer -= update_diff;
     if (m_loyaltyTimer <= update_diff)
     {
         TickLoyaltyChange();
@@ -657,6 +659,7 @@ void Pet::LooseHappiness()
     int32 addvalue = (140 >> GetLoyaltyLevel()) * 125;      // value is 70/35/17/8/4 (per min) * 1000 / 8 (timer 7.5 secs)
     if (isInCombat())                                       // we know in combat happiness fades faster, multiplier guess
         addvalue = int32(addvalue * 1.5);
+	addvalue = (addvalue / 2);
     ModifyPower(POWER_HAPPINESS, -addvalue);
 }
 
@@ -1099,9 +1102,18 @@ bool Pet::InitStatsForLevel(uint32 petlevel, Unit* owner)
 
     SetModifierValue(UNIT_MOD_ARMOR, BASE_VALUE, float(petlevel * 50));
 
-    SetAttackTime(BASE_ATTACK, BASE_ATTACK_TIME);
-    SetAttackTime(OFF_ATTACK, BASE_ATTACK_TIME);
-    SetAttackTime(RANGED_ATTACK, BASE_ATTACK_TIME);
+	if (uint32 attacktime = sObjectMgr.GetCreatureTemplate(GetEntry())->MeleeBaseAttackTime)
+	{
+		SetAttackTime(BASE_ATTACK, attacktime);
+		SetAttackTime(OFF_ATTACK, attacktime);
+		SetAttackTime(RANGED_ATTACK, attacktime);
+	}
+	else
+	{
+		SetAttackTime(BASE_ATTACK, BASE_ATTACK_TIME);
+		SetAttackTime(OFF_ATTACK, BASE_ATTACK_TIME);
+		SetAttackTime(RANGED_ATTACK, BASE_ATTACK_TIME);
+	}
 
     SetFloatValue(UNIT_MOD_CAST_SPEED, 1.0);
 

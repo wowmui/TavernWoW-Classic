@@ -273,10 +273,21 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 	{
 		player->ADD_GOSSIP_ITEM(3, "秒升满级", 1, GOSSIP_ACTION_INFO_DEF + 3);
 	}
-	player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
-	player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
+	auto jf_xresult = player->PQuery(GameDB::WorldDB, "SELECT moneyleveluponoroff,buyskillonoroff FROM world_conf");
+	if (jf_xresult)
+	{
+		auto field = jf_xresult->Fetch();
+		bool onorof = field[0].GetBool();
+		bool onoroff = field[1].GetBool();
+		if (onoroff != 0)
+		player->ADD_GOSSIP_ITEM(3, "购买商业技能", 1, GOSSIP_ACTION_INFO_DEF + 5);
+		if (onorof != 0)
+		player->ADD_GOSSIP_ITEM(3, "提升商业技能", 1, GOSSIP_ACTION_INFO_DEF + 6);
+	}
 	player->ADD_GOSSIP_ITEM(3, "购买背包", 1, GOSSIP_ACTION_INFO_DEF + 7);
 	player->ADD_GOSSIP_ITEM(3, "个人信息查询", 1, GOSSIP_ACTION_INFO_DEF + 12);
+	player->ADD_GOSSIP_ITEM(3, "总荣誉排行榜", 1, GOSSIP_ACTION_INFO_DEF + 97);
+	player->ADD_GOSSIP_ITEM(3, "上周荣誉排行榜", 1, GOSSIP_ACTION_INFO_DEF + 98);
 	player->ADD_GOSSIP_ITEM(3, "阿拉希队列", 1, GOSSIP_ACTION_INFO_DEF + 9);
 	player->ADD_GOSSIP_ITEM(3, "战歌队列", 1, GOSSIP_ACTION_INFO_DEF + 10);
 	player->ADD_GOSSIP_ITEM(3, "奥山队列", 1, GOSSIP_ACTION_INFO_DEF + 11);
@@ -285,7 +296,49 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 }
 bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint32 action)
 {
-	uint32 jf;
+	if (action == 1097)
+	{
+		auto result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT name,stored_honor_rating FROM characters ORDER BY stored_honor_rating DESC");
+		if (result)
+		{
+			uint32 i = 1;
+			auto feild = result->Fetch();
+			do
+			{
+				std::string name = feild[0].GetString();
+				int32 count = feild[1].GetInt32();
+				if (i > 15)
+					break;
+				char msg[255];
+				snprintf(msg, 255, "|cff1F1F1F排名:|r|cffEE0000%u|r\n|cff4876FF玩家名称:|r[|cffCD4F39%s|r]\n|cffEE00EE军衔分数:|r[%i]\n",i, name.c_str(), count);
+				pPlayer->ADD_GOSSIP_ITEM(0, msg, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10000 + i);
+				i++;
+			} while (result->NextRow());
+			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		}
+	}
+	if (action == 1098)
+	{
+		auto result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT name,lastweekhonor FROM characters_honor_lock ORDER BY lastweekhonor DESC");
+		if (result)
+		{
+			uint32 i = 1;
+			auto feild = result->Fetch();
+			do
+			{
+				std::string name = feild[0].GetString();
+				int32 count = feild[1].GetInt32();
+				if (i > 15)
+					break;
+				char msg[255];
+				snprintf(msg, 255, "|cff1F1F1F排名:|r|cffEE0000%u|r\n|cff4876FF玩家名称:|r[|cffCD4F39%s|r]\n|cffEE00EE军衔分数:|r[%i]\n", i, name.c_str(), count);
+				pPlayer->ADD_GOSSIP_ITEM(0, msg, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10000 + i);
+				i++;
+			} while (result->NextRow());
+			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
+		}
+	}
+	int32 jf;
 	uint32 skillcount = 0;
 	uint32 maxskilljf = 0;
 	uint32 learnskilljf;
@@ -746,7 +799,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		  ItemPosCountVec dest;
 		  uint32 noSpaceForCount = 0;
 		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", bagjf, pPlayer->GetSession()->GetAccountId());
-		  InventoryResult msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99004, 1, &noSpaceForCount);
+		  InventoryResult msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99007, 1, &noSpaceForCount);
 		  if (msg != EQUIP_ERR_OK)
 		  {
 			  ChatHandler(pPlayer).PSendSysMessage("背包空间不足！");
@@ -754,7 +807,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		  }
 		  else
 		  {
-			  Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99004));
+			  Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99007));
 			  pPlayer->SendNewItem(Pitem, 1, true, false);
 			  ChatHandler(pPlayer).PSendSysMessage("购买成功！");
 			  break;
@@ -1441,7 +1494,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 }
 	case GOSSIP_ACTION_INFO_DEF + 3:
 	{
-		pPlayer->ADD_GOSSIP_ITEM(0, "使用金币秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 930);
+		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT moneyleveluponoroff FROM world_conf");
+		auto field = jf_xresult->Fetch();
+		bool onorof = field[0].GetBool();
+		if (onorof != 0)
+			pPlayer->ADD_GOSSIP_ITEM(0, "使用金币秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 930);
 		pPlayer->ADD_GOSSIP_ITEM(0, "使用积分秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 931);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
@@ -1460,8 +1517,6 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = (((60 - oldlevel) * levelupjf)*200000);
-		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT maxlevelupjf FROM world_conf");
-		auto field = jf_xresult->Fetch();
 		pPlayer->CLOSE_GOSSIP_MENU();
 		if (pPlayer->GetMoney() >= uplevel)
 		{
@@ -1485,6 +1540,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = ((60 - oldlevel) * levelupjf);
+		auto jf_xresult = pPlayer->PQuery(GameDB::WorldDB, "SELECT maxlevelupjf FROM world_conf");
+		auto field = jf_xresult->Fetch();
+		uint32 max = field[0].GetUInt32();
+		if (max != 0)
+			uplevel = max;
 		pPlayer->ADD_GOSSIP_ITEM(0, "确认秒升", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000014);
 		pPlayer->ADD_GOSSIP_ITEM(0, "取消", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000015);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
@@ -1531,7 +1591,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升制皮", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000106);
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升钓鱼", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000107);
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升附魔", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000108);
-		pPlayer->ADD_GOSSIP_ITEM(3, "提升珠宝", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000109);
+		//pPlayer->ADD_GOSSIP_ITEM(3, "提升珠宝", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000109);
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升工程", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000110);
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升急救", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000111);
 		pPlayer->ADD_GOSSIP_ITEM(3, "提升草药", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000112);
@@ -1541,7 +1601,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000101:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(186))
+		if (jf >= maxskilljf && pPlayer->HasSkill(186))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(186, 300, 300);
@@ -1557,7 +1617,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000102:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(171))
+		if (jf >= maxskilljf && pPlayer->HasSkill(171))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(171, 300, 300);
@@ -1573,7 +1633,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000103:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(164))
+		if (jf >= maxskilljf && pPlayer->HasSkill(164))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(164, 300, 300);
@@ -1589,7 +1649,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000104:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(197))
+		if (jf >= maxskilljf && pPlayer->HasSkill(197))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(197, 300, 300);
@@ -1605,7 +1665,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000105:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(185))
+		if (jf >= maxskilljf && pPlayer->HasSkill(185))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(185, 300, 300);
@@ -1621,7 +1681,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000106:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(165))
+		if (jf >= maxskilljf && pPlayer->HasSkill(165))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(165, 300, 300);
@@ -1637,7 +1697,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000107:
 	{
-		if (jf >= 100 && pPlayer->HasSkill(356))
+		if (jf >= maxskilljf && pPlayer->HasSkill(356))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(356, 300, 300);
@@ -1653,7 +1713,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000108:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(333))
+		if (jf >= maxskilljf && pPlayer->HasSkill(333))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(333, 300, 300);
@@ -1669,7 +1729,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000109:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(755))
+		if (jf >= maxskilljf && pPlayer->HasSkill(755))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(755, 300, 300);
@@ -1685,7 +1745,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000110:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(202))
+		if (jf >= maxskilljf && pPlayer->HasSkill(202))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(202, 300, 300);
@@ -1701,7 +1761,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000111:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(129))
+		if (jf >= maxskilljf && pPlayer->HasSkill(129))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(129, 300, 300);
@@ -1717,7 +1777,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000112:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(182))
+		if (jf >= maxskilljf && pPlayer->HasSkill(182))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(182, 300, 300);
@@ -1733,7 +1793,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 	}
 	case GOSSIP_ACTION_INFO_DEF + 1000113:
 	{
-		if (jf >= 50 && pPlayer->HasSkill(393))
+		if (jf >= maxskilljf && pPlayer->HasSkill(393))
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(393, 300, 300);
