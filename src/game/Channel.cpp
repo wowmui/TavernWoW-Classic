@@ -53,6 +53,7 @@ Channel::Channel(const std::string& name)
 
 void Channel::Join(Player* player, const char* password)
 {
+	uint32 id = this->GetChannelId();
     ObjectGuid guid = player->GetObjectGuid();
 
     WorldPacket data;
