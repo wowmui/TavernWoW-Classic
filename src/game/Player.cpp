@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1609,7 +1609,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 		}
 		if (allow == 0)
 		{
-			GetSession()->SendNotification("ÈÙÓş·¿ÔİÎ´¿ªÆô");
+			GetSession()->SendNotification("è£èª‰æˆ¿æš‚æœªå¼€å¯");
 			return false;
 		}
 	}
@@ -4630,6 +4630,8 @@ void Player::UpdateLocalChannels(uint32 newZone)
         if ((ch->flags & 4) == 4)                           // global channel without zone name in pattern
             continue;
 
+		if (ch->ChannelID == 1) //ä¿®å¤è‡ªåŠ¨ç¦»å¼€å¯»æ±‚ç»„é˜Ÿé¢‘é“
+			continue;
         //  new channel
         char new_channel_name_buf[100];
         snprintf(new_channel_name_buf, 100, ch->pattern[m_session->GetSessionDbcLocale()], current_zone_name.c_str());
@@ -6191,7 +6193,7 @@ bool Player::RewardHonor(Unit* uVictim, uint32 groupsize)
 			bool allow = field[0].GetBool();
 			if (allow == false)
 			{
-				GetSession()->SendNotification("ÈÙÓşÏµÍ³ÔİÎ´¿ªÆô£¡");
+				GetSession()->SendNotification("è£èª‰ç³»ç»Ÿæš‚æœªå¼€å¯ï¼");
 				return false;
 			}
 		}
