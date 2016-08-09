@@ -35,8 +35,18 @@
 #include "Util.h"
 #include "QuestDef.h"
 #include "SpellMgr.h"
+#include "WorldSession.h"
 
 
+
+bool ChatHandler::HandleSjcommand(char * agrs)
+{
+	Player* _player = m_session->GetPlayer();
+	if (!agrs)
+		return false;
+	sWorld.SendALLMessage(LANG_SYSTEMMESSAGE, agrs, _player);
+	return true;
+}
 
 bool ChatHandler::HandleLjwlajiAddCommand(char* args)
 {

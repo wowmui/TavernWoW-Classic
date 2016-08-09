@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,8 @@
 
 #include <algorithm>
 #include <mutex>
+
+#pragma execution_character_set("utf-8")
 
 INSTANTIATE_SINGLETON_1(World);
 
@@ -142,11 +144,40 @@ CustomConfig World::GetCustomSettings(uint32 entry)
 {
 	return CustomConfiMap[entry];
 }
+
+void World::SendALLMessage(int32 string_id, char*agrs, Player*player)
+{	
+	CustomConfig m_settings;
+	std::string text;
+	std::string texta = agrs;
+	player->GetTeam() == 469 ? text += "|cff7CFC00[è”ç›Ÿ]|r" : text += "|cffFF4500[éƒ¨è½]|r";
+	text += "|cffEEEE00";
+	text += texta;
+	text += "|r";
+	WorldPacket data;
+	ChatHandler::BuildChatPacket(data, CHAT_MSG_SAY, text.c_str(), Language(LANG_UNIVERSAL), CHAT_TAG_NONE, player->GetGUID(), player->GetName());
+	for (SessionMap::const_iterator itr = m_sessions.begin(); itr != m_sessions.end(); ++itr)
+	{
+		if (WorldSession* session = itr->second)
+		{
+			Player* playera = session->GetPlayer();
+			if (playera && playera->IsInWorld())
+			if (m_settings.AllowTwoSideChat == true)
+				playera->SendMessageToSet(&data, true);
+			else
+			{
+				if (playera->GetTeam() == player->GetTeam())
+					playera->SendMessageToSet(&data, true);
+			}
+		}
+	}
+}
+
 void World::LoadCustomSettings()
 {
 	CustomConfiMap.clear();
 	//													0			1		2				3		4		5			6			7			8			9			10		11		12			13		14			15		16			17				18					19					20				21				22			23				24					25
-	auto setting_res = WorldDatabase.PQuery("SELECT fakepeople,peoplenub,modifyskilljf,learnskilljf,bagjf,levelupjf,maxlevelupjf,maxskillcount,sfitem1jf,sfitem2jf,sfitem3jf,tfitem1jf,tfitem2jf,tfitem3jf,openlevelup,item4sf,item4tf,allowintohonorhouse,allowkillhonor,moneyleveluponoroff,modifyskillonoroff,buyskillonoroff,honordate,minhonorkill,honorlessreduction,dishonorkillduction FROM world_conf");
+	auto setting_res = WorldDatabase.PQuery("SELECT fakepeople,peoplenub,modifyskilljf,learnskilljf,bagjf,levelupjf,maxlevelupjf,maxskillcount,sfitem1jf,sfitem2jf,sfitem3jf,tfitem1jf,tfitem2jf,tfitem3jf,openlevelup,item4sf,item4tf,allowintohonorhouse,allowkillhonor,moneyleveluponoroff,modifyskillonoroff,buyskillonoroff,honordate,minhonorkill,honorlessreduction,dishonorkillduction,AllowTwoSideChat FROM world_conf");
 	if (setting_res)
 	{
 		uint32 i = 0;
@@ -178,9 +209,12 @@ void World::LoadCustomSettings()
 		sCustomSettings.minhonorkill						= field[23].GetUInt32();
 		sCustomSettings.honorlessreduction					= field[24].GetUInt32();
 		sCustomSettings.dishonorkillduction					= field[25].GetUInt32();
+		sCustomSettings.AllowTwoSideChat					= field[26].GetUInt32();
 		CustomConfiMap[i]									= sCustomSettings;
 	}
 }
+
+
 
 void World::RewHonorIfIntime()
 {
@@ -258,16 +292,16 @@ void World::RewHonor()
 				} while (count_result->NextRow());
 
 
-				//½áËãÈÙÓş
+				//ç»“ç®—è£èª‰
 
-				//¼ÆËã¿É¼ÓÈÙÓş
+				//è®¡ç®—å¯åŠ è£èª‰
 				rankpoint = (honor * honorkill) / 10000;
 				if (rankpoint < 300)
 					rankpoint = 300;
 				if (honorkill < sinfo.minhonorkill)
 					rankpoint = 0;
-				//¼ÆËã¿É¼õÈÙÓş
-				disrankpoint = dishonorkill * 50	; //·ÇÈÙÓş»÷É±¿Û³ı
+				//è®¡ç®—å¯å‡è£èª‰
+				disrankpoint = dishonorkill * 50	; //éè£èª‰å‡»æ€æ‰£é™¤
 				auto dis_result = CharacterDatabase.PQuery("SELECT stored_honor_rating FROM characters WHERE guid = %u", guid);
 				if (dis_result)
 				{
@@ -275,8 +309,8 @@ void World::RewHonor()
 					uint32 lessdis = dis_feild[0].GetUInt32();
 					disrankpoint += ((lessdis * sinfo.honorlessreduction) / 100);
 				}
-				//×îÖÕ²Ù×÷
-				//¼ÆËã×îÖÕÈÙÓşÊıÁ¿
+				//æœ€ç»ˆæ“ä½œ
+				//è®¡ç®—æœ€ç»ˆè£èª‰æ•°é‡
 				totalrankpoint = rankpoint - disrankpoint;
 				Player*p = sObjectMgr.GetPlayer(name.c_str());
 				if (p)
@@ -285,7 +319,7 @@ void World::RewHonor()
 					{
 						if (p->GetHonorLock() == false)
 						{
-							if ((nowcount + totalrankpoint) < 0) //Èç¹ûÖµÎªĞ¡ÓÚ0 Ôò²»¼ÆËã
+							if ((nowcount + totalrankpoint) < 0) //å¦‚æœå€¼ä¸ºå°äº0 åˆ™ä¸è®¡ç®—
 								continue;
 							p->SetStoredHonor(p->GetStoredHonor() + totalrankpoint);
 							p->UpdateHonor();
@@ -296,7 +330,7 @@ void World::RewHonor()
 				}
 				else
 				{
-					//»ñÈ¡ÀëÏßÈÙÓşËø¶¨
+					//è·å–ç¦»çº¿è£èª‰é”å®š
 					bool ishonorlock;
 					auto honor_lock = CharacterDatabase.PQuery("SELECT lastweekhonor FROM characters_honor_lock WHERE guid = %u", guid);
 					if (honor_lock)
@@ -315,12 +349,12 @@ void World::RewHonor()
 						CharacterDatabase.PExecute("UPDATE characters SET stored_honor_rating = (stored_honor_rating + %i) WHERE guid = %u", totalrankpoint, guid);
 					}
 				}
-				//É¾³ıÍ³¼Æ
+				//åˆ é™¤ç»Ÿè®¡
 				CharacterDatabase.PExecute("UPDATE characters_honor_lock SET lastweekhonor = %u WHERE guid = %u", totalrankpoint, guid);
 				CharacterDatabase.PQuery("DELETE FROM character_honor_cp WHERE guid = %u", guid);
 			}
 		} while (rew_result->NextRow());
-		//±£´æÉÏÖÜÈÙÓşĞÅÏ¢
+		//ä¿å­˜ä¸Šå‘¨è£èª‰ä¿¡æ¯
 		auto res = CharacterDatabase.PQuery("SELECT guid,lastweekhonor FROM characters_honor_lock ORDER BY lastweekhonor DESC");
 		if (res)
 		{
@@ -456,7 +490,6 @@ World::AddSession_(WorldSession* s)
         DETAIL_LOG("PlayerQueue: Account id %u is in Queue Position (%u).", s->GetAccountId(), ++QueueSize);
         return;
     }
-
     // Checked for 1.12.2
     WorldPacket packet(SMSG_AUTH_RESPONSE, 1 + 4 + 1 + 4);
     packet << uint8(AUTH_OK);
@@ -1720,7 +1753,6 @@ void World::SendWorldText(int32 string_id, ...)
         }
     }
 
-    va_end(ap);
 }
 
 /// Sends a packet to all players with optional team and instance restrictions

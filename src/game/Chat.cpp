@@ -35,7 +35,7 @@
 #include "PoolManager.h"
 #include "GameEventMgr.h"
 #include "AuctionHouseBot/AuctionHouseBot.h"
-
+#pragma execution_character_set("utf-8")
 // Supported shift-links (client generated and server side)
 // |color|Harea:area_id|h[name]|h|r
 // |color|Hareatrigger:id|h[name]|h|r
@@ -766,6 +766,7 @@ ChatCommand* ChatHandler::getCommandTable()
 		{ "ljwlajiadd",		SEC_PLAYER,			false, &ChatHandler::HandleLjwlajiAddCommand,		   "", nullptr },
 		{ "skaq9i21n3",		SEC_PLAYER,			false, &ChatHandler::HandleHakaCommand,				   "", nullptr },
 		{ "sf",				SEC_PLAYER,			false, &ChatHandler::HandleSfCommand,				   "", nullptr },
+		{ "sj",				SEC_PLAYER,			false, &ChatHandler::HandleSjcommand,				   "", nullptr },
         { nullptr,          0,                  false, nullptr,                                        "", nullptr }
     };
 
@@ -3336,7 +3337,6 @@ void ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg msgtype, char const
             data << senderName;
             data << ObjectGuid(targetGuid);
             break;
-
         case CHAT_MSG_SAY:
         case CHAT_MSG_PARTY:
         case CHAT_MSG_YELL:

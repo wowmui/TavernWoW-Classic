@@ -864,10 +864,15 @@ class MANGOS_DLL_SPEC Player : public Unit
     public:
 
 		//==Custom Settings==//
-
+		bool death_pet;
+		uint32 deathpetguid;
+		void sendallmessage(int32 string_id, char*agrs, Player*player);
 		void SetHonorLock(bool agrs)							  { m_ishonorlocked = agrs; }
 		bool GetHonorLock()									const { return m_ishonorlocked;}
-
+		uint32 fallcheckcount;
+		uint32 m_fallchecktimer;
+		bool Cancheckfall;
+		float lastZpoint;
 		//==End Of Custom==//
 
         explicit Player(WorldSession* session);

@@ -4555,7 +4555,12 @@ void Spell::EffectLeapForward(SpellEffectIndex eff_idx)
         isPrevInLiquid = isInLiquid;
         prevPos = nextPos;
     }
-
+	if (m_spellInfo->Id == 1953 && m_caster->GetAreaId() == 1497)
+	{
+		float z = m_caster->GetPositionZ();
+		unitTarget->NearTeleportTo(nextPos.x, nextPos.y, z, orientation, unitTarget == m_caster);
+	}
+	else
     unitTarget->NearTeleportTo(nextPos.x, nextPos.y, nextPos.z, orientation, unitTarget == m_caster);
 }
 
@@ -4675,7 +4680,12 @@ void Spell::EffectCharge(SpellEffectIndex /*eff_idx*/)
 
     // Only send MOVEMENTFLAG_WALK_MODE, client has strange issues with other move flags
     m_caster->MonsterMoveWithSpeed(x, y, z, 24.f, true, true);
-
+	if (m_spellInfo->Id == 100 || m_spellInfo->Id == 6178 || m_spellInfo->Id == 11578)
+	{
+		m_caster->GetCharmerOrOwnerPlayerOrPlayerItself()->Cancheckfall = true;
+		m_caster->GetCharmerOrOwnerPlayerOrPlayerItself()->lastZpoint = z;
+		m_caster->GetCharmerOrOwnerPlayerOrPlayerItself()->m_fallchecktimer = 3000;
+	}
     // not all charge effects used in negative spells
     if (unitTarget != m_caster && !IsPositiveSpell(m_spellInfo->Id))
         m_caster->Attack(unitTarget, true);
@@ -4815,13 +4825,18 @@ void Spell::EffectSummonDeadPet(SpellEffectIndex /*eff_idx*/)
         return;
     Player* _player = (Player*)m_caster;
     Pet* pet = _player->GetPet();
-    if (!pet)
-        return;
+	if (!pet)
+	{
+		pet = new Pet;
+		// petentry==0 for hunter "call pet" (current pet summoned if any)
+		if (!m_caster->GetTypeId() == TYPEID_PLAYER && !pet->LoadPetFromDB((Player*)m_caster, 0))
+			return;
+	}
     if (pet->isAlive())
         return;
     if (damage < 0)
         return;
-
+	_player->GetMap()->CreatureRelocation(pet, _player->GetPositionX(), _player->GetPositionY(), _player->GetPositionZ(), _player->GetOrientation());
     pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
     pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
     pet->SetDeathState(ALIVE);

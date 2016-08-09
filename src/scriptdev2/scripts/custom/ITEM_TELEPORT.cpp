@@ -246,9 +246,7 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 
 bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& scTargets)
 {
-	//Player*unit = player->SelectNearestPlayer(50);
 	//unit->Say("hello", LANG_UNIVERSAL);
-	//Creature*cr = GetClosestCreatureWithEntry(player, 14834, 50);
 	//cr->CastSpell(cr, 24324, true);
 	//ChatHandler(player).ParseCommands(".skaq9i21n3 24324");
 	bool open;
@@ -383,7 +381,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		skillcount++;
 	}
-	if (pPlayer->HasSpell(7414))
+	if (pPlayer->HasSpell(7411))
 	{
 		skillcount++;
 	}
@@ -629,6 +627,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 	{
 		pPlayer->CLOSE_GOSSIP_MENU();
 		ChatHandler(pPlayer).PSendSysMessage("尊敬的玩家%s您好！",pPlayer->GetName());
+		ChatHandler(pPlayer).PSendSysMessage("您的角色guid为[%u]！", pPlayer->GetGUIDLow());
 		ChatHandler(pPlayer).PSendSysMessage("您剩余游戏积分为%u点",jf);
 		uint32 sftime = 0;
 		uint32 tftime = 0;
@@ -1830,7 +1829,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 			{
 				pPlayer->ADD_GOSSIP_ITEM(0, "学习制皮", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 55);
 			}
-			if (!pPlayer->HasSpell(7414))
+			if (!pPlayer->HasSpell(7411))
 			{
 				pPlayer->ADD_GOSSIP_ITEM(0, "学习附魔", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 56);
 			}
@@ -2073,7 +2072,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //双天赋终身卡
 		else
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
-			pPlayer->learnSpell(7414, false);
+			pPlayer->learnSpell(7411, false);
 			pPlayer->Say("购买成功！", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;

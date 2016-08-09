@@ -2637,7 +2637,6 @@ void Spell::cast(bool skipCheck)
         SetExecutedCurrently(false);
         return;
     }
-
     // update pointers base at GUIDs to prevent access to already nonexistent object
     UpdatePointers();
 
@@ -3895,6 +3894,14 @@ Unit* Spell::GetPrefilledUnitTargetOrUnitTarget(SpellEffectIndex effIndex) const
 
 SpellCastResult Spell::CheckCast(bool strict)
 {
+	if (m_spellInfo->Id == 883)
+	{
+		if (Player*_player = m_caster->GetCharmerOrOwnerPlayerOrPlayerItself())
+		{
+			if (_player->death_pet == true)
+				return SPELL_FAILED_TARGETS_DEAD;
+		}
+	}
     // check cooldowns to prevent cheating (ignore passive spells, that client side visual only)
     if (m_caster->GetTypeId() == TYPEID_PLAYER && !m_spellInfo->HasAttribute(SPELL_ATTR_PASSIVE) &&
             ((Player*)m_caster)->HasSpellCooldown(m_spellInfo->Id))
@@ -4735,14 +4742,26 @@ SpellCastResult Spell::CheckCast(bool strict)
             case SPELL_EFFECT_SUMMON_DEAD_PET:
             {
                 Creature* pet = m_caster->GetPet();
-                if (!pet)
-                    return SPELL_FAILED_NO_PET;
-
-                if (pet->isAlive())
-                    return SPELL_FAILED_ALREADY_HAVE_SUMMON;
-
-				if (!pet->isAlive())
-					pet->RemoveFromWorld();
+				if (!pet)
+				{
+					if (Player*_player = m_caster->GetCharmerOrOwnerPlayerOrPlayerItself())
+					{
+						if (_player->death_pet == false)
+						{
+							return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+						}
+					}
+					if (m_caster->GetTypeId() == TYPEID_PLAYER)
+					{
+						 Pet*pet = new Pet;
+						 pet->LoadPetFromDB((Player*)m_caster, 0);
+						 pet->DealDamage(pet, pet->GetHealth(), nullptr, DIRECT_DAMAGE, SPELL_SCHOOL_MASK_NONE, nullptr, false);
+						 if (!pet)
+							 return SPELL_FAILED_NO_PET;
+						//if (pet->isAlive())
+						//	 return SPELL_FAILED_ALREADY_HAVE_SUMMON;
+					}
+				}
                 break;
             }
             // Don't make this check for SPELL_EFFECT_SUMMON_CRITTER, SPELL_EFFECT_SUMMON_WILD or SPELL_EFFECT_SUMMON_GUARDIAN.

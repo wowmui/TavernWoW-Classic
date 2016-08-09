@@ -127,12 +127,25 @@ static const uint32 corpseReclaimDelay[MAX_DEATH_COUNT] = {30, 60, 120};
 //== PlayerTaxi ================================================
 
 
+void Player::sendallmessage(int32 string_id, char*agrs, Player*player)
+{
+	sWorld.SendALLMessage(LANG_SYSTEMMESSAGE, agrs, this);
+	return;
+}
 void Player::LoadCustom()
 {
 	uint32 sftime = 0;
 	uint32 tftime = 0;
 	uint32 sftime1 = 0;
 	uint32 tftime1 = 0;
+	if (GetItemCount(106948) == 0)
+	{
+		ItemPosCountVec dest;
+		uint32 noSpaceForCount = 0;
+		InventoryResult msg = CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 106948, 1, &noSpaceForCount);
+		Item* Pitem = StoreNewItem(dest, 106948, true, Item::GenerateItemRandomPropertyId(106948));
+		SendNewItem(Pitem, 1, true, false);
+	}
 	auto level_result = CharacterDatabase.PQuery("SELECT sftime,tftime,sftime1,tftime1 FROM characters_limited WHERE guid = %u", GetGUIDLow());
 	if (level_result)
 	{
@@ -471,9 +484,12 @@ UpdateMask Player::updateVisualBits;
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
     m_transport = 0;
-
+	death_pet = false;
     m_speakTime = 0;
     m_speakCount = 0;
+	fallcheckcount = 0;
+	m_fallchecktimer = 3000;
+	Cancheckfall = false;
 
     m_objectType |= TYPEMASK_PLAYER;
     m_objectTypeId = TYPEID_PLAYER;
@@ -1403,6 +1419,35 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 
     if (IsHasDelayedTeleport())
         TeleportTo(m_teleport_dest, m_teleport_options);
+
+		if (Cancheckfall == true)
+		{
+		if (m_fallchecktimer <= p_time)
+			{
+			fallcheckcount++;
+			if (fallcheckcount <= 3 /*自己设定检查次数*/)
+				{
+				float nowpos = GetPositionZ();
+				float disdance = abs(nowpos - lastZpoint);
+				if (disdance > 8.0f/*自己设定检测距离*/)
+					{
+					TeleportTo(GetMapId(), GetPositionX(), GetPositionY(), lastZpoint, GetOrientation());
+					Cancheckfall = false;
+					m_fallchecktimer = 500;//第二次检查延迟0.5秒
+					}
+				}
+			else /*超过次数不检查 并重置*/
+				{
+				fallcheckcount = 0;
+				Cancheckfall = false;
+				m_fallchecktimer = 3000;
+				}
+			}
+		else m_fallchecktimer -= p_time;
+		}
+
+	if (HasAura(22799) && GetMapId() != 429)
+		RemoveAurasDueToSpell(22799);
 }
 
 void Player::SetDeathState(DeathState s)

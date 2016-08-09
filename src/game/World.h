@@ -388,6 +388,7 @@ struct CustomConfig
 	uint32 minhonorkill;
 	uint32 honorlessreduction;
 	uint32 dishonorkillduction;
+	uint8 AllowTwoSideChat;
 };
 struct CliCommandHolder
 {
@@ -421,9 +422,9 @@ class World
 
         World();
         ~World();
-
 		//==Custom Load==//
 		void RewHonor();
+		void SendALLMessage(int32 string_id, char*agrs, Player*player);
 		void RewHonorIfIntime();
 		void LoadCustomSettings();
         void CleanupsBeforeStop();

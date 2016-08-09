@@ -87,6 +87,22 @@ void Pet::RemoveFromWorld()
     if (IsInWorld())
         GetMap()->GetObjectsStore().erase<Pet>(GetObjectGuid(), (Pet*)nullptr);
 
+	if (!isAlive())
+	{
+		SetDeathState(DEAD);
+		if (GetCharmerOrOwnerPlayerOrPlayerItself())
+		{
+			if (Player*player = GetCharmerOrOwnerPlayerOrPlayerItself())
+			{
+				player->death_pet = true;
+			}
+		}
+	}
+	else
+	{
+		if (Player*player = GetCharmerOrOwnerPlayerOrPlayerItself())
+			player->death_pet = false;
+	}
     ///- Don't call the function for Creature, normal mobs + totems go in a different storage
     Unit::RemoveFromWorld();
 }
@@ -548,6 +564,8 @@ void Pet::CheckSpeed()
 		return;
 	if (isInCombat() || owner->isInCombat())
 		return;
+	if (HasAura(23099) || HasAura(23109) || HasAura(23110))
+		return;
 	float speed = owner->GetSpeedRate(MOVE_RUN);
 	if (GetSpeedRate(MOVE_RUN) == speed)
 		return;
@@ -574,6 +592,10 @@ void Pet::Update(uint32 update_diff, uint32 diff)
         {
             // unsummon pet that lost owner
             Unit* owner = GetOwner();
+			if (owner->GetTypeId() == TYPEID_PLAYER)
+			{
+				owner->GetCharmerOrOwnerPlayerOrPlayerItself()->deathpetguid = owner->GetCharmerOrOwnerPlayerOrPlayerItself()->GetPetGuid();
+			}
             if (!owner ||
                     (!IsWithinDistInMap(owner, GetMap()->GetVisibilityDistance()) && (owner->GetCharmGuid() && (owner->GetCharmGuid() != GetObjectGuid()))) ||
                     (isControlled() && !owner->GetPetGuid()))
@@ -638,7 +660,7 @@ void Pet::RegenerateAll(uint32 update_diff)
     if (m_happinessTimer <= update_diff)
     {
         LooseHappiness();
-        m_happinessTimer = 7500;
+        m_happinessTimer = 3600000;
     }
     else
         m_happinessTimer -= update_diff;

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of the CMaNGOS Project. See AUTHORS file for Copyright information
  *
  * This program is free software; you can redistribute it and/or modify
@@ -57,6 +57,8 @@
 #include "MoveMap.h"                                        // for mmap manager
 #include "PathFinder.h"                                     // for mmap commands
 #include "movement/MoveSplineInit.h"
+
+#pragma execution_character_set("utf-8")
 
 static uint32 ReputationRankStrIndex[MAX_REPUTATION_RANK] =
 {
@@ -3558,6 +3560,9 @@ bool ChatHandler::HandleHonorShow(char* /*args*/)
 bool ChatHandler::HandleUpdateHonorCommand(char*agrs)
 {
 	sWorld.RewHonor();
+	sWorld.SendWorldText(LANG_SYSTEMMESSAGE, "cffFFB90F荣誉更新完毕!|r");
+	sWorld.SendWorldText(LANG_SYSTEMMESSAGE, "cffFFB90F荣誉更新完毕!|r");
+	sWorld.SendWorldText(LANG_SYSTEMMESSAGE, "cffFFB90F荣誉更新完毕!|r");
 	return true;
 }
 bool ChatHandler::HandleHonorAddCommand(char* args)

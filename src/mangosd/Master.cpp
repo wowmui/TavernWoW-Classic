@@ -239,18 +239,18 @@ int Master::Run()
 	//
     //    sLog.outString("Daemon PID: %u\n", pid);
     //}
-	//uint32 nowtime = time(NULL);;
-	//uint32 limittime = 1468425599;
-	//uint32 day = (1464195599 - nowtime);
-	//if (nowtime > limittime)
-	//{
-	//	char Serial_s1[1024];
-	//	sLog.outString("%u,%u", nowtime,limittime);
-	//	sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权。");
-	//	getchar();
-	//	World::StopNow(ERROR_EXIT_CODE);
-	//	return World::GetExitCode();
-	//}
+	uint32 nowtime = time(NULL);;
+	uint32 limittime = 1470931199;
+	uint32 day = (1470931199 - nowtime);
+	if (nowtime > limittime)
+	{
+		char Serial_s1[1024];
+		sLog.outString("%u,%u", nowtime,limittime);
+		sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权。");
+		getchar();
+		World::StopNow(ERROR_EXIT_CODE);
+		return World::GetExitCode();
+	}
 	char     m_Volume[256];//防盗
 	char     m_FileSysName[256];
 	DWORD   m_SerialNum;////防盗  
@@ -270,7 +270,7 @@ int Master::Run()
 	std::string serial = "错误代码:";
 	serial += Serial_str;
 	std::string realname = Serial_str;
-	if (realname != "1e561")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e//1be0b050e//1347c154a//12093762e
+	if (realname != "1c62fa37e")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e//1be0b050e//1347c154a//12093762e
 	{
 	  if (realname != "1a4295ee7")
 		{

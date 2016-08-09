@@ -938,7 +938,7 @@ bool Creature::CanTrainAndResetTalentsOf(Player* pPlayer) const
            && pPlayer->getClass() == GetCreatureInfo()->TrainerClass;
 }
 
-void Creature::PrepareBodyLootState()
+void Creature::PrepareBodyLootState()  //µôÂäĞÅÏ¢
 {
     // loot may already exist (pickpocket case)
     delete loot;
