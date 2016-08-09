@@ -1,4 +1,4 @@
-#include "precompiled.h"
+ï»¿#include "precompiled.h"
 #include "Spell.h"
 #include "Common.h"
 #include "WorldPacket.h"
@@ -52,7 +52,7 @@ bool ItemUse_frozen_transform(Player* player, Item* _Item, SpellCastTargets cons
 	{
 		if (!item->GetProto())
 		{
-			player->GetSession()->SendNotification(_ToUTF8("ÎïÆ·´íÎó1"));
+			player->GetSession()->SendNotification(_ToUTF8("ç‰©å“é”™è¯¯1"));
 			return true;
 		}
 		switch (item->GetProto()->InventoryType)
@@ -106,59 +106,59 @@ bool ItemUse_frozen_transform(Player* player, Item* _Item, SpellCastTargets cons
 		{
 			if (!titem->GetProto())
 			{
-				player->GetSession()->SendNotification(_ToUTF8("ÎïÆ·´íÎó2"));
+				player->GetSession()->SendNotification(_ToUTF8("ç‰©å“é”™è¯¯2"));
 				return true;
 			}
 
 			if (titem->GetProto()->Class != item->GetProto()->Class || titem->GetProto()->SubClass != item->GetProto()->SubClass)
 			{
-				player->GetSession()->SendNotification(_ToUTF8("ÄãÉíÉÏÃ»ÓĞ×°±¸´ËÀàÎïÆ·."));
+				player->GetSession()->SendNotification(_ToUTF8("ä½ èº«ä¸Šæ²¡æœ‰è£…å¤‡æ­¤ç±»ç‰©å“."));
 				return true;
 			}
-			std::string text = _ToUTF8("µã»÷´Ë´¦°Ñ");
+			std::string text = _ToUTF8("ç‚¹å‡»æ­¤å¤„æŠŠ");
 			switch (slot)
 			{
 			case EQUIPMENT_SLOT_HEAD:
-				text += _ToUTF8(_ToUTF8("Í·²¿µÄ"));
+				text += _ToUTF8(_ToUTF8("å¤´éƒ¨çš„"));
 				break;
 			case EQUIPMENT_SLOT_SHOULDERS:
-				text += _ToUTF8("¼ç²¿µÄ");
+				text += _ToUTF8("è‚©éƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_CHEST:
-				text += _ToUTF8("ĞØ²¿µÄ");
+				text += _ToUTF8("èƒ¸éƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_WAIST:
-				text += _ToUTF8("Ñü²¿µÄ");
+				text += _ToUTF8("è…°éƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_LEGS:
-				text += _ToUTF8("ÍÈ²¿µÄ");
+				text += _ToUTF8("è…¿éƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_FEET:
-				text += _ToUTF8("½Å²¿µÄ");
+				text += _ToUTF8("è„šéƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_WRISTS:
-				text += _ToUTF8("ÊÖÍóµÄ");
+				text += _ToUTF8("æ‰‹è…•çš„");
 				break;
 			case EQUIPMENT_SLOT_HANDS:
-				text += _ToUTF8("ÊÖ²¿µÄ");
+				text += _ToUTF8("æ‰‹éƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_BACK:
-				text += _ToUTF8("±³²¿µÄ");
+				text += _ToUTF8("èƒŒéƒ¨çš„");
 				break;
 			case EQUIPMENT_SLOT_MAINHAND:
-				text += _ToUTF8("Ö÷ÊÖµÄ");
+				text += _ToUTF8("ä¸»æ‰‹çš„");
 				break;
 			case EQUIPMENT_SLOT_OFFHAND:
-				text += _ToUTF8("¸±ÊÖµÄ");
+				text += _ToUTF8("å‰¯æ‰‹çš„");
 				break;
 			case EQUIPMENT_SLOT_RANGED:
-				text += _ToUTF8("Ô¶³ÌµÄ");
+				text += _ToUTF8("è¿œç¨‹çš„");
 				break;
 			}
 
 			text += "[";
 			text += titem->GetProto()->Name1;
-			text += _ToUTF8("]»Ã»¯Îª£º[");
+			text += _ToUTF8("]å¹»åŒ–ä¸ºï¼š[");
 			text += item->GetProto()->Name1;
 			text += "]";
 			player->scriptslot = slot;
@@ -166,14 +166,14 @@ bool ItemUse_frozen_transform(Player* player, Item* _Item, SpellCastTargets cons
 			player->ADD_GOSSIP_ITEM(10, text.c_str(), 1, GOSSIP_ACTION_INFO_DEF);
 		}
 		else
-			player->GetSession()->SendNotification(_ToUTF8("ÄãÉíÉÏÃ»ÓĞ×°±¸´ËÀàÎïÆ·."));
+			player->GetSession()->SendNotification(_ToUTF8("ä½ èº«ä¸Šæ²¡æœ‰è£…å¤‡æ­¤ç±»ç‰©å“."));
 	}
 	else
 	{
-		player->GetSession()->SendNotification(_ToUTF8("ÎïÆ·´íÎó0"));
+		player->GetSession()->SendNotification(_ToUTF8("ç‰©å“é”™è¯¯0"));
 		return true;
 	}
-	player->ADD_GOSSIP_ITEM(10, _ToUTF8("¹Ø±Õ"), 1, GOSSIP_ACTION_INFO_DEF + 1);
+	player->ADD_GOSSIP_ITEM(10, _ToUTF8("å…³é—­"), 1, GOSSIP_ACTION_INFO_DEF + 1);
 	player->PlayerTalkClass->SendGossipMenu(822, _Item->GetGUID());
 	return true;
 }
@@ -210,12 +210,12 @@ bool ItemUse_frozen_detransform(Player* player, Item* pItem, SpellCastTargets co
 	if (Item * item = scTargets.getItemTarget())
 	{
 		player->scriptitemguid = item->GetGUID();
-		std::string text = _ToUTF8("µã»÷´Ë´¦°Ñ[");
+		std::string text = _ToUTF8("ç‚¹å‡»æ­¤å¤„æŠŠ[");
 		text += item->GetProto()->Name1;
-		text += _ToUTF8("]µÄ»Ã»¯Ğ§¹ûÇå³ı¡£");
+		text += _ToUTF8("]çš„å¹»åŒ–æ•ˆæœæ¸…é™¤ã€‚");
 		player->ADD_GOSSIP_ITEM(10, text.c_str(), 1, GOSSIP_ACTION_INFO_DEF + 1);
 	}
-	player->ADD_GOSSIP_ITEM(10, _ToUTF8("¹Ø±Õ"), 1, GOSSIP_ACTION_INFO_DEF + 1);
+	player->ADD_GOSSIP_ITEM(10, _ToUTF8("å…³é—­"), 1, GOSSIP_ACTION_INFO_DEF + 1);
 	player->PlayerTalkClass->SendGossipMenu(822, pItem->GetGUID());
 	return true;
 }
@@ -256,20 +256,20 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		auto field = jfresult->Fetch();
 		open = field[0].GetBool();
 	}
-	//player->ADD_GOSSIP_ITEM(3, "µã¿¨Ê£ÓàÊ±¼ä²éÑ¯¼°³äÖµ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
-	//player->ADD_GOSSIP_ITEM(3, "½ğ±Ò-»ı·Ö×ª»»", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
+	//player->ADD_GOSSIP_ITEM(3, "ç‚¹å¡å‰©ä½™æ—¶é—´æŸ¥è¯¢åŠå……å€¼", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 13);
+	//player->ADD_GOSSIP_ITEM(3, "é‡‘å¸-ç§¯åˆ†è½¬æ¢", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 14);
 	if (player->CanInstantTaxi_1 == false)
 	{
-		player->ADD_GOSSIP_ITEM(3, "¹ºÂòË²·É", 1, GOSSIP_ACTION_INFO_DEF + 1);
+		player->ADD_GOSSIP_ITEM(3, "è´­ä¹°ç¬é£", 1, GOSSIP_ACTION_INFO_DEF + 1);
 	}
 	if (player->CanDoubleTalent_1 == false)
 	{
-		player->ADD_GOSSIP_ITEM(3, "¹ºÂòË«Ìì¸³", 1, GOSSIP_ACTION_INFO_DEF + 2);
+		player->ADD_GOSSIP_ITEM(3, "è´­ä¹°åŒå¤©èµ‹", 1, GOSSIP_ACTION_INFO_DEF + 2);
 	}
-	player->ADD_GOSSIP_ITEM(3, "ÇĞ»»Ë«Ìì¸³", 1, GOSSIP_ACTION_INFO_DEF + 8);
+	player->ADD_GOSSIP_ITEM(3, "åˆ‡æ¢åŒå¤©èµ‹", 1, GOSSIP_ACTION_INFO_DEF + 8);
 	if (player->getLevel() < 60 && open == true)
 	{
-		player->ADD_GOSSIP_ITEM(3, "ÃëÉıÂú¼¶", 1, GOSSIP_ACTION_INFO_DEF + 3);
+		player->ADD_GOSSIP_ITEM(3, "ç§’å‡æ»¡çº§", 1, GOSSIP_ACTION_INFO_DEF + 3);
 	}
 	auto jf_xresult = player->PQuery(GameDB::WorldDB, "SELECT moneyleveluponoroff,buyskillonoroff FROM world_conf");
 	if (jf_xresult)
@@ -278,17 +278,17 @@ bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& 
 		bool onorof = field[0].GetBool();
 		bool onoroff = field[1].GetBool();
 		if (onoroff != 0)
-		player->ADD_GOSSIP_ITEM(3, "¹ºÂòÉÌÒµ¼¼ÄÜ", 1, GOSSIP_ACTION_INFO_DEF + 5);
+		player->ADD_GOSSIP_ITEM(3, "è´­ä¹°å•†ä¸šæŠ€èƒ½", 1, GOSSIP_ACTION_INFO_DEF + 5);
 		if (onorof != 0)
-		player->ADD_GOSSIP_ITEM(3, "ÌáÉıÉÌÒµ¼¼ÄÜ", 1, GOSSIP_ACTION_INFO_DEF + 6);
+		player->ADD_GOSSIP_ITEM(3, "æå‡å•†ä¸šæŠ€èƒ½", 1, GOSSIP_ACTION_INFO_DEF + 6);
 	}
-	player->ADD_GOSSIP_ITEM(3, "¹ºÂò±³°ü", 1, GOSSIP_ACTION_INFO_DEF + 7);
-	player->ADD_GOSSIP_ITEM(3, "¸öÈËĞÅÏ¢²éÑ¯", 1, GOSSIP_ACTION_INFO_DEF + 12);
-	player->ADD_GOSSIP_ITEM(3, "×ÜÈÙÓşÅÅĞĞ°ñ", 1, GOSSIP_ACTION_INFO_DEF + 97);
-	player->ADD_GOSSIP_ITEM(3, "ÉÏÖÜÈÙÓşÅÅĞĞ°ñ", 1, GOSSIP_ACTION_INFO_DEF + 98);
-	player->ADD_GOSSIP_ITEM(3, "°¢À­Ï£¶ÓÁĞ", 1, GOSSIP_ACTION_INFO_DEF + 9);
-	player->ADD_GOSSIP_ITEM(3, "Õ½¸è¶ÓÁĞ", 1, GOSSIP_ACTION_INFO_DEF + 10);
-	player->ADD_GOSSIP_ITEM(3, "°ÂÉ½¶ÓÁĞ", 1, GOSSIP_ACTION_INFO_DEF + 11);
+	player->ADD_GOSSIP_ITEM(3, "è´­ä¹°èƒŒåŒ…", 1, GOSSIP_ACTION_INFO_DEF + 7);
+	player->ADD_GOSSIP_ITEM(3, "ä¸ªäººä¿¡æ¯æŸ¥è¯¢", 1, GOSSIP_ACTION_INFO_DEF + 12);
+	player->ADD_GOSSIP_ITEM(3, "æ€»è£èª‰æ’è¡Œæ¦œ", 1, GOSSIP_ACTION_INFO_DEF + 97);
+	player->ADD_GOSSIP_ITEM(3, "ä¸Šå‘¨è£èª‰æ’è¡Œæ¦œ", 1, GOSSIP_ACTION_INFO_DEF + 98);
+	player->ADD_GOSSIP_ITEM(3, "é˜¿æ‹‰å¸Œé˜Ÿåˆ—", 1, GOSSIP_ACTION_INFO_DEF + 9);
+	player->ADD_GOSSIP_ITEM(3, "æˆ˜æ­Œé˜Ÿåˆ—", 1, GOSSIP_ACTION_INFO_DEF + 10);
+	player->ADD_GOSSIP_ITEM(3, "å¥¥å±±é˜Ÿåˆ—", 1, GOSSIP_ACTION_INFO_DEF + 11);
 	player->SEND_GOSSIP_MENU(822,_Item->GetGUID());
 	return true;
 }
@@ -308,7 +308,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 				if (i > 15)
 					break;
 				char msg[255];
-				snprintf(msg, 255, "|cff1F1F1FÅÅÃû:|r|cffEE0000%u|r\n|cff4876FFÍæ¼ÒÃû³Æ:|r[|cffCD4F39%s|r]\n|cffEE00EE¾üÏÎ·ÖÊı:|r[%i]\n",i, name.c_str(), count);
+				snprintf(msg, 255, "|cff1F1F1Fæ’å:|r|cffEE0000%u|r\n|cff4876FFç©å®¶åç§°:|r[|cffCD4F39%s|r]\n|cffEE00EEå†›è¡”åˆ†æ•°:|r[%i]\n",i, name.c_str(), count);
 				pPlayer->ADD_GOSSIP_ITEM(0, msg, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10000 + i);
 				i++;
 			} while (result->NextRow());
@@ -329,7 +329,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 				if (i > 15)
 					break;
 				char msg[255];
-				snprintf(msg, 255, "|cff1F1F1FÅÅÃû:|r|cffEE0000%u|r\n|cff4876FFÍæ¼ÒÃû³Æ:|r[|cffCD4F39%s|r]\n|cffEE00EE¾üÏÎ·ÖÊı:|r[%i]\n", i, name.c_str(), count);
+				snprintf(msg, 255, "|cff1F1F1Fæ’å:|r|cffEE0000%u|r\n|cff4876FFç©å®¶åç§°:|r[|cffCD4F39%s|r]\n|cffEE00EEå†›è¡”åˆ†æ•°:|r[%i]\n", i, name.c_str(), count);
 				pPlayer->ADD_GOSSIP_ITEM(0, msg, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10000 + i);
 				i++;
 			} while (result->NextRow());
@@ -420,10 +420,10 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 												pPlayer->Say("yes it's actived", LANG_UNIVERSAL);
 											}
 										}
-		pPlayer->ADD_GOSSIP_ITEM(3, "×ª»»±ÈÀı30½ğ:1»ı·Ö", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1400);
-		pPlayer->ADD_GOSSIP_ITEM(3, "×ª»»1µã", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1401);
-		pPlayer->ADD_GOSSIP_ITEM(3, "×ª»»10µã", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
-		pPlayer->ADD_GOSSIP_ITEM(3, "×ª»»50µã", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è½¬æ¢æ¯”ä¾‹30é‡‘:1ç§¯åˆ†", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1400);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è½¬æ¢1ç‚¹", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1401);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è½¬æ¢10ç‚¹", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è½¬æ¢50ç‚¹", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1402);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
@@ -434,11 +434,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		{
 		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 1) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
 		  pPlayer->ModifyMoney(-300000);
-		  ChatHandler(pPlayer).PSendSysMessage("×ª»»³É¹¦£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è½¬æ¢æˆåŠŸï¼");
 		}
 		else
 		{
-		  ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		return true;
 	}
@@ -449,11 +449,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		{
 		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 10) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
 		  pPlayer->ModifyMoney(-3000000);
-		  ChatHandler(pPlayer).PSendSysMessage("×ª»»³É¹¦£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è½¬æ¢æˆåŠŸï¼");
 		}
 		else
 		{
-		  ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		return true;
 	}
@@ -464,27 +464,27 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		{
 		  pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf + 50) WHERE id = %u",pPlayer->GetSession()->GetAccountId());
 		  pPlayer->ModifyMoney(-15000000);
-		  ChatHandler(pPlayer).PSendSysMessage("×ª»»³É¹¦£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è½¬æ¢æˆåŠŸï¼");
 		}
 		else
 		{
-		  ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+		  ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 13:
 	{
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼ÒÄúºÃ£¡");
-		ChatHandler(pPlayer).PSendSysMessage("Ìì¿¨·ÑÓÃÎª10½ğ±ÒÒ»ÕÅ£¡");
-		ChatHandler(pPlayer).PSendSysMessage("ÖÜ¿¨·ÑÓÃÎª70½ğ±ÒÒ»ÕÅ£¡");
-		ChatHandler(pPlayer).PSendSysMessage("ÔÂ¿¨·ÑÓÃÎª300½ğ±ÒÒ»ÕÅ£¡");
-		pPlayer->ADD_GOSSIP_ITEM(3, "²éÑ¯Ê£ÓàÊ±¼ä", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30009);
-		pPlayer->ADD_GOSSIP_ITEM(3, "´¢ÖµÌì¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30100);
-		pPlayer->ADD_GOSSIP_ITEM(3, "´¢ÖµÖÜ¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30101);
-		pPlayer->ADD_GOSSIP_ITEM(3, "´¢ÖµÔÂ¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30102);
-		pPlayer->ADD_GOSSIP_ITEM(3, "¹ºÂòÌì¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30103);
-		pPlayer->ADD_GOSSIP_ITEM(3, "¹ºÂòÖÜ¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30104);
-		pPlayer->ADD_GOSSIP_ITEM(3, "¹ºÂòÔÂ¿¨", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30105);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶æ‚¨å¥½ï¼");
+		ChatHandler(pPlayer).PSendSysMessage("å¤©å¡è´¹ç”¨ä¸º10é‡‘å¸ä¸€å¼ ï¼");
+		ChatHandler(pPlayer).PSendSysMessage("å‘¨å¡è´¹ç”¨ä¸º70é‡‘å¸ä¸€å¼ ï¼");
+		ChatHandler(pPlayer).PSendSysMessage("æœˆå¡è´¹ç”¨ä¸º300é‡‘å¸ä¸€å¼ ï¼");
+		pPlayer->ADD_GOSSIP_ITEM(3, "æŸ¥è¯¢å‰©ä½™æ—¶é—´", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30009);
+		pPlayer->ADD_GOSSIP_ITEM(3, "å‚¨å€¼å¤©å¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30100);
+		pPlayer->ADD_GOSSIP_ITEM(3, "å‚¨å€¼å‘¨å¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30101);
+		pPlayer->ADD_GOSSIP_ITEM(3, "å‚¨å€¼æœˆå¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30102);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è´­ä¹°å¤©å¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30103);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è´­ä¹°å‘¨å¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30104);
+		pPlayer->ADD_GOSSIP_ITEM(3, "è´­ä¹°æœˆå¡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 30105);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
@@ -498,11 +498,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   Item* Pitem = pPlayer->StoreNewItem(dest, 99006, true, Item::GenerateItemRandomPropertyId(99006));
 		   pPlayer->ModifyMoney(-100000);
 		   pPlayer->SendNewItem(Pitem, 1, true, false);
-		   pPlayer->GetSession()->SendNotification("¹ºÂò³É¹¦£¡");
+		   pPlayer->GetSession()->SendNotification("è´­ä¹°æˆåŠŸï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("ÇëÈ·ÈÏÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·ç¡®è®¤æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		pPlayer->CLOSE_GOSSIP_MENU();
 		return true;
@@ -517,11 +517,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99007));
 		   pPlayer->ModifyMoney(-700000);
 		   pPlayer->SendNewItem(Pitem, 1, true, false);
-		   pPlayer->GetSession()->SendNotification("¹ºÂò³É¹¦£¡");
+		   pPlayer->GetSession()->SendNotification("è´­ä¹°æˆåŠŸï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("ÇëÈ·ÈÏÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·ç¡®è®¤æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		pPlayer->CLOSE_GOSSIP_MENU();
 		return true;
@@ -536,11 +536,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   Item* Pitem = pPlayer->StoreNewItem(dest, 99008, true, Item::GenerateItemRandomPropertyId(99008));
 		   pPlayer->ModifyMoney(-3000000);
 		   pPlayer->SendNewItem(Pitem, 1, true, false);
-		   pPlayer->GetSession()->SendNotification("¹ºÂò³É¹¦£¡");
+		   pPlayer->GetSession()->SendNotification("è´­ä¹°æˆåŠŸï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("ÇëÈ·ÈÏÊÇ·ñÓĞ×ã¹»µÄ½ğ±Ò£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·ç¡®è®¤æ˜¯å¦æœ‰è¶³å¤Ÿçš„é‡‘å¸ï¼");
 		}
 		pPlayer->CLOSE_GOSSIP_MENU();
 		return true;
@@ -556,9 +556,9 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		char time[20];
 		snprintf(time, 20, "%u", playtime);
 		std::string pt = time;
-		std::string text = "ÄúµÄ¹Ì¶¨¼Æ»®¸¶·ÑÓÎÏ·ÕËºÅ½«ÔÚ[";
+		std::string text = "æ‚¨çš„å›ºå®šè®¡åˆ’ä»˜è´¹æ¸¸æˆè´¦å·å°†åœ¨[";
 		text += pt;
-		text += "]Ììºó¹ıÆÚ,";
+		text += "]å¤©åè¿‡æœŸ,";
 		pPlayer->ADD_GOSSIP_ITEM_EXTENDED(10, text.c_str(), GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 33411, text.c_str(), 0, false);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
@@ -575,11 +575,11 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   uint32 nowgametime = (((restgametime - nowtime) + 86400) / 86400);
 		   pPlayer->DestroyItemCount(99006, 1, true);
 		   pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET playtimelimit = (playtimelimit + 86400) WHERE id = %u", pPlayer->GetSession()->GetAccountId());
-		   ChatHandler(pPlayer).PSendSysMessage("´¢Öµ³É¹¦£¡ÄúµÄ¹Ì¶¨¼Æ»®¸¶·ÑÓÎÏ·ÕËºÅÊ£Óà[%u]Ìì.", nowgametime);
+		   ChatHandler(pPlayer).PSendSysMessage("å‚¨å€¼æˆåŠŸï¼æ‚¨çš„å›ºå®šè®¡åˆ’ä»˜è´¹æ¸¸æˆè´¦å·å‰©ä½™[%u]å¤©.", nowgametime);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄÎïÆ·£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„ç‰©å“ï¼");
 		}
 			return true;
 	}
@@ -594,12 +594,12 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   uint32 nowtime = time(NULL);
 		   uint32 nowgametime = (((restgametime - nowtime) + 604800) / 86400);
 		   pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET playtimelimit = (playtimelimit + 604800) WHERE id = %u", pPlayer->GetSession()->GetAccountId());
-		   ChatHandler(pPlayer).PSendSysMessage("´¢Öµ³É¹¦£¡ÄúµÄ¹Ì¶¨¼Æ»®¸¶·ÑÓÎÏ·ÕËºÅÊ£Óà[%u]Ìì.", nowgametime);
+		   ChatHandler(pPlayer).PSendSysMessage("å‚¨å€¼æˆåŠŸï¼æ‚¨çš„å›ºå®šè®¡åˆ’ä»˜è´¹æ¸¸æˆè´¦å·å‰©ä½™[%u]å¤©.", nowgametime);
 		   pPlayer->DestroyItemCount(99007, 1, true);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄÎïÆ·£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„ç‰©å“ï¼");
 		}
 			return true;
 	}
@@ -614,21 +614,21 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		   uint32 nowtime = time(NULL);
 		   uint32 nowgametime = (((restgametime - nowtime) + 2592000) / 86400);
 		   pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET playtimelimit = (playtimelimit + 2592000) WHERE id = %u", pPlayer->GetSession()->GetAccountId());
-		   ChatHandler(pPlayer).PSendSysMessage("´¢Öµ³É¹¦£¡ÄúµÄ¹Ì¶¨¼Æ»®¸¶·ÑÓÎÏ·ÕËºÅÊ£Óà[%u]Ìì.", nowgametime);
+		   ChatHandler(pPlayer).PSendSysMessage("å‚¨å€¼æˆåŠŸï¼æ‚¨çš„å›ºå®šè®¡åˆ’ä»˜è´¹æ¸¸æˆè´¦å·å‰©ä½™[%u]å¤©.", nowgametime);
 		   pPlayer->DestroyItemCount(99008, 1, true);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Çë¼ì²éÊÇ·ñÓĞ×ã¹»µÄÎïÆ·£¡");
+			ChatHandler(pPlayer).PSendSysMessage("è¯·æ£€æŸ¥æ˜¯å¦æœ‰è¶³å¤Ÿçš„ç‰©å“ï¼");
 		}
 			return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 12:
 	{
 		pPlayer->CLOSE_GOSSIP_MENU();
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò%sÄúºÃ£¡",pPlayer->GetName());
-		ChatHandler(pPlayer).PSendSysMessage("ÄúµÄ½ÇÉ«guidÎª[%u]£¡", pPlayer->GetGUIDLow());
-		ChatHandler(pPlayer).PSendSysMessage("ÄúÊ£ÓàÓÎÏ·»ı·ÖÎª%uµã",jf);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶%sæ‚¨å¥½ï¼",pPlayer->GetName());
+		ChatHandler(pPlayer).PSendSysMessage("æ‚¨çš„è§’è‰²guidä¸º[%u]ï¼", pPlayer->GetGUIDLow());
+		ChatHandler(pPlayer).PSendSysMessage("æ‚¨å‰©ä½™æ¸¸æˆç§¯åˆ†ä¸º%uç‚¹",jf);
 		uint32 sftime = 0;
 		uint32 tftime = 0;
 		auto nowtime_result = pPlayer->PQuery(GameDB::CharactersDB, "SELECT sftime,tftime FROM characters_limited WHERE guid = %u", pPlayer->GetGUIDLow());
@@ -640,48 +640,48 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		}
 		if (pPlayer->CanInstantTaxi_1 == true)
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Ë²·ÉÊ±¼äÊ£Óà:ÓÀ¾Ã");
+			ChatHandler(pPlayer).PSendSysMessage("ç¬é£æ—¶é—´å‰©ä½™:æ°¸ä¹…");
 		}
 		else if (sftime < time(NULL))
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Ë²·ÉÊ±¼äÊ£Óà:ÎŞ");
+			ChatHandler(pPlayer).PSendSysMessage("ç¬é£æ—¶é—´å‰©ä½™:æ— ");
 		}
 		else
 		{
 			uint32 resttime = ((sftime - time(NULL)) / 86400);
-			ChatHandler(pPlayer).PSendSysMessage("Ë²·ÉÊ±¼äÊ£Óà:%uÌì",resttime);
+			ChatHandler(pPlayer).PSendSysMessage("ç¬é£æ—¶é—´å‰©ä½™:%uå¤©",resttime);
 		}
 		if (pPlayer->CanDoubleTalent_1 == true)
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Ë«Ìì¸³Ê±¼äÊ£Óà:ÓÀ¾Ã");
+			ChatHandler(pPlayer).PSendSysMessage("åŒå¤©èµ‹æ—¶é—´å‰©ä½™:æ°¸ä¹…");
 		}
 		else if (tftime < time(NULL))
 		{
-			ChatHandler(pPlayer).PSendSysMessage("Ë«Ìì¸³Ê±¼äÊ£Óà:ÎŞ");
+			ChatHandler(pPlayer).PSendSysMessage("åŒå¤©èµ‹æ—¶é—´å‰©ä½™:æ— ");
 		}
 		else
 		{
 			uint32 resttime = ((tftime - time(NULL)) / 86400);
-			ChatHandler(pPlayer).PSendSysMessage("Ë«Ìì¸³Ê±¼äÊ£Óà:%uÌì", resttime);
+			ChatHandler(pPlayer).PSendSysMessage("åŒå¤©èµ‹æ—¶é—´å‰©ä½™:%uå¤©", resttime);
 		}
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 9:
 	{								  
 		uint64 guid = pPlayer->GetTeam() == ALLIANCE ? 17379391213815256417 : 17379391213781652121;
-		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_AB); //°¢À­Ï£ ÁªÃË 17379391213781652121 
+		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_AB); //é˜¿æ‹‰å¸Œ è”ç›Ÿ 17379391213781652121 
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 10:
 	{								  
 		uint64 guid = pPlayer->GetTeam() == ALLIANCE ? 17379391213362271574 : 17379391027286119069;
-		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_WS); //Õ½¸è ÁªÃË  17379391027286119069
+		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_WS); //æˆ˜æ­Œ è”ç›Ÿ  17379391027286119069
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 11:
 	{
 		uint64 guid = pPlayer->GetTeam() == ALLIANCE ? 17379391086341957517 : 17379391212707910300;
-		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_AV); //°ÂÉ½ ÁªÃË  17379391212707910300
+		pPlayer->GetSession()->SendBattlegGroundList(guid, BATTLEGROUND_AV); //å¥¥å±± è”ç›Ÿ  17379391212707910300
 		return true;
 	}
 	case GOSSIP_ACTION_INFO_DEF + 8:
@@ -691,37 +691,37 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		//uint32 menuid;
 		//pPlayer->PrepareGossipMenu(pPlayer, 6504);
 		//pPlayer->SendPreparedGossip(pPlayer);
-		//pPlayer->GetSession()->SendBattlegGroundList(17379391213529989638, BATTLEGROUND_AB); //°¢À­Ï£ ÁªÃË
-		//pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //Õ½¸è ÁªÃË
-		//pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //°ÂÉ½ ÁªÃË
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391213529989638, BATTLEGROUND_AB); //é˜¿æ‹‰å¸Œ è”ç›Ÿ
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391213362271574, BATTLEGROUND_WS); //æˆ˜æ­Œ è”ç›Ÿ
+		//pPlayer->GetSession()->SendBattlegGroundList(17379391086341957517, BATTLEGROUND_AV); //å¥¥å±± è”ç›Ÿ
 		// pPlayer->SEND_GOSSIP_MENU(6504, pItem->GetGUID());
 									   pPlayer->CLOSE_GOSSIP_MENU();
 		   ChatHandler(pPlayer).ParseCommands(".tf");
 		   return true;
 		/*if (pPlayer->CanDoubleTalent == false)
 		{
-			pPlayer->GetSession()->SendNotification("ÄãÃ»ÓĞÈ¨ÏŞ£¡");
+			pPlayer->GetSession()->SendNotification("ä½ æ²¡æœ‰æƒé™ï¼");
 			return true;
 		}
 		else
 		{
 			if (pPlayer->isInCombat())
 			{
-				ChatHandler(pPlayer).PSendSysMessage("Õ½¶·ÖĞÎŞ·¨ÇĞ»»Ìì¸³£¡");
+				ChatHandler(pPlayer).PSendSysMessage("æˆ˜æ–—ä¸­æ— æ³•åˆ‡æ¢å¤©èµ‹ï¼");
 				return true;
 			}
 			if (!pPlayer->CanDoubleTalent)
 			{
-				ChatHandler(pPlayer).PSendSysMessage("ÄãÃ»ÓĞ»ñµÃË«Ìì¸³È¨ÏŞ£¡");
+				ChatHandler(pPlayer).PSendSysMessage("ä½ æ²¡æœ‰è·å¾—åŒå¤©èµ‹æƒé™ï¼");
 				return true;
 			}
 			std::vector<PlayerTalentSpell> bak_talent;
-			auto result = pPlayer->PQuery(GameDB::CharactersDB,"SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //Æ¥Åä±¸·İÌì¸³
+			auto result = pPlayer->PQuery(GameDB::CharactersDB,"SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //åŒ¹é…å¤‡ä»½å¤©èµ‹
 			if (result)
 			{
 				do
 				{
-					Field* field = result->Fetch();            //´¢´æ±¸·İÌì¸³
+					Field* field = result->Fetch();            //å‚¨å­˜å¤‡ä»½å¤©èµ‹
 					uint32 guid = field[0].GetUInt32();
 					uint32 spell = field[1].GetUInt32();
 					uint32 active = field[2].GetUInt32();
@@ -735,7 +735,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 					tmp_talent.freepoint = freepoint;
 					bak_talent.push_back(tmp_talent);
 				} while (result->NextRow());
-				pPlayer->PExecute(GameDB::CharactersDB, "DELETE FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //É¾³ı±¸·İÌì¸³
+				pPlayer->PExecute(GameDB::CharactersDB, "DELETE FROM character_spell_talent WHERE guid=%u", pPlayer->GetGUIDLow()); //åˆ é™¤å¤‡ä»½å¤©èµ‹
 			}
 			for (PlayerSpellMap::const_iterator itr = pPlayer->GetSpellMap().begin(); itr != pPlayer->GetSpellMap().end(); ++itr) //
 			{
@@ -743,7 +743,7 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 					pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", pPlayer->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), pPlayer->GetFreeTalentPoints());
 			}
 			pPlayer->SaveToDB();
-			pPlayer->GetSession()->SendNotification("µÚÒ»Ì×Ìì¸³±£´æ³É¹¦£¡");
+			pPlayer->GetSession()->SendNotification("ç¬¬ä¸€å¥—å¤©èµ‹ä¿å­˜æˆåŠŸï¼");
 			for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
 			{
 				TalentEntry const* talentInfo = sTalentStore.LookupEntry(i);
@@ -777,20 +777,20 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 				freepoint = var.freepoint;
 			}
 			pPlayer->SetFreeTalentPoints(freepoint);
-			ChatHandler(pPlayer).PSendSysMessage("Ìì¸³ÇĞ»»³É¹¦£¡");
+			ChatHandler(pPlayer).PSendSysMessage("å¤©èµ‹åˆ‡æ¢æˆåŠŸï¼");
 			pPlayer->SaveToDB();
 			return true;
 		}*/
 	}
-	case GOSSIP_ACTION_INFO_DEF + 7: //±³°ü
+	case GOSSIP_ACTION_INFO_DEF + 7: //èƒŒåŒ…
 	{
-		ChatHandler(pPlayer).PSendSysMessage("¹ºÂòĞèÒªÏûºÄ%uµã»ı·Ö£¬ÇëÈ·ÈÏ£¡", bagjf);
-		pPlayer->ADD_GOSSIP_ITEM(10, "È·ÈÏ¹ºÂò", 1, GOSSIP_ACTION_INFO_DEF + 70);
-		pPlayer->ADD_GOSSIP_ITEM(10, "È¡Ïû", 1, GOSSIP_ACTION_INFO_DEF + 71);
+		ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°éœ€è¦æ¶ˆè€—%uç‚¹ç§¯åˆ†ï¼Œè¯·ç¡®è®¤ï¼", bagjf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "ç¡®è®¤è´­ä¹°", 1, GOSSIP_ACTION_INFO_DEF + 70);
+		pPlayer->ADD_GOSSIP_ITEM(10, "å–æ¶ˆ", 1, GOSSIP_ACTION_INFO_DEF + 71);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
-	case GOSSIP_ACTION_INFO_DEF + 70: //±³°ü
+	case GOSSIP_ACTION_INFO_DEF + 70: //èƒŒåŒ…
 	{
 		pPlayer->CLOSE_GOSSIP_MENU();
 		if (jf >= bagjf)
@@ -801,25 +801,25 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 		  InventoryResult msg = pPlayer->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, 99007, 1, &noSpaceForCount);
 		  if (msg != EQUIP_ERR_OK)
 		  {
-			  ChatHandler(pPlayer).PSendSysMessage("±³°ü¿Õ¼ä²»×ã£¡");
+			  ChatHandler(pPlayer).PSendSysMessage("èƒŒåŒ…ç©ºé—´ä¸è¶³ï¼");
 			  return true;
 		  }
 		  else
 		  {
 			  Item* Pitem = pPlayer->StoreNewItem(dest, 99007, true, Item::GenerateItemRandomPropertyId(99007));
 			  pPlayer->SendNewItem(Pitem, 1, true, false);
-			  ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+			  ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 			  break;
 		  }
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã£¡£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³ï¼ï¼");
 			break;
 		}
 		return true;
 	}
-	case GOSSIP_ACTION_INFO_DEF + 1: //Ë²·É
+	case GOSSIP_ACTION_INFO_DEF + 1: //ç¬é£
 	{
 		uint32 item1jf;
 		uint32 item2jf;
@@ -834,18 +834,18 @@ bool ItemSelect_Item_TelePort(Player *pPlayer, Item *pItem, uint32 sender, uint3
 			 item3jf = field[2].GetUInt32();
 			 item4jf = field[3].GetUInt32();
 		}
-		ChatHandler(pPlayer).PSendSysMessage("Ì×²Í1Ò»¸öÔÂĞèÇó»ı·Ö%uµã", item1jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í2Èı¸öÔÂĞèÇó»ı·Ö%uµã", item2jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í3Ò»ÄêĞèÇó»ı·Ö%uµã", item3jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í4ÓÀ¾ÃĞèÇó»ı·Ö%uµã", item4jf);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 20);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 21);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 22);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË²·ÉÌ×²Í4", 1, GOSSIP_ACTION_INFO_DEF + 30);
+		ChatHandler(pPlayer).PSendSysMessage("å¥—é¤1ä¸€ä¸ªæœˆéœ€æ±‚ç§¯åˆ†%uç‚¹", item1jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤2ä¸‰ä¸ªæœˆéœ€æ±‚ç§¯åˆ†%uç‚¹", item2jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤3ä¸€å¹´éœ€æ±‚ç§¯åˆ†%uç‚¹", item3jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤4æ°¸ä¹…éœ€æ±‚ç§¯åˆ†%uç‚¹", item4jf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°ç¬é£å¥—é¤1", 1, GOSSIP_ACTION_INFO_DEF + 20);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°ç¬é£å¥—é¤2", 1, GOSSIP_ACTION_INFO_DEF + 21);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°ç¬é£å¥—é¤3", 1, GOSSIP_ACTION_INFO_DEF + 22);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°ç¬é£å¥—é¤4", 1, GOSSIP_ACTION_INFO_DEF + 30);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
-case GOSSIP_ACTION_INFO_DEF + 30: //ÖÕÉí¿¨
+case GOSSIP_ACTION_INFO_DEF + 30: //ç»ˆèº«å¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -867,13 +867,13 @@ case GOSSIP_ACTION_INFO_DEF + 30: //ÖÕÉí¿¨
 					if (dbsftime1 == 0)
 					{
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime1 = 1 WHERE guid = %u", pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->CanInstantTaxi = true;
 						return true;
 					}
 					else
 					{
-						ChatHandler(pPlayer).PSendSysMessage("ÄúÒÑ¾­ÓµÓĞÓÀ¾ÃÊ¹ÓÃÈ¨£¡");
+						ChatHandler(pPlayer).PSendSysMessage("æ‚¨å·²ç»æ‹¥æœ‰æ°¸ä¹…ä½¿ç”¨æƒï¼");
 						return true;
 					}
 				}
@@ -890,22 +890,22 @@ case GOSSIP_ACTION_INFO_DEF + 30: //ÖÕÉí¿¨
 					sftime = field[1].GetUInt32();
 					tftime1 = field[2].GetUInt32();
 				}
-				uint32 atime = 1; //ÔÂ¿¨												1     2      3      4        5             1  2  3  4  5                              6      6
+				uint32 atime = 1; //æœˆå¡												1     2      3      4        5             1  2  3  4  5                              6      6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime1 = %u;", pPlayer->GetGUIDLow(), tftime,sftime, tftime1, atime, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->CanInstantTaxi = true;
 				return true;
 			}
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 	}
 		return true;
 }
-case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
+case GOSSIP_ACTION_INFO_DEF + 20: //æœˆå¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -929,7 +929,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 2592000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -949,9 +949,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 2592000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 2592000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -972,9 +972,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 2592000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 2592000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanInstantTaxi = true;
 				return true;
@@ -982,13 +982,13 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
 	}
 }
-	case GOSSIP_ACTION_INFO_DEF + 21: //¼¾¿¨
+	case GOSSIP_ACTION_INFO_DEF + 21: //å­£å¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -1012,7 +1012,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 7776000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -1032,9 +1032,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 7776000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 7776000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -1055,9 +1055,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 7776000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 7776000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanInstantTaxi = true;
 				return true;
@@ -1065,13 +1065,13 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
 	}
 }
-	case GOSSIP_ACTION_INFO_DEF + 22: //Äê¿¨
+	case GOSSIP_ACTION_INFO_DEF + 22: //å¹´å¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -1095,7 +1095,7 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 31536000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET sftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -1115,9 +1115,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 31104000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 31104000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanInstantTaxi = true;
 						return true;
@@ -1138,9 +1138,9 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 31104000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 31104000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE sftime = %u;", pPlayer->GetGUIDLow(), tftime, atime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanInstantTaxi = true;
 				return true;
@@ -1148,13 +1148,13 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
 	}
 }
-	case GOSSIP_ACTION_INFO_DEF + 2: //Ë«Ìì¸³
+	case GOSSIP_ACTION_INFO_DEF + 2: //åŒå¤©èµ‹
 	{
 		uint32 item1jf;
 		uint32 item2jf;
@@ -1169,18 +1169,18 @@ case GOSSIP_ACTION_INFO_DEF + 20: //ÔÂ¿¨
 			 item3jf = field[2].GetUInt32();
 			 item4jf = field[3].GetUInt32();
 		}
-		ChatHandler(pPlayer).PSendSysMessage("Ì×²Í1Ò»¸öÔÂĞèÇó»ı·Ö%uµã", item1jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í2Èı¸öÔÂĞèÇó»ı·Ö%uµã", item2jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í3Ò»ÄêĞèÇó»ı·Ö%uµã", item3jf);
-		//ChatHandler(pPlayer).PSendSysMessage("Ì×²Í4ÓÀ¾ÃĞèÇó»ı·Ö%uµã", item4jf);
-		pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í1", 1, GOSSIP_ACTION_INFO_DEF + 23);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í2", 1, GOSSIP_ACTION_INFO_DEF + 24);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í3", 1, GOSSIP_ACTION_INFO_DEF + 25);
-		//pPlayer->ADD_GOSSIP_ITEM(10, "¹ºÂòË«Ìì¸³Ì×²Í4", 1, GOSSIP_ACTION_INFO_DEF + 40);
+		ChatHandler(pPlayer).PSendSysMessage("å¥—é¤1ä¸€ä¸ªæœˆéœ€æ±‚ç§¯åˆ†%uç‚¹", item1jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤2ä¸‰ä¸ªæœˆéœ€æ±‚ç§¯åˆ†%uç‚¹", item2jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤3ä¸€å¹´éœ€æ±‚ç§¯åˆ†%uç‚¹", item3jf);
+		//ChatHandler(pPlayer).PSendSysMessage("å¥—é¤4æ°¸ä¹…éœ€æ±‚ç§¯åˆ†%uç‚¹", item4jf);
+		pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°åŒå¤©èµ‹å¥—é¤1", 1, GOSSIP_ACTION_INFO_DEF + 23);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°åŒå¤©èµ‹å¥—é¤2", 1, GOSSIP_ACTION_INFO_DEF + 24);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°åŒå¤©èµ‹å¥—é¤3", 1, GOSSIP_ACTION_INFO_DEF + 25);
+		//pPlayer->ADD_GOSSIP_ITEM(10, "è´­ä¹°åŒå¤©èµ‹å¥—é¤4", 1, GOSSIP_ACTION_INFO_DEF + 40);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
-case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
+case GOSSIP_ACTION_INFO_DEF + 40: //åŒå¤©èµ‹ç»ˆèº«å¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -1201,14 +1201,14 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 					if (dbsftime1 == 0)
 					{
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime1 = 1 WHERE guid = %u", pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
 					}
 					else
 					{
-						ChatHandler(pPlayer).PSendSysMessage("ÄúÒÑ¾­ÓµÓĞÓÀ¾ÃÊ¹ÓÃÈ¨£¡");
+						ChatHandler(pPlayer).PSendSysMessage("æ‚¨å·²ç»æ‹¥æœ‰æ°¸ä¹…ä½¿ç”¨æƒï¼");
 					}
 				}
 			else
@@ -1226,9 +1226,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = 1; //ÔÂ¿¨												  1    2     3        4       5            1  2  3  4  5                              6      6
+				uint32 atime = 1; //æœˆå¡												  1    2     3        4       5            1  2  3  4  5                              6      6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime1 = %u;", pPlayer->GetGUIDLow(), tftime, sftime, atime, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanDoubleTalent = true;
 				return true;
@@ -1236,13 +1236,13 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
 	}
 }
-	case GOSSIP_ACTION_INFO_DEF + 23: //ÔÂ¿¨
+	case GOSSIP_ACTION_INFO_DEF + 23: //æœˆå¡
 {
 		pPlayer->CLOSE_GOSSIP_MENU();
 		uint32 item1jf;
@@ -1266,7 +1266,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 2592000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1286,9 +1286,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 2592000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 2592000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1309,9 +1309,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 2592000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 2592000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanDoubleTalent = true;
 				return true;
@@ -1319,7 +1319,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
@@ -1349,7 +1349,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 7776000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1369,9 +1369,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 7776000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 7776000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1392,9 +1392,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 7776000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 7776000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanDoubleTalent = true;
 				return true;
@@ -1402,7 +1402,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
@@ -1432,7 +1432,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 						nowtime = field[0].GetUInt32();
 						nowtime = nowtime + 31536000;
 						pPlayer->PExecute(GameDB::CharactersDB, "UPDATE characters_limited SET tftime = %u WHERE guid = %u", nowtime, pPlayer->GetGUIDLow());
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1452,9 +1452,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 							tftime1 = field[2].GetUInt32();
 							sftime1 = field[3].GetUInt32();
 						}
-						uint32 atime = time(NULL) + 31536000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+						uint32 atime = time(NULL) + 31536000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 						pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-						ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+						ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 						pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 						pPlayer->CanDoubleTalent = true;
 						return true;
@@ -1475,9 +1475,9 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 					tftime1 = field[2].GetUInt32();
 					sftime1 = field[3].GetUInt32();
 				}
-				uint32 atime = time(NULL) + 31536000; //ÔÂ¿¨								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
+				uint32 atime = time(NULL) + 31536000; //æœˆå¡								1		2		3	4		5				1  2 3  4  5									 6			1					2		3     4			5	   6
 				pPlayer->PExecute(GameDB::CharactersDB, "INSERT INTO characters_limited(guid,tftime,sftime,tftime1,sftime1) VALUES(%u,%u,%u,%u,%u) ON DUPLICATE KEY UPDATE tftime = %u;", pPlayer->GetGUIDLow(), atime, sftime, tftime1, sftime1, atime);
-				ChatHandler(pPlayer).PSendSysMessage("¹ºÂò³É¹¦£¡");
+				ChatHandler(pPlayer).PSendSysMessage("è´­ä¹°æˆåŠŸï¼");
 				pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", item1jf, pPlayer->GetSession()->GetAccountId());
 				pPlayer->CanDoubleTalent = true;
 				return true;
@@ -1485,7 +1485,7 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·ÖÓà¶î²»×ã£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä½™é¢ä¸è¶³ï¼");
 			break;
 		}
 		return true;
@@ -1497,8 +1497,8 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		auto field = jf_xresult->Fetch();
 		bool onorof = field[0].GetBool();
 		if (onorof != 0)
-			pPlayer->ADD_GOSSIP_ITEM(0, "Ê¹ÓÃ½ğ±ÒÃëÉı", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 930);
-		pPlayer->ADD_GOSSIP_ITEM(0, "Ê¹ÓÃ»ı·ÖÃëÉı", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 931);
+			pPlayer->ADD_GOSSIP_ITEM(0, "ä½¿ç”¨é‡‘å¸ç§’å‡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 930);
+		pPlayer->ADD_GOSSIP_ITEM(0, "ä½¿ç”¨ç§¯åˆ†ç§’å‡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 931);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
@@ -1506,13 +1506,13 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = (((60 - oldlevel) * levelupjf)*20);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÃëÉı", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000114);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000115);
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤ç§’å‡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000114);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000115);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼ÒÄúºÃ,ÄúÏÖÔÚµÄµÈ¼¶Îª%u¼¶,ÃëÉıµ½60ÏûºÄ%u½ğ±Ò,ÇëÈ·ÈÏ!", oldlevel, uplevel);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶æ‚¨å¥½,æ‚¨ç°åœ¨çš„ç­‰çº§ä¸º%uçº§,ç§’å‡åˆ°60æ¶ˆè€—%ué‡‘å¸,è¯·ç¡®è®¤!", oldlevel, uplevel);
 		return true;
 	}
-	case GOSSIP_ACTION_INFO_DEF + 1000114://ÃëÉı·şÎñ
+	case GOSSIP_ACTION_INFO_DEF + 1000114://ç§’å‡æœåŠ¡
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = (((60 - oldlevel) * levelupjf)*200000);
@@ -1521,12 +1521,12 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			if (uplevel)
 			pPlayer->ModifyMoney(-uplevel);
-			ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò,¹§Ï²ÃëÉı³É¹¦!ÏûºÄ%uµã½ğ±ÒÌáÉıµ½60¼¶£¡", (uplevel / 10000));
+			ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶,æ­å–œç§’å‡æˆåŠŸ!æ¶ˆè€—%uç‚¹é‡‘å¸æå‡åˆ°60çº§ï¼", (uplevel / 10000));
 			pPlayer->GiveLevel(60);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("½ğ±Ò²»×ã!");
+			ChatHandler(pPlayer).PSendSysMessage("é‡‘å¸ä¸è¶³!");
 		}
 		return true;
 	}
@@ -1544,13 +1544,13 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		uint32 max = field[0].GetUInt32();
 		if (max != 0)
 			uplevel = max;
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÃëÉı", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000014);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000015);
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤ç§’å‡", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000014);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000015);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼ÒÄúºÃ,ÄúÏÖÔÚµÄµÈ¼¶Îª%u¼¶,ÃëÉıµ½60ÏûºÄ%uµã»ı·Ö,ÇëÈ·ÈÏ!", oldlevel, uplevel);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶æ‚¨å¥½,æ‚¨ç°åœ¨çš„ç­‰çº§ä¸º%uçº§,ç§’å‡åˆ°60æ¶ˆè€—%uç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", oldlevel, uplevel);
 		return true;
 	}
-	case GOSSIP_ACTION_INFO_DEF + 1000014://ÃëÉı·şÎñ
+	case GOSSIP_ACTION_INFO_DEF + 1000014://ç§’å‡æœåŠ¡
 	{
 		oldlevel = pPlayer->getLevel();
 		uplevel = ((60 - oldlevel) * levelupjf);
@@ -1566,12 +1566,12 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			if (uplevel)
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", uplevel, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò,¹§Ï²ÃëÉı³É¹¦!ÏûºÄ%uµã»ı·ÖÌáÉıµ½60¼¶£¡", uplevel);
+			ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶,æ­å–œç§’å‡æˆåŠŸ!æ¶ˆè€—%uç‚¹ç§¯åˆ†æå‡åˆ°60çº§ï¼", uplevel);
 			pPlayer->GiveLevel(60);
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã!");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³!");
 		}
 		return true;
 	}
@@ -1582,19 +1582,19 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 	}
 	case GOSSIP_ACTION_INFO_DEF + 6:
 	{
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı²É¿ó", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000101);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉıÁ¶½ğ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000102);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı¶ÍÔì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000103);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı²Ã·ì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000104);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉıÅëâ¿", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000105);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉıÖÆÆ¤", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000106);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉıµöÓã", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000107);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı¸½Ä§", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000108);
-		//pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉıÖé±¦", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000109);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı¹¤³Ì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000110);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı¼±¾È", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000111);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı²İÒ©", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000112);
-		pPlayer->ADD_GOSSIP_ITEM(3, "ÌáÉı°şÆ¤", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000113);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡é‡‡çŸ¿", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000101);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡ç‚¼é‡‘", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000102);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡é”»é€ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000103);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡è£ç¼", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000104);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡çƒ¹é¥ª", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000105);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡åˆ¶çš®", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000106);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡é’“é±¼", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000107);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡é™„é­”", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000108);
+		//pPlayer->ADD_GOSSIP_ITEM(3, "æå‡ç å®", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000109);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡å·¥ç¨‹", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000110);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡æ€¥æ•‘", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000111);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡è‰è¯", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000112);
+		pPlayer->ADD_GOSSIP_ITEM(3, "æå‡å‰¥çš®", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1000113);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 	}
@@ -1605,11 +1605,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(186, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1621,11 +1621,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(171, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1637,11 +1637,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(164, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1653,11 +1653,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(197, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1669,11 +1669,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(185, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1685,11 +1685,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(165, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1701,11 +1701,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(356, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1717,11 +1717,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(333, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1733,11 +1733,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(755, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1749,11 +1749,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(202, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1765,11 +1765,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(129, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1781,11 +1781,11 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(182, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
@@ -1797,53 +1797,53 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 			pPlayer->CLOSE_GOSSIP_MENU();
 			pPlayer->SetSkill(393, 300, 300);
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", maxskilljf, pPlayer->GetSession()->GetAccountId());
-			ChatHandler(pPlayer).PSendSysMessage("¸ĞĞ»ÄúµÄÖ§³Ö£¡");
+			ChatHandler(pPlayer).PSendSysMessage("æ„Ÿè°¢æ‚¨çš„æ”¯æŒï¼");
 		}
 		else
 		{
-			ChatHandler(pPlayer).PSendSysMessage("»ı·Ö²»×ã¹ºÂò´ËÏîÄ¿,»òÎ´Ñ§µÃ¸Ã¼¼ÄÜ£¡");
+			ChatHandler(pPlayer).PSendSysMessage("ç§¯åˆ†ä¸è¶³è´­ä¹°æ­¤é¡¹ç›®,æˆ–æœªå­¦å¾—è¯¥æŠ€èƒ½ï¼");
 			pPlayer->CLOSE_GOSSIP_MENU();
 		}
 		return true;
 	}
-	case GOSSIP_ACTION_INFO_DEF + 5://ÉÌÒµ¼¼ÄÜ¹ºÂò
+	case GOSSIP_ACTION_INFO_DEF + 5://å•†ä¸šæŠ€èƒ½è´­ä¹°
 		if (skillcount < maxskillcount)
 		{
 			if (!pPlayer->HasSpell(2575))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°²É¿ó", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 51);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ é‡‡çŸ¿", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 51);
 			}
 			if (!pPlayer->HasSpell(2259))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°Á¶½ğ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 52);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ ç‚¼é‡‘", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 52);
 			}
 			if (!pPlayer->HasSpell(2018))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°¶ÍÔì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 53);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ é”»é€ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 53);
 			}
 			if (!pPlayer->HasSpell(3908))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°²Ã·ì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 54);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ è£ç¼", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 54);
 			}
 			if (!pPlayer->HasSpell(2108))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°ÖÆÆ¤", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 55);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ åˆ¶çš®", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 55);
 			}
 			if (!pPlayer->HasSpell(7411))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°¸½Ä§", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 56);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ é™„é­”", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 56);
 			}
 			if (!pPlayer->HasSpell(4036))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°¹¤³Ì", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 58);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ å·¥ç¨‹", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 58);
 			}
 			if (!pPlayer->HasSpell(2372))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°²İÒ©", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 59);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ è‰è¯", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 59);
 			}
 			if (!pPlayer->HasSpell(8613))
 			{
-				pPlayer->ADD_GOSSIP_ITEM(0, "Ñ§Ï°°şÆ¤", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 60);
+				pPlayer->ADD_GOSSIP_ITEM(0, "å­¦ä¹ å‰¥çš®", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 60);
 			}
 			pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 			return true;
@@ -1851,88 +1851,88 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		else
 		{
 			pPlayer->CLOSE_GOSSIP_MENU();
-			pPlayer->GetSession()->SendNotification("×¨Òµ¼¼ÄÜ¹ı¶à£¬ÎŞ·¨¼ÌĞøÑ§Ï°£¡");
+			pPlayer->GetSession()->SendNotification("ä¸“ä¸šæŠ€èƒ½è¿‡å¤šï¼Œæ— æ³•ç»§ç»­å­¦ä¹ ï¼");
 			return true;
 		}
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	case GOSSIP_ACTION_INFO_DEF + 51://¹ºÂò²É¿ó
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5001);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5002);
+	case GOSSIP_ACTION_INFO_DEF + 51://è´­ä¹°é‡‡çŸ¿
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5001);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5002);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 52://¹ºÂòÁ¶½ğ
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5003);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5004);
+	case GOSSIP_ACTION_INFO_DEF + 52://è´­ä¹°ç‚¼é‡‘
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5003);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5004);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 53://¹ºÂò¶ÍÔì
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5005);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5006);
+	case GOSSIP_ACTION_INFO_DEF + 53://è´­ä¹°é”»é€ 
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5005);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5006);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 54://¹ºÂò²Ã·ì
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5007);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5008);
+	case GOSSIP_ACTION_INFO_DEF + 54://è´­ä¹°è£ç¼
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5007);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5008);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 55://¹ºÂòÖÆÆ¤
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5009);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5010);
+	case GOSSIP_ACTION_INFO_DEF + 55://è´­ä¹°åˆ¶çš®
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5009);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5010);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 56://¹ºÂò¸½Ä§
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5011);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5012);
+	case GOSSIP_ACTION_INFO_DEF + 56://è´­ä¹°é™„é­”
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5011);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5012);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 57://¹ºÂòÖé±¦
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5013);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5014);
+	case GOSSIP_ACTION_INFO_DEF + 57://è´­ä¹°ç å®
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5013);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5014);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 58://¹ºÂò¹¤³Ì
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5015);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5016);
+	case GOSSIP_ACTION_INFO_DEF + 58://è´­ä¹°å·¥ç¨‹
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5015);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5016);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 59://¹ºÂò²İÒ©
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5017);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5018);
+	case GOSSIP_ACTION_INFO_DEF + 59://è´­ä¹°è‰è¯
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5017);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5018);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 
-	case GOSSIP_ACTION_INFO_DEF + 60://¹ºÂò°şÆ¤
-		pPlayer->ADD_GOSSIP_ITEM(0, "È·ÈÏÑ§Ï°", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5019);
-		ChatHandler(pPlayer).PSendSysMessage("×ğ¾´µÄÍæ¼Ò|cff54FF9F[%s]|rÄúºÃ,±¾´Î²Ù×÷½«¿Û³ı|cffFF0000%u|rµã»ı·Ö,ÇëÈ·ÈÏ!", pPlayer->GetName(), learnskilljf);
-		pPlayer->ADD_GOSSIP_ITEM(0, "È¡Ïû", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5020);
+	case GOSSIP_ACTION_INFO_DEF + 60://è´­ä¹°å‰¥çš®
+		pPlayer->ADD_GOSSIP_ITEM(0, "ç¡®è®¤å­¦ä¹ ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5019);
+		ChatHandler(pPlayer).PSendSysMessage("å°Šæ•¬çš„ç©å®¶|cff54FF9F[%s]|ræ‚¨å¥½,æœ¬æ¬¡æ“ä½œå°†æ‰£é™¤|cffFF0000%u|rç‚¹ç§¯åˆ†,è¯·ç¡®è®¤!", pPlayer->GetName(), learnskilljf);
+		pPlayer->ADD_GOSSIP_ITEM(0, "å–æ¶ˆ", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5020);
 		pPlayer->SEND_GOSSIP_MENU(822, pItem->GetGUID());
 		return true;
 				/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////////////////
-		//¹ºÂò²É¿ó¼¼ÄÜ//
+		//è´­ä¹°é‡‡çŸ¿æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5001:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1940,31 +1940,31 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(2575,false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5002:
 	{
-		 pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		 pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		 pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 
 		////////////////
-		//¹ºÂòÁ¶½ğ¼¼ÄÜ//
+		//è´­ä¹°ç‚¼é‡‘æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5003:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		else if (pPlayer->HasSpell(2259))
 		{
-			pPlayer->Say("ÒÑ¾­ÓµÓĞÁ¶½ğ¼¼ÄÜ!", LANG_UNIVERSAL);
+			pPlayer->Say("å·²ç»æ‹¥æœ‰ç‚¼é‡‘æŠ€èƒ½!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1972,24 +1972,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(2259, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5004:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò¶ÍÔì¼¼ÄÜ//
+		//è´­ä¹°é”»é€ æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5005:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -1997,24 +1997,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(2018, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5006:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò²Ã·ì¼¼ÄÜ//
+		//è´­ä¹°è£ç¼æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5007:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2022,25 +2022,25 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(3908, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5008:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 
 		////////////////
-		//¹ºÂòÖÆÆ¤¼¼ÄÜ//
+		//è´­ä¹°åˆ¶çš®æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5009:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2048,24 +2048,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(2108, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5010:
 	{
-		    pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		    pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		    pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò¸½Ä§¼¼ÄÜ//
+		//è´­ä¹°é™„é­”æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5011:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2073,24 +2073,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(7411, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5012:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò¹¤³Ì¼¼ÄÜ//
+		//è´­ä¹°å·¥ç¨‹æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5015:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2098,24 +2098,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(4036, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5016:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò²İÒ©¼¼ÄÜ//
+		//è´­ä¹°è‰è¯æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5017:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2123,24 +2123,24 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(2372, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5018:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
 		////////////////
-		//¹ºÂò°şÆ¤¼¼ÄÜ//
+		//è´­ä¹°å‰¥çš®æŠ€èƒ½//
 		////////////////
 	case GOSSIP_ACTION_INFO_DEF + 5019:
 		if (jf < learnskilljf)
 		{
-			pPlayer->Say("»ı·Ö²»×ã!", LANG_UNIVERSAL);
+			pPlayer->Say("ç§¯åˆ†ä¸è¶³!", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
@@ -2148,14 +2148,14 @@ case GOSSIP_ACTION_INFO_DEF + 40: //Ë«Ìì¸³ÖÕÉí¿¨
 		{
 			pPlayer->PExecute(GameDB::RealmDB, "UPDATE account SET jf = (jf - %u) WHERE id = %u", learnskilljf, pPlayer->GetSession()->GetAccountId());
 			pPlayer->learnSpell(8613, false);
-			pPlayer->Say("¹ºÂò³É¹¦£¡", LANG_UNIVERSAL);
+			pPlayer->Say("è´­ä¹°æˆåŠŸï¼", LANG_UNIVERSAL);
 			pPlayer->CLOSE_GOSSIP_MENU();
 			break;
 		}
 		break;
 	case GOSSIP_ACTION_INFO_DEF + 5020:
 	{
-		pPlayer->Say("¸ĞĞ»Ê¹ÓÃ", LANG_UNIVERSAL);
+		pPlayer->Say("æ„Ÿè°¢ä½¿ç”¨", LANG_UNIVERSAL);
 		pPlayer->CLOSE_GOSSIP_MENU();
 	}
 		break;
