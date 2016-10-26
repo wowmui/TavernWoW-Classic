@@ -682,6 +682,9 @@
     <ClCompile Include="..\..\src\scriptdev2\scripts\custom\CDKEY.cpp">
       <Filter>scripts\custom</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\scriptdev2\scripts\custom\PlayFunCheat_Ingnore.cpp">
+      <Filter>scripts\examples</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\scriptdev2\base\escort_ai.h">

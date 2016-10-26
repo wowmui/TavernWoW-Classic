@@ -42,9 +42,11 @@
 bool ChatHandler::HandleSjcommand(char * agrs)
 {
 	Player* _player = m_session->GetPlayer();
-	if (!agrs)
-		return false;
-	sWorld.SendALLMessage(LANG_SYSTEMMESSAGE, agrs, _player);
+	std::string text = "";
+	text += GetNameLink();
+	text += ":  ";
+	text += agrs;
+	sWorld.SendWorldText(10019,text.c_str());
 	return true;
 }
 

@@ -672,6 +672,9 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)   //玩家登录
 
     m_playerLoading = false;
     delete holder;
+	pCurrChar->Setlastx(0);
+	pCurrChar->Setlasty(0);
+	pCurrChar->Setlastz(0);
 	//////////世界公告
 		//uint32 playeronlinvecount = sWorld.GetActiveSessionCount();
 		//if (playeronlinvecount > 5)

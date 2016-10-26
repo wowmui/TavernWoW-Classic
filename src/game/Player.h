@@ -873,6 +873,28 @@ class MANGOS_DLL_SPEC Player : public Unit
 		uint32 m_fallchecktimer;
 		bool Cancheckfall;
 		float lastZpoint;
+		uint32 CheckSpeedTimer;
+		uint32 SpeedCheckCount;
+		uint32 totalcheckcount;
+		bool teleportcheckband;
+		uint32 teleportchecktimer;
+		float Getlastz() const { return lastz; }
+		float Getlastx() const { return lastx; }
+		float Getlasty() const { return lasty; }
+		void Setlastz(float z) { lastz = z; }
+		void Setlasty(float z) { lasty = z; }
+		void Setlastx(float z) { lastx = z; }
+		void Setlastm(uint32 mapid) { lastmapid = mapid; }
+		float lastx;
+		float lasty;
+		float lastz;
+		bool CanCheckFalling;
+		bool PlayFunCheatIngnore;
+		uint32 PlayFunCheatIngnoreTimer;
+		uint32 lastmapid;
+		uint32 FlyinfCheatCount;
+		void GetCheckpoz();
+		void KickOrNot(uint8 type,std::string bandreason);
 		//==End Of Custom==//
 
         explicit Player(WorldSession* session);

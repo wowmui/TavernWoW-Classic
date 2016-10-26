@@ -61,7 +61,7 @@
 #include "DBCStores.h"
 #include "SQLStorages.h"
 #include "LootMgr.h"
-
+#include "Config/Config.h"
 #include <cmath>
 
 #pragma execution_character_set("utf-8")
@@ -484,12 +484,24 @@ UpdateMask Player::updateVisualBits;
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
     m_transport = 0;
+	PlayFunCheatIngnore = false;
+	PlayFunCheatIngnoreTimer = 20000;
+	FlyinfCheatCount = 0;
 	death_pet = false;
     m_speakTime = 0;
     m_speakCount = 0;
 	fallcheckcount = 0;
 	m_fallchecktimer = 3000;
 	Cancheckfall = false;
+	CanCheckFalling = false;
+	CheckSpeedTimer = 500;
+	totalcheckcount = 0;
+	teleportchecktimer = 3000;
+	teleportcheckband = false;
+	SpeedCheckCount = 0;
+	lastx = 0;
+	lasty = 0;
+	lastz = 0;
 
     m_objectType |= TYPEMASK_PLAYER;
     m_objectTypeId = TYPEID_PLAYER;
@@ -901,6 +913,13 @@ bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 c
     return true;
 }
 
+void Player::GetCheckpoz()
+{
+	Setlastm(GetMapId());
+	Setlastx(GetPositionX());
+	Setlasty(GetPositionY());
+	Setlastz(GetPositionZ());
+}
 bool Player::StoreNewItemInBestSlots(uint32 titem_id, uint32 titem_amount)
 {
     DEBUG_LOG("STORAGE: Creating initial item, itemId = %u, count = %u", titem_id, titem_amount);
@@ -1446,10 +1465,138 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 		else m_fallchecktimer -= p_time;
 		}
 
+
 	if (HasAura(22799) && GetMapId() != 429)
 		RemoveAurasDueToSpell(22799);
+
+	if (PlayFunCheatIngnore == true)
+	{
+		if (PlayFunCheatIngnoreTimer <= p_time)
+		{
+			Setlastx(GetPositionX());
+			Setlasty(GetPositionY());
+			Setlastz(GetPositionZ());
+			PlayFunCheatIngnore = false;
+			PlayFunCheatIngnoreTimer = 20000;
+		}
+		else
+		{
+			PlayFunCheatIngnoreTimer -= p_time;
+			return;
+		}
+	}
+	if (sConfig.GetBoolDefault("PlayFunCheck.Open", 0) == 1)
+	{
+		if (teleportcheckband == true)
+		{
+			if (teleportchecktimer <= p_time)
+			{
+				Setlastx(GetPositionX());
+				Setlasty(GetPositionY());
+				Setlastz(GetPositionZ());
+				teleportcheckband = false;
+				teleportchecktimer = 3000;
+			}
+			else
+			{
+				teleportchecktimer -= p_time;
+				return;
+			}
+		}
+		if (CheckSpeedTimer <= p_time)
+		{
+			if (IsTaxiFlying())
+			{
+				Setlastm(GetMapId());
+				Setlastx(0);
+				Setlasty(0);
+				Setlastz(0);
+				CheckSpeedTimer = 1000;
+				return;
+			}
+			if (Getlastx() == 0)
+			{
+				GetCheckpoz();
+			}
+			else
+			{
+				totalcheckcount++;
+				float higth = GetMap()->GetHeight(GetPositionX(), GetPositionY(), GetPositionZ());
+				float dis = (GetDistance2d(Getlastx(), Getlasty()) * 10000);
+				float timea = 12000;
+				float speedf = (dis / timea);
+				float speed_3 = GetSpeed(MOVE_RUN);
+				float posz = GetPositionZ();
+				float high_2 = abs(GetPositionZ() - higth);
+				float high_3 = lastz - GetPositionZ();
+				if (HasMovementFlag(MOVEFLAG_FALLING))
+					CanCheckFalling = true;
+				if (sConfig.GetIntDefault("PlayFunCheck.Debug", 1) == 1)
+				{
+					ChatHandler(this).PSendSysMessage("%f", speedf);
+					ChatHandler(this).PSendSysMessage("%f", speed_3);
+				}
+				if (CanFreeMove() && !IsTaxiFlying() && high_2 > 2.4f && !IsInWater())
+				{
+					//GetMotionMaster()->MoveFall();
+					if (CanCheckFalling == true)
+					{
+						FlyinfCheatCount++;
+						if (sConfig.GetIntDefault("PlayFunCheck.Debug", 1) == 1)
+						ChatHandler(this).PSendSysMessage("检测异常飞天%u", FlyinfCheatCount);
+						CanCheckFalling = false;
+					}
+				}
+				if (high_3 > 1.0f)
+					FlyinfCheatCount = 0;
+				if (speedf > speed_3)
+				{
+					SpeedCheckCount++;
+					if (sConfig.GetIntDefault("PlayFunCheck.Debug", 1) == 1)
+					ChatHandler(this).PSendSysMessage("检测异常%u", SpeedCheckCount);
+				}
+				if (speedf > sConfig.GetIntDefault("PlayFunCheck.TelePortDistance", 100))
+				{
+					TeleportTo(lastmapid, lastx, lasty, lastz, GetOrientation());
+					KickOrNot(sConfig.GetIntDefault("PlayFunCheck.BandType", 0),"TeleportCheat");
+				}
+				if (SpeedCheckCount > sConfig.GetIntDefault("PlayFunCheck.SpeedCheatCount", 5))
+					KickOrNot(sConfig.GetIntDefault("PlayFunCheck.BandType", 0),"OverSpeedCheat");
+				if (totalcheckcount > 10)
+				{
+					SpeedCheckCount = 0;
+					totalcheckcount = 0;
+					FlyinfCheatCount = 0;
+				}
+				if (FlyinfCheatCount > sConfig.GetIntDefault("PlayFunCheck.FlyCheatCount", 3))
+					KickOrNot(sConfig.GetIntDefault("PlayFunCheck.BandType", 0),"FlyingCheat");
+				GetCheckpoz();
+			}
+			CheckSpeedTimer = 1000;
+		}
+		else CheckSpeedTimer -= p_time;
+	}
 }
 
+void Player::KickOrNot(uint8 type, std::string bandreason)
+{
+	std::string bandby = "PlayFunCheck";
+	switch (type)
+	{
+	case 0:
+		break;
+	case 1:
+		GetSession()->KickPlayer();
+		break;
+	case 2:
+		uint32 timea = time(NULL);
+		uint32 timeb = timea + (sConfig.GetIntDefault("PlayFunCheck.BandTime",1) * 86400);
+		uint32 active = 1;
+		LoginDatabase.PQuery("INSERT INTO account_banned (id,bandate,unbandate,bannedby,banreason,active) VALUES (%u,%u,%u,'%s','%s',%u);", GetSession()->GetAccountId(), timea, timeb, bandby.c_str(), bandreason.c_str(), active);
+		GetSession()->KickPlayer();
+		break;
+	}
+}
 void Player::SetDeathState(DeathState s)
 {
     uint32 ressSpellId = 0;
@@ -1643,6 +1790,8 @@ ChatTagFlags Player::GetChatTag() const
 
 bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options /*=0*/, AreaTrigger const* at /*=nullptr*/)
 {
+	teleportcheckband = true;
+	teleportchecktimer = 10000;
 	if (mapid == 450 || mapid == 449)
 	{
 		bool allow;
@@ -1779,7 +1928,6 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
                 m_teleport_options = options;
                 return true;
             }
-
             SetSelectionGuid(ObjectGuid());
 
             CombatStop();
@@ -16232,6 +16380,11 @@ bool Player::ActivateTaxiPathTo(std::vector<uint32> const& nodes, Creature* npc 
 		TaxiNodesEntry const* lastnode = sTaxiNodesStore.LookupEntry(nodes[nodes.size() - 1]);
 		m_taxi.ClearTaxiDestinations();
 		TeleportTo(lastnode->map_id, lastnode->x, lastnode->y, lastnode->z, GetOrientation());
+		teleportcheckband = true;
+		teleportchecktimer = 2000;
+		Setlastx(0);
+		Setlasty(0);
+		Setlastz(0);
 		return false;
 	}
     // prevent stealth flight

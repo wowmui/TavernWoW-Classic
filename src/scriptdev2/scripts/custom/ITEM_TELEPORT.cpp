@@ -246,6 +246,9 @@ bool ItemSelect_frozen_detransform(Player *player, Item *pItem, uint32 sender, u
 
 bool ItemUse_Item_TelePort(Player* player, Item* _Item, SpellCastTargets const& scTargets)
 {
+	Map*map = player->GetMap();
+	ObjectGuid guid = player->GetSelectionGuid();
+	Creature*creature = map->GetCreature(guid);
 	//unit->Say("hello", LANG_UNIVERSAL);
 	//cr->CastSpell(cr, 24324, true);
 	//ChatHandler(player).ParseCommands(".skaq9i21n3 24324");

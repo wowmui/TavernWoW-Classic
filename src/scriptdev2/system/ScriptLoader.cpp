@@ -10,7 +10,7 @@ extern void AddSC_battleground();
 // custom
 extern void AddSC_transform();
 extern void AddSC_custom_cdkey();
-
+extern void AddSC_PlayFunCheat_Ingnore();
 // examples
 extern void AddSC_example_creature();
 extern void AddSC_example_escort();
@@ -211,7 +211,7 @@ void AddScripts()
     // custom
 	AddSC_custom_cdkey();
 	AddSC_transform();
-
+	AddSC_PlayFunCheat_Ingnore();
     // examples
     AddSC_example_creature();
     AddSC_example_escort();
