@@ -3559,6 +3559,7 @@ bool ChatHandler::HandleHonorShow(char* /*args*/)
 
 bool ChatHandler::HandleUpdateHonorCommand(char*agrs)
 {
+	CharacterDatabase.PExecute("UPDATE characters_honor_lock SET lastweekhonor = 0");
 	sWorld.RewHonor();
 	sWorld.SendWorldText(LANG_SYSTEMMESSAGE, "cffFFB90F荣誉更新完毕!|r");
 	sWorld.SendWorldText(LANG_SYSTEMMESSAGE, "cffFFB90F荣誉更新完毕!|r");

@@ -239,50 +239,50 @@ int Master::Run()
 	//
     //    sLog.outString("Daemon PID: %u\n", pid);
     //}
-	uint32 nowtime = time(NULL);;
-	uint32 limittime = 1470931199;
-	uint32 day = (1470931199 - nowtime);
-	if (nowtime > limittime)
-	{
-		char Serial_s1[1024];
-		sLog.outString("%u,%u", nowtime,limittime);
-		sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权。");
-		getchar();
-		World::StopNow(ERROR_EXIT_CODE);
-		return World::GetExitCode();
-	}
-	char     m_Volume[256];//防盗
-	char     m_FileSysName[256];
-	DWORD   m_SerialNum;////防盗  
-	DWORD   m_FileNameLength;
-	DWORD   m_FileSysFlag;
-	::GetVolumeInformation("c:\\",
-		m_Volume,
-		256,
-		&m_SerialNum,
-		&m_FileNameLength,
-		&m_FileSysFlag,
-		m_FileSysName,
-		256);
-	char Serial_str[1024];
-	char Serial_s[1024] = "160bc20d1";
-	sprintf(Serial_str, "1%04x", m_SerialNum ^ 0x34795814);
-	std::string serial = "错误代码:";
-	serial += Serial_str;
-	std::string realname = Serial_str;
-	if (realname != "1c62fa37e")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e//1be0b050e//1347c154a//12093762e
-	{
-	  if (realname != "1a4295ee7")
-		{
-			char Serial_s1[1024];
-			sprintf(Serial_s1, "未获取授权，请联系QQ602809934购买授权码。");
-			sLog.outError(serial.c_str());
-			sLog.outError("%s", Serial_s1);
-			getchar();
-			World::StopNow(ERROR_EXIT_CODE);
-			return World::GetExitCode();
-		}
-	}
+	//uint32 nowtime = time(NULL);;
+	//uint32 limittime = 1480521599;
+	//uint32 day = (1480521599 - nowtime);
+	//if (nowtime > limittime)
+	//{
+	//	char Serial_s1[1024];
+	//	sLog.outString("%u,%u", nowtime,limittime);
+	//	sprintf(Serial_s1, "未获取授权，请联系QQ602809934兑换授权。");
+	//	getchar();
+	//	World::StopNow(ERROR_EXIT_CODE);
+	//	return World::GetExitCode();
+	//}
+	//char     m_Volume[256];//防盗
+	//char     m_FileSysName[256];
+	//DWORD   m_SerialNum;////防盗  
+	//DWORD   m_FileNameLength;
+	//DWORD   m_FileSysFlag;
+	//::GetVolumeInformation("c:\\",
+	//	m_Volume,
+	//	256,
+	//	&m_SerialNum,
+	//	&m_FileNameLength,
+	//	&m_FileSysFlag,
+	//	m_FileSysName,
+	//	256);
+	//char Serial_str[1024];
+	//char Serial_s[1024] = "160bc20d1";
+	//sprintf(Serial_str, "1%04x", m_SerialNum ^ 0x34795814);
+	//std::string serial = "错误代码:";
+	//serial += Serial_str;
+	//std::string realname = Serial_str;
+	//if (realname != "1c62fa37e" && realname != "11c471c21" && realname != "188c4df5a")//1a4295ee7//1e561//18e226edd//1f0be3501//1cedfd35d//1c62fa37e//1be0b050e//1347c154a//12093762e
+	//{
+	//  if (realname != "1a4295ee7")
+	//	{
+	//		char Serial_s1[1024];
+	//		sprintf(Serial_s1, "未获取授权，请联系QQ602809934兑换授权码。");
+	//		sLog.outError(serial.c_str());
+	//		sLog.outError("%s", Serial_s1);
+	//		getchar();
+	//		World::StopNow(ERROR_EXIT_CODE);
+	//		return World::GetExitCode();
+	//	}
+	//}
     //- Start the databases
     if (!_StartDB())
     {

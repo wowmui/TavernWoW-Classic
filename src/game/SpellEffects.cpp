@@ -993,16 +993,16 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
         }
         case SPELLFAMILY_WARRIOR:
         {
-            // Execute
+            // Execute斩杀伤害计算
             if (m_spellInfo->SpellFamilyFlags & UI64LIT(0x20000000))
             {
                 if (!unitTarget)
                     return;
-
-                int32 basePoints0 = damage + int32(m_caster->GetPower(POWER_RAGE) * m_spellInfo->DmgMultiplier[eff_idx]);
+				float ATdamage = m_caster->GetTotalAttackPowerValue(BASE_ATTACK) * 0.4f;	//增强斩杀伤害受40%攻击强度加成
+                int32 basePoints0 = damage + (int32)ATdamage + int32(m_caster->GetPower(POWER_RAGE) * m_spellInfo->DmgMultiplier[eff_idx]);		//加上ATdamage
                 m_caster->CastCustomSpell(unitTarget, 20647, &basePoints0, nullptr, nullptr, true, 0);
-                m_caster->SetPower(POWER_RAGE, 0);
-                return;
+				m_caster->SetPower(POWER_RAGE, 0);
+				return;
             }
             // Warrior's Wrath
             if (m_spellInfo->Id == 21977)
@@ -1509,6 +1509,20 @@ void Spell::EffectTeleportUnits(SpellEffectIndex eff_idx)   // TODO - Use target
             }
             return;
         }
+		case 23460:		//bwl传送
+		{
+
+				((Player*)m_caster)->ResurrectPlayer(0.5f);
+				((Player*)m_caster)->SpawnCorpseBones();
+				return;
+		}
+		case 25139:		//mc传送
+		{
+
+				((Player*)m_caster)->ResurrectPlayer(0.5f);
+				((Player*)m_caster)->SpawnCorpseBones();
+				return;
+		}
     }
 }
 
@@ -2438,10 +2452,10 @@ void Spell::EffectPickPocket(SpellEffectIndex /*eff_idx*/)
             loot->ShowContentTo((Player*)m_caster);
         }
         else
-        {
+        {	//盗贼偷窃失败消除隐形
             // Reveal action + get attack
-            m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
-            unitTarget->AttackedBy(m_caster);
+            //m_caster->RemoveSpellsCausingAura(SPELL_AURA_MOD_STEALTH);
+            //unitTarget->AttackedBy(m_caster);
         }
     }
 }
@@ -4417,8 +4431,9 @@ void Spell::EffectLeapForward(SpellEffectIndex eff_idx)
     bool isPrevInLiquid = false;
 
     // falling case
-    if (!unitTarget->GetMap()->GetHeightInRange(prevPos.x, prevPos.y, groundZ, 3.0f) && unitTarget->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLING))
-    {
+    //if (!unitTarget->GetMap()->GetHeightInRange(prevPos.x, prevPos.y, groundZ, 3.0f) && unitTarget->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLING))
+	if (!unitTarget->GetMap()->GetHeightInRange(prevPos.x, prevPos.y, groundZ, 3.0f) && (unitTarget->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLING) || unitTarget->m_movementInfo.HasMovementFlag(MOVEFLAG_FALLINGFAR)))	//在空中的判断
+	{
         nextPos.x = prevPos.x + dist * cos(orientation);
         nextPos.y = prevPos.y + dist * sin(orientation);
         nextPos.z = prevPos.z - 2.0f; // little hack to avoid the impression to go up when teleporting instead of continue to fall. This value may need some tweak
@@ -4555,9 +4570,11 @@ void Spell::EffectLeapForward(SpellEffectIndex eff_idx)
         isPrevInLiquid = isInLiquid;
         prevPos = nextPos;
     }
-	if (m_spellInfo->Id == 1953 && m_caster->GetAreaId() == 1497)
+	//if (m_spellInfo->Id == 1953 && m_caster->GetAreaId() == 1497)
+	if (m_caster->GetAreaId() == 1497)	//幽暗城闪现
 	{
-		float z = m_caster->GetPositionZ();
+
+		float z = fabs(fabs(nextPos.z) - fabs(prevPos.z)) >= 10.0f ? nextPos.z : m_caster->GetPositionZ() + 4.0f;
 		unitTarget->NearTeleportTo(nextPos.x, nextPos.y, z, orientation, unitTarget == m_caster);
 	}
 	else

@@ -4854,7 +4854,18 @@ SpellAuraHolder::SpellAuraHolder(SpellEntry const* spellproto, Unit* target, Wor
 
     Unit* unitCaster = caster && caster->isType(TYPEMASK_UNIT) ? (Unit*)caster : nullptr;
 
-    m_duration = m_maxDuration = CalculateSpellDuration(spellproto, unitCaster);
+	m_duration = m_maxDuration = CalculateSpellDuration(spellproto, unitCaster);
+	if ((spellproto->Effect[0] == 6 && spellproto->Effect[1] == 6 && spellproto->Effect[2] == 108 && spellproto->SpellIconID == 82) || (spellproto->Effect[0] == 6 && spellproto->Effect[1] == 0 && spellproto->Effect[2] == 0 && spellproto->SpellIconID == 249))
+	{
+ 		if (target)
+		if (target->GetTypeId() == TYPEID_PLAYER)
+		if (caster)
+		if (caster->GetTypeId() == TYPEID_PLAYER)
+		{
+			m_duration = target->GetCharmerOrOwnerPlayerOrPlayerItself()->GetControlTime();
+			target->GetCharmerOrOwnerPlayerOrPlayerItself()->m_controlcount++;
+		}
+	}
 
     if (m_maxDuration == -1 || (m_isPassive && spellproto->DurationIndex == 0))
         m_permanent = true;

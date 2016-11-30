@@ -340,6 +340,12 @@ void BattleGround::Update(uint32 diff)
                 {
                     if (Player* player = sObjectMgr.GetPlayer(itr->first))
                     {
+						if (player->IsInWorld())
+						if (player->isAlive())
+						if (m_StartDelayTime > 3000)
+							player->SetRoot(true);
+						else if (m_StartDelayTime < 3000 && m_StartDelayTime != 0)
+							player->SetRoot(false);
                         float x, y, z, o;
                         GetTeamStartLoc(player->GetTeam(), x, y, z, o);
                         if (!player->IsWithinDist3d(x, y, z, maxDist))
@@ -353,7 +359,6 @@ void BattleGround::Update(uint32 diff)
             else
                 m_validStartPositionTimer -= diff;
         }
-
         ModifyStartDelayTime(diff);
 
         if (!(m_Events & BG_STARTING_EVENT_1))
@@ -400,7 +405,6 @@ void BattleGround::Update(uint32 diff)
             }
         }
     }
-
     /*********************************************************/
     /***           BATTLEGROUND ENDING SYSTEM              ***/
     /*********************************************************/

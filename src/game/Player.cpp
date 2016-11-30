@@ -483,6 +483,13 @@ UpdateMask Player::updateVisualBits;
 
 Player::Player(WorldSession* session): Unit(), m_mover(this), m_camera(this), m_reputationMgr(this)
 {
+	TFSign = false;
+	HandlePAODIANTimer = 60000;
+	CanHandleSJCommand = false;
+	SJCommandTimer = 30000;
+	m_controltimer = 3000;
+	m_controltime = 25000;
+	m_controlcount = 1;
     m_transport = 0;
 	PlayFunCheatIngnore = false;
 	PlayFunCheatIngnoreTimer = 20000;
@@ -696,6 +703,12 @@ Player::~Player()
         itr->second.state->RemovePlayer(this);
 }
 
+void Player::SendSpellCoolDown(uint32 entry, uint32 time)
+{
+	SpellEntry const* spellInfo = sSpellStore.LookupEntry(entry);
+	GetGlobalCooldownMgr().AddGlobalCooldown(spellInfo, time);
+}
+
 void Player::CleanupsBeforeDelete()
 {
     if (m_uint32Values)                                     // only for fully created Object
@@ -710,6 +723,25 @@ void Player::CleanupsBeforeDelete()
     Unit::CleanupsBeforeDelete();
 }
 
+uint32 Player::GetControlTime()
+{
+	switch (m_controlcount)
+	{
+	case 0:
+		m_controltime = 25000;
+		break;
+	case 1:
+		m_controltime = 13000;
+		break;
+	case 2:
+		m_controltime = 7000;
+		break;
+	default:
+		m_controltime = 0;
+		break;
+	}
+	return m_controltime;
+}
 bool Player::Create(uint32 guidlow, const std::string& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair, uint8 /*outfitId */)
 {
     // FIXME: outfitId not used in player creating
@@ -1229,7 +1261,34 @@ void Player::SetDrunkValue(uint16 newDrunkenValue, uint32 itemId)
     else
         m_detectInvisibilityMask &= ~(1 << 6);
 }
+void Player::CheckPaodian()
+{
+	if (m_Played_time[PLAYED_TIME_TOTAL] > 7200)
+	{
+		uint32 GetJF = (m_Played_time[PLAYED_TIME_TOTAL] / 7200) * 2;
+		uint32 LeftTime = m_Played_time[PLAYED_TIME_TOTAL] % 7200;
+		m_Played_time[PLAYED_TIME_TOTAL] = LeftTime;
+		ModifyJFifCan(GetJF, true);
+	}
+}
 
+//积分增减方法
+void Player::ModifyJFifCan(uint32 Count, bool Plus)
+{
+	if (Plus)
+	{
+		LoginDatabase.PExecute("UPDATE account SET jf = jf + %u WHERE id = %u", Count, GetSession()->GetAccountId());
+		GetSession()->SendNotification("获得%u点积分", Count);
+		SaveToDB();
+	}
+	else
+	{
+		LoginDatabase.PExecute("UPDATE account SET jf = jf - %u WHERE id = %u", Count, GetSession()->GetAccountId());
+		GetSession()->SendNotification("使用%u点积分", Count);
+		SaveToDB();
+	}
+
+}
 void Player::Update(uint32 update_diff, uint32 p_time)
 {
     // Undelivered mail
@@ -1431,6 +1490,12 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 
     // Group update
     SendUpdateToOutOfRangeGroupMembers();
+	if (m_controltimer <= p_time && m_controlcount != 0)
+	{
+		m_controlcount = 0;
+		m_controltimer = 90000;
+	}
+	else m_controltimer -= p_time;
 
     Pet* pet = GetPet();
     if (pet && !pet->IsWithinDistInMap(this, GetMap()->GetVisibilityDistance()) && (GetCharmGuid() && (pet->GetObjectGuid() != GetCharmGuid())))
@@ -1469,6 +1534,19 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 	if (HasAura(22799) && GetMapId() != 429)
 		RemoveAurasDueToSpell(22799);
 
+	if (SJCommandTimer <= p_time)
+	{
+		CanHandleSJCommand = true;
+		SJCommandTimer = 30000;
+	}
+	else SJCommandTimer -= p_time;
+
+	if (HandlePAODIANTimer <= p_time)
+	{
+		CheckPaodian();
+		HandlePAODIANTimer = 60000;
+	}
+	else HandlePAODIANTimer -= p_time;
 	if (PlayFunCheatIngnore == true)
 	{
 		if (PlayFunCheatIngnoreTimer <= p_time)

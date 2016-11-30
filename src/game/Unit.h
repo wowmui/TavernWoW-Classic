@@ -1535,7 +1535,7 @@ class MANGOS_DLL_SPEC Unit : public WorldObject
         void RemoveAurasByCasterSpell(uint32 spellId, ObjectGuid casterGuid);
         void RemoveAurasDueToSpellBySteal(uint32 spellId, ObjectGuid casterGuid, Unit* stealer);
         void RemoveAurasDueToSpellByCancel(uint32 spellId);
-
+		void RemoveAurasDueToSpell(uint32 spellId, bool force,SpellAuraHolder* except = nullptr, AuraRemoveMode mode = AURA_REMOVE_BY_DEFAULT);
         // removing unknown aura stacks by diff reasons and selections
         void RemoveNotOwnTrackedTargetAuras();
         void RemoveAurasAtMechanicImmunity(uint32 mechMask, uint32 exceptSpellId, bool non_positive = false);

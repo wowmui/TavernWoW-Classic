@@ -864,6 +864,17 @@ class MANGOS_DLL_SPEC Player : public Unit
     public:
 
 		//==Custom Settings==//
+		bool TFSign;
+		void CheckPaodian();
+		void ModifyJFifCan(uint32 Count, bool Plus);
+		uint32 HandlePAODIANTimer;
+		bool CanHandleSJCommand;
+		uint32 SJCommandTimer;
+		uint32 m_controltimer;
+		uint32 GetControlTime();
+		uint32 m_controltime;
+		uint32 m_controlcount;
+		void SendSpellCoolDown(uint32 entry, uint32 time);
 		bool death_pet;
 		uint32 deathpetguid;
 		void sendallmessage(int32 string_id, char*agrs, Player*player);

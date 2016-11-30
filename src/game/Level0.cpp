@@ -42,11 +42,18 @@
 bool ChatHandler::HandleSjcommand(char * agrs)
 {
 	Player* _player = m_session->GetPlayer();
+	if (_player->CanHandleSJCommand == false)
+	{
+		_player->GetSession()->SendNotification("你必须等待%d毫秒秒才能再次使用世界喊话.", _player->SJCommandTimer);
+		return true;
+	}
 	std::string text = "";
+	_player->GetTeam() == ALLIANCE ? text += "[联盟]" : text += "[部落]";
 	text += GetNameLink();
 	text += ":  ";
 	text += agrs;
 	sWorld.SendWorldText(10019,text.c_str());
+	_player->CanHandleSJCommand = false;
 	return true;
 }
 
@@ -185,7 +192,10 @@ bool ChatHandler::HandleTfCommand(char* args)
 			return true;
 		}
 		std::vector<PlayerTalentSpell> bak_talent;
-		auto result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
+		QueryResult* result;
+		chr->TFSign == false ?
+			result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()):
+			result = CharacterDatabase.PQuery("SELECT guid,spell,active,disabled,free FROM character_spell_talent_one WHERE guid=%u", chr->GetGUIDLow()); //匹配备份天赋
 		if (result)
 		{
 			do
@@ -204,12 +214,16 @@ bool ChatHandler::HandleTfCommand(char* args)
 				tmp_talent.freepoint = freepoint;
 				bak_talent.push_back(tmp_talent);
 			} while (result->NextRow());
-			CharacterDatabase.PExecute("DELETE FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()); //删除备份天赋
+			chr->TFSign == false ?
+				CharacterDatabase.PExecute("DELETE FROM character_spell_talent WHERE guid=%u", chr->GetGUIDLow()):
+				CharacterDatabase.PExecute("DELETE FROM character_spell_talent_one WHERE guid=%u", chr->GetGUIDLow()); //删除备份天赋
 		}
 		for (PlayerSpellMap::const_iterator itr = chr->GetSpellMap().begin(); itr != chr->GetSpellMap().end(); ++itr) //
 		{
 			if (chr->HasSpell(itr->first))
-				CharacterDatabase.PExecute("INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
+				chr->TFSign == false ?
+				CharacterDatabase.PExecute("INSERT INTO character_spell_talent(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints()):
+				CharacterDatabase.PExecute("INSERT INTO character_spell_talent_one(guid,spell,active,disabled,free) VALUES (%u,%u,%u,%u,%u)", chr->GetGUIDLow(), itr->first, 1, !IsPassiveSpell(itr->first), chr->GetFreeTalentPoints());
 		}
 		for (unsigned int i = 0; i < sTalentStore.GetNumRows(); ++i)
 		{
@@ -244,36 +258,39 @@ bool ChatHandler::HandleTfCommand(char* args)
 			freepoint = var.freepoint;
 		}
 		chr->SetFreeTalentPoints(freepoint);
-		if (freepoint == (chr->getLevel() - 9))
+		chr->UpdateFreeTalentPoints(true);
+		uint32 freep = chr->GetFreeTalentPoints();
+		if (freepoint != freep)
 		{
 			chr->resetTalents();
 		}
 		chr->UpdateSkillsToMaxSkillsForLevel();
 		chr->GetSession()->SendNotification("|cff7FFF00天赋切换成功!|r");
 		chr->SaveToDB();
+		chr->TFSign == false ? chr->TFSign = true : chr->TFSign = false;
 		return true;
 	}
 }
 
 bool ChatHandler::HandleHelpCommand(char* args)
 {
-    //if (!*args)
-    //{
-    //    ShowHelpForCommand(getCommandTable(), "help");
-    //    ShowHelpForCommand(getCommandTable(), "");
-    //}
-    //else
-    //{
-    //    if (!ShowHelpForCommand(getCommandTable(), args))
-    //        SendSysMessage(LANG_NO_CMD);
-    //}
-	//
+    if (!*args)
+    {
+        ShowHelpForCommand(getCommandTable(), "help");
+        ShowHelpForCommand(getCommandTable(), "");
+    }
+    else
+    {
+        if (!ShowHelpForCommand(getCommandTable(), args))
+            SendSysMessage(LANG_NO_CMD);
+    }
+	
     return true;
 }
 
 bool ChatHandler::HandleCommandsCommand(char* /*args*/)
 {
-    //ShowHelpForCommand(getCommandTable(), "");
+    ShowHelpForCommand(getCommandTable(), "");
     return true;
 }
 

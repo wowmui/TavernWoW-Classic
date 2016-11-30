@@ -612,7 +612,7 @@ void AuctionHouseObject::BuildListAuctionItems(WorldPacket& data, Player* player
 
             if (usable != 0x00)
             {
-                if (player->CanUseItem(item) != EQUIP_ERR_OK)
+				if (player->CanUseItem(item) != EQUIP_ERR_OK)
                     continue;
 
                 if (proto->Class == ITEM_CLASS_RECIPE)

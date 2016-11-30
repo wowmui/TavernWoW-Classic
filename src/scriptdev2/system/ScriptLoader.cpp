@@ -8,7 +8,7 @@
 extern void AddSC_battleground();
 
 // custom
-extern void AddSC_transform();
+extern void AddSC_item_teleport();
 extern void AddSC_custom_cdkey();
 extern void AddSC_PlayFunCheat_Ingnore();
 // examples
@@ -210,7 +210,7 @@ void AddScripts()
 
     // custom
 	AddSC_custom_cdkey();
-	AddSC_transform();
+	AddSC_item_teleport();
 	AddSC_PlayFunCheat_Ingnore();
     // examples
     AddSC_example_creature();

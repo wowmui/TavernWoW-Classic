@@ -852,7 +852,7 @@ uint32 Unit::DealDamage(Unit* pVictim, uint32 damage, CleanDamage const* cleanDa
             next = i; ++next;
             if (spellProto && spellProto->Id == se->Id) // Not drop auras added by self
                 continue;
-            if (!se->procFlags && (se->AuraInterruptFlags & AURA_INTERRUPT_FLAG_DAMAGE))
+            if ((!se->procFlags && (se->AuraInterruptFlags & AURA_INTERRUPT_FLAG_DAMAGE)) || pVictim->HasAura(19386) || pVictim->HasAura(24132) || pVictim->HasAura(24133) || pVictim->HasAura(26180))		//尝试修复翼龙钉刺打不醒的问题
             {
                 pVictim->RemoveAurasDueToSpell(i->second->GetId());
                 next = vAuras.begin();
@@ -3878,8 +3878,30 @@ void Unit::RemoveAurasDueToSpell(uint32 spellId, SpellAuraHolder* except, AuraRe
         else
             ++iter;
     }
+	if (spellId == 28682 && GetTypeId() == TYPEID_PLAYER)
+	{
+		GetCharmerOrOwnerPlayerOrPlayerItself()->RemoveSpellCooldown(11129, true);
+		GetCharmerOrOwnerPlayerOrPlayerItself()->CastSpell(this, 11129, true);
+		GetCharmerOrOwnerPlayerOrPlayerItself()->RemoveAurasDueToSpell(28682, true);
+	}
+
 }
 
+void Unit::RemoveAurasDueToSpell(uint32 spellId, bool force, SpellAuraHolder* except, AuraRemoveMode mode)
+{
+	SpellAuraHolderBounds bounds = GetSpellAuraHolderBounds(spellId);
+	for (SpellAuraHolderMap::iterator iter = bounds.first; iter != bounds.second;)
+	{
+		if (iter->second != except)
+		{
+			RemoveSpellAuraHolder(iter->second, mode);
+			bounds = GetSpellAuraHolderBounds(spellId);
+			iter = bounds.first;
+		}
+		else
+			++iter;
+	}
+}
 void Unit::RemoveAurasDueToItemSpell(Item* castItem, uint32 spellId)
 {
     SpellAuraHolderBounds bounds = GetSpellAuraHolderBounds(spellId);

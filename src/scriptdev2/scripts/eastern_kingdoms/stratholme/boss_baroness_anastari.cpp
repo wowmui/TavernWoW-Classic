@@ -149,7 +149,6 @@ struct boss_baroness_anastariAI : public ScriptedAI
                     DoCastSpellIfCan(m_creature, SPELL_POSSESS_INV, CAST_TRIGGERED);
 
                     m_possessedPlayer = pTarget->GetObjectGuid();
-					DoCastSpellIfCan(pTarget, 11446, CAST_TRIGGERED);
                     m_uiPossessEndTimer = 1000;
                     m_uiPossessTimer = 30000;
                 }

@@ -79,6 +79,11 @@ void Totem::Update(uint32 update_diff, uint32 time)
     else
         m_duration -= update_diff;
 
+	if (GetEntry() == 5925 && !owner->HasAura(8178))
+	{
+		RemoveAurasDueToSpell(8178);
+		CastSpell(nullptr, 8178, true);
+	}
     Creature::Update(update_diff, time);
 }
 

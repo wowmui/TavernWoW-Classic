@@ -82,7 +82,6 @@ int32 CalculateSpellDuration(SpellEntry const* spellInfo, Unit const* caster)
     if (duration != -1 && caster)
     {
         int32 maxduration = GetSpellMaxDuration(spellInfo);
-
         if (duration != maxduration && caster->GetTypeId() == TYPEID_PLAYER)
             duration += int32((maxduration - duration) * ((Player*)caster)->GetComboPoints() / 5);
 
@@ -94,8 +93,28 @@ int32 CalculateSpellDuration(SpellEntry const* spellInfo, Unit const* caster)
                 duration = 0;
         }
     }
-
     return duration;
+}
+
+int32 CalculateSpellDuration(bool force, SpellEntry const* spellInfo, Unit const* caster,Unit const * target)
+{
+	int32 duration = GetSpellDuration(spellInfo);
+
+	if (duration != -1 && caster)
+	{
+		int32 maxduration = GetSpellMaxDuration(spellInfo);
+		if (duration != maxduration && caster->GetTypeId() == TYPEID_PLAYER)
+			duration += int32((maxduration - duration) * ((Player*)caster)->GetComboPoints() / 5);
+
+		if (Player* modOwner = caster->GetSpellModOwner())
+		{
+			modOwner->ApplySpellMod(spellInfo->Id, SPELLMOD_DURATION, duration);
+
+			if (duration < 0)
+				duration = 0;
+		}
+	}
+	return duration;
 }
 
 uint32 GetSpellCastTime(SpellEntry const* spellInfo, Spell const* spell)

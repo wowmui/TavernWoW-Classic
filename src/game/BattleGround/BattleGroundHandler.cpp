@@ -72,7 +72,7 @@ void WorldSession::SendBattlegGroundList(ObjectGuid guid, BattleGroundTypeId bgT
     SendPacket(&data);
 }
 
-void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket& recv_data)
+void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket& recv_data) //加入战场
 {
     ObjectGuid guid;
     uint32 instanceId;
@@ -104,11 +104,11 @@ void WorldSession::HandleBattlemasterJoinOpcode(WorldPacket& recv_data)
         return;
 
     Creature* unit = GetPlayer()->GetMap()->GetCreature(guid);
-    if (!unit)
-        return;
+    //if (!unit)
+    //    return;
 
-    if (!unit->isBattleMaster())                            // it's not battlemaster
-        return;
+    //if (!unit->isBattleMaster())                            // it's not battlemaster
+    //    return;
 
     // get bg instance or bg template if instance not found
     BattleGround* bg = nullptr;

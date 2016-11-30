@@ -7,7 +7,7 @@
 
 bool GossipHello_custom_cdkey(Player* pPlayer, Creature* pCreature)
 {
-	pPlayer->ADD_GOSSIP_ITEM_EXTENDED(0, "※玩吧魔兽新手礼包兑换※", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, "|cffEEB422※※玩吧魔兽特色服务器介绍※※|r \n\n |cffCAFF70客服QQ: 602809934,494642333 \n QQ群: 185738294|r\n\n |cffCD6889官方网站:http://www.wonebar.com/ |r \n\n |cffAB82FF保持公平合理特色公益服务器特性\n\n 拒绝GM参与游戏\n\n 拒绝出售装备，声望\n\n 拒绝任何私下勾当如卖隐藏技能 \n\n 拒绝任何影响游戏环境的行为\n\n 极力维护良好的游戏氛围|r \n\n |cffCDBE70★★玩吧魔兽特色系统介绍★★|r  \n\n |cffCAFF70★幻化系统★|r,|cffCAE1FF★军衔系统★|r\n\n |cffBF3EFF★双重天赋★|r,|cff8B7500★战友招募★|r \n\n |cffFF3E96★前缀附魔★|r,|cffFFBBFF★瞬飞系统★|r \n\n |cffFF7F24★★特色地图★★|r,|cffFFD700★★随身功能★★|r \n\n |cffCAE1FF★★各种功能持续开发中...★★|r", 0, true);
+	pPlayer->ADD_GOSSIP_ITEM_EXTENDED(0, "※酒馆小调新手礼包兑换※", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, "|cffEEB422※※酒馆小调经典怀旧服务器介绍※※|r \n\n QQ群: 185738294|r\n\n |cffCD6889官方网站:http://www.wswow.online/ |r \n\n |cffAB82FF保持公平合理特色公益服务器特性\n\n 拒绝GM参与游戏\n\n 拒绝出售装备，声望\n\n 拒绝任何私下勾当如卖隐藏技能 \n\n 拒绝任何影响游戏环境的行为\n\n 极力维护良好的游戏氛围|r \n\n |cffCDBE70★★玩吧魔兽特色系统介绍★★|r  \n\n |cffCAFF70★幻化系统★|r,|cffCAE1FF★军衔系统★|r\n\n |cffBF3EFF★双重天赋★|r,|cff8B7500★战友招募★|r \n\n |cffFF3E96★前缀附魔★|r,|cffFFBBFF★瞬飞系统★|r \n\n |cffFF7F24★★特色地图★★|r,|cffFFD700★★随身功能★★|r \n\n |cffCAE1FF★★各种功能持续开发中...★★|r", 0, true);
 	pPlayer->SEND_GOSSIP_MENU(822, pCreature->GetGUID());
 	return true;
 }

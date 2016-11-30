@@ -325,7 +325,8 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
         else if (eventType == AI_EVENT_CUSTOM_B && pInvoker->GetEntry() == NPC_ISILLIEN)
         {
             StartNextDialogueText(NPC_TIRION_FORDRING);
-            m_creature->SummonCreature(NPC_TIRION_FORDRING, 2620.273f, -1920.917f, 74.25f, 0, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS);
+            if (Creature* pTirion = m_creature->SummonCreature(NPC_TIRION_FORDRING, 2620.273f, -1920.917f, 74.25f, 0, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS))
+                pTirion->SetWalk(false);
         }
     }
 
@@ -454,25 +455,32 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
                 m_creature->SummonCreature(NPC_ISILLIEN, 2693.12f, -1943.04f, 72.04f, 2.11f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS);
                 break;
             case SAY_ISILLIEN_2:
+                m_creature->Unmount();
                 if (Creature* pIsillien = m_creature->GetMap()->GetCreature(m_isillenGuid))
                     m_creature->SetFacingToObject(pIsillien);
                 break;
             case SPELL_CRUSADER_STRIKE:
             {
-                // spawn additioinal elites
-                m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2711.32f, -1882.67f, 67.89f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS);
-                m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2710.93f, -1878.90f, 67.97f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS);
-                m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2710.53f, -1875.28f, 67.90f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS);
-
-                std::list<Creature*> lElitesInRange;
-                Player* pPlayer = GetPlayerForEscort();
-                if (!pPlayer)
-                    return;
-
-                GetCreatureListWithEntryInGrid(lElitesInRange, m_creature, NPC_CRIMSON_ELITE, 70.0f);
-
-                for (std::list<Creature*>::const_iterator itr = lElitesInRange.begin(); itr != lElitesInRange.end(); ++itr)
-                    (*itr)->AI()->AttackStart(pPlayer);
+                float fX, fY, fZ;
+                // spawn 3 additional elites
+                if (Creature* pElite = m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2711.32f, -1882.67f, 67.89f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS))
+                {
+                    pElite->SetWalk(false);
+                    m_creature->GetContactPoint(pElite, fX, fY, fZ);
+                    pElite->GetMotionMaster()->MovePoint(0, fX, fY, fZ);
+                }
+                if (Creature* pElite = m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2710.93f, -1878.90f, 67.97f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS))
+                {
+                    pElite->SetWalk(false);
+                    m_creature->GetContactPoint(pElite, fX, fY, fZ);
+                    pElite->GetMotionMaster()->MovePoint(0, fX, fY, fZ);
+                }
+                if (Creature* pElite = m_creature->SummonCreature(NPC_CRIMSON_ELITE, 2710.53f, -1875.28f, 67.90f, 3.2f, TEMPSUMMON_TIMED_OOC_OR_DEAD_DESPAWN, 15 * MINUTE * IN_MILLISECONDS))
+                {
+                    pElite->SetWalk(false);
+                    m_creature->GetContactPoint(pElite, fX, fY, fZ);
+                    pElite->GetMotionMaster()->MovePoint(0, fX, fY, fZ);
+                }
 
                 // Isillien only attacks Taelan
                 if (Creature* pIsillien = m_creature->GetMap()->GetCreature(m_isillenGuid))
@@ -557,7 +565,8 @@ struct npc_taelan_fordringAI: public npc_escortAI, private DialogueHelper
         if (m_bTaelanDead)
             return;
 
-        if (!m_bTaelanDead && m_creature->GetHealthPercent() < 50.0f)
+        // If Taelan is in fight with Isillien and drops below 50% make him "dead"
+        if (!m_bTaelanDead && m_bFightStarted && m_creature->GetHealthPercent() < 50.0f)
         {
             StartNextDialogueText(SAY_KILL_TAELAN_1);
             m_bTaelanDead = true;
@@ -654,6 +663,7 @@ struct npc_isillienAI: public npc_escortAI
     {
         m_bTirionSpawned = false;
         m_bTaelanDead = false;
+        m_uiSummonTirionTimer = 0;
         Reset();
     }
 
@@ -662,6 +672,7 @@ struct npc_isillienAI: public npc_escortAI
 
     ObjectGuid m_taelanGuid;
 
+    uint32 m_uiSummonTirionTimer;
     uint32 m_uiManaBurnTimer;
     uint32 m_uFlashHealTimer;
     uint32 m_uiGreaterHealTimer;
@@ -716,6 +727,7 @@ struct npc_isillienAI: public npc_escortAI
             // kill Taelan
             DoCastSpellIfCan(pInvoker, SPELL_TAELAN_DEATH, CAST_INTERRUPT_PREVIOUS);
             m_bTaelanDead = true;
+            m_uiSummonTirionTimer = 120000;      // 2 minutes wait before Tirion arrives
             m_taelanGuid = pInvoker->GetObjectGuid();
         }
     }
@@ -732,16 +744,19 @@ struct npc_isillienAI: public npc_escortAI
 
     void UpdateEscortAI(const uint32 uiDiff) override
     {
-        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
-            return;
-
         // start event epilog
-        if (!m_bTirionSpawned && m_creature->GetHealthPercent() < 20.0f)
+        if (!m_bTirionSpawned && ((m_uiSummonTirionTimer != 0 && m_uiSummonTirionTimer < uiDiff) || m_creature->GetHealthPercent() < 20.0f))
         {
             if (Creature* pTaelan = m_creature->GetMap()->GetCreature(m_taelanGuid))
                 SendAIEvent(AI_EVENT_CUSTOM_B, m_creature, pTaelan);
             m_bTirionSpawned = true;
         }
+        else
+            if (m_uiSummonTirionTimer)
+                m_uiSummonTirionTimer -= uiDiff;
+
+        if (!m_creature->SelectHostileTarget() || !m_creature->getVictim())
+            return;
 
         // combat spells
         if (m_uiMindBlastTimer < uiDiff)
@@ -826,8 +841,8 @@ struct npc_tirion_fordringAI: public npc_escortAI
 
     void Reset() override
     {
-        m_uiHolyCleaveTimer = urand(11000, 15000);
-        m_uiHolyStrikeTimer = urand(6000, 8000);
+        m_uiHolyCleaveTimer = urand(4000, 8000);
+        m_uiHolyStrikeTimer = urand(4000, 7000);
         m_uiCrusaderStrike  = urand(1000, 5000);
     }
 
@@ -908,7 +923,7 @@ struct npc_tirion_fordringAI: public npc_escortAI
         if (m_uiHolyCleaveTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_CLEAVE) == CAST_OK)
-                m_uiHolyCleaveTimer = urand(12000, 15000);
+                m_uiHolyCleaveTimer = urand(4000, 8000);
         }
         else
             m_uiHolyCleaveTimer -= uiDiff;
@@ -916,7 +931,7 @@ struct npc_tirion_fordringAI: public npc_escortAI
         if (m_uiHolyStrikeTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_HOLY_STRIKE) == CAST_OK)
-                m_uiHolyStrikeTimer = urand(8000, 11000);
+                m_uiHolyStrikeTimer = urand(4000, 7000);
         }
         else
             m_uiHolyStrikeTimer -= uiDiff;
@@ -924,7 +939,7 @@ struct npc_tirion_fordringAI: public npc_escortAI
         if (m_uiCrusaderStrike < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature->getVictim(), SPELL_CRUSADER_STRIKE) == CAST_OK)
-                m_uiCrusaderStrike = urand(7000, 9000);
+                m_uiCrusaderStrike = urand(3000, 5000);
         }
         else
             m_uiCrusaderStrike -= uiDiff;

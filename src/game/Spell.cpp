@@ -2537,7 +2537,11 @@ void Spell::prepare(SpellCastTargets const* targets, Aura* triggeredByAura)
     // calculate cast time (calculated after first CheckCast check to prevent charge counting for first CheckCast fail)
     m_casttime = GetSpellCastTime(m_spellInfo, this);
     m_duration = CalculateSpellDuration(m_spellInfo, m_caster);
-
+	//if ((m_spellInfo->Effect[0] == 6 && m_spellInfo->Effect[1] == 6 && m_spellInfo->Effect[2] == 108) || (m_spellInfo->Effect[0] == 6 && m_spellInfo->Effect[1] == 0 && m_spellInfo->Effect[2] == 0))
+	//if (Unit*target = targets->getUnitTarget())
+	//if (target->GetTypeId() == TYPEID_PLAYER)
+	//if (m_caster->GetTypeId() == TYPEID_PLAYER)
+	//	m_duration = m_duration / 2;
     // set timer base at cast time
     ReSetTimer();
 
@@ -2569,6 +2573,51 @@ void Spell::prepare(SpellCastTargets const* targets, Aura* triggeredByAura)
     // will not show cast bar but will show effects at casting time etc
 }
 
+void Spell::cancel(bool nowarrning)
+{
+    if (m_spellState == SPELL_STATE_FINISHED)
+        return;
+
+    // channeled spells don't display interrupted message even if they are interrupted, possible other cases with no "Interrupted" message
+    bool sendInterrupt = IsChanneledSpell(m_spellInfo) ? false : true;
+
+    m_autoRepeat = false;
+    switch (m_spellState)
+    {
+        case SPELL_STATE_PREPARING:
+            CancelGlobalCooldown();
+
+        //(no break)
+        case SPELL_STATE_DELAYED:
+        {
+            SendInterrupted(0);
+        } break;
+
+        case SPELL_STATE_CASTING:
+        {
+            for (TargetList::const_iterator ihit = m_UniqueTargetInfo.begin(); ihit != m_UniqueTargetInfo.end(); ++ihit)
+            {
+                if (ihit->missCondition == SPELL_MISS_NONE)
+                {
+                    Unit* unit = m_caster->GetObjectGuid() == (*ihit).targetGUID ? m_caster : ObjectAccessor::GetUnit(*m_caster, ihit->targetGUID);
+                    if (unit && unit->isAlive())
+                        unit->RemoveAurasByCasterSpell(m_spellInfo->Id, m_caster->GetObjectGuid());
+                }
+            }
+
+            SendChannelUpdate(0);
+            SendInterrupted(0);
+        } break;
+
+        default:
+        {
+        } break;
+    }
+
+    finish(false);
+    m_caster->RemoveDynObject(m_spellInfo->Id);
+    m_caster->RemoveGameObject(m_spellInfo->Id, true);
+}
 void Spell::cancel()
 {
     if (m_spellState == SPELL_STATE_FINISHED)
@@ -2637,6 +2686,18 @@ void Spell::cast(bool skipCheck)
         SetExecutedCurrently(false);
         return;
     }
+
+	if ((m_spellInfo->Effect[0] == 6 && m_spellInfo->Effect[1] == 6 && m_spellInfo->Effect[2] == 108))
+	if (Unit*target = m_targets.getUnitTarget())
+	if (Totem* totem = target->GetTotem(TotemSlot(TOTEM_SLOT_AIR)))
+	{
+		if (Creature*toteam = ((Creature*)totem))
+		if (toteam->GetEntry() == 5925)
+		{
+			m_targets.setUnitTarget(toteam);
+		}
+	}
+
     // update pointers base at GUIDs to prevent access to already nonexistent object
     UpdatePointers();
 
@@ -2779,6 +2840,13 @@ void Spell::cast(bool skipCheck)
 
     m_caster->DecreaseCastCounter();
     SetExecutedCurrently(false);
+	if ((m_spellInfo->Effect[0] == 6 && m_spellInfo->Effect[1] == 6 && m_spellInfo->Effect[2] == 108))
+	if (Unit*target = m_targets.getUnitTarget())
+	if (Creature*toteam = ((Creature*)target))
+	{
+		if (toteam->GetEntry() == 5925)
+			toteam->ForcedDespawn();
+	}
 }
 
 void Spell::handle_immediate()
@@ -4091,9 +4159,11 @@ SpellCastResult Spell::CheckCast(bool strict)
         {
             if (!CheckTargetCreatureType(target))
             {
-                if (target->GetTypeId() == TYPEID_PLAYER)
-                    return SPELL_FAILED_TARGET_IS_PLAYER;
-                else
+				if (target->GetTypeId() == TYPEID_PLAYER)
+					return SPELL_FAILED_TARGET_IS_PLAYER;
+				else if (target->GetEntry() == 5925)
+					return SPELL_CAST_OK;
+				else
                     return SPELL_FAILED_BAD_TARGETS;
             }
 
